@@ -91,82 +91,127 @@
   button { font-family: inherit; cursor: pointer; border: none; color: inherit; }
 
   .app {
-    display: grid;
-    grid-template-columns: minmax(300px, 380px) 1fr;
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
   }
-  @media (max-width: 1100px) {
-    .app { grid-template-columns: 1fr; }
-    .side-panel {
-      position: static !important;
-      height: auto !important;
-      max-height: none !important;
-      border-right: none;
-      border-bottom: 1px solid var(--panel-border);
-    }
-  }
 
-  .side-panel {
-    background: var(--panel);
-    border-right: 1px solid var(--panel-border);
-    padding: 32px 22px 56px;
-    overflow-y: auto;
+  /* 홈페이지형 상단 바 */
+  .topbar {
     position: sticky;
     top: 0;
-    height: 100vh;
-    max-height: 100vh;
-    scrollbar-width: thin;
-    scrollbar-color: var(--panel-border) transparent;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 22px;
+    background: rgba(28,28,30,0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--panel-border);
   }
-  .side-panel::-webkit-scrollbar { width: 6px; }
-  .side-panel::-webkit-scrollbar-thumb { background: var(--panel-border-strong); border-radius: 3px; }
-
-  .side-header { margin-bottom: 28px; }
-  .side-header h1 {
-    font-size: 23px;
+  body.light .topbar { background: rgba(255,255,255,0.88); }
+  .topbar-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+  .topbar-brand h1 {
+    font-size: 17px;
     font-weight: 800;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.03em;
     line-height: 1.2;
   }
-  .side-header .sub {
-    font-size: 13px;
+  .topbar-brand .sub {
+    font-size: 11px;
     color: var(--gray);
-    margin-top: 5px;
     font-weight: 500;
-    letter-spacing: -0.01em;
   }
-  .side-tools {
+  .topbar-actions {
     display: flex;
-    gap: 8px;
-    margin-top: 16px;
+    flex-wrap: wrap;
     align-items: center;
+    gap: 8px;
+    justify-content: flex-end;
   }
   .icon-btn {
-    height: 38px;
-    padding: 0 14px;
+    height: 36px;
+    padding: 0 12px;
     border-radius: 10px;
     background: var(--input-bg);
     border: 1px solid var(--panel-border);
     color: var(--text);
     font-size: 13px;
     font-weight: 600;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 6px;
     transition: all 0.2s var(--ease);
     letter-spacing: -0.01em;
+    white-space: nowrap;
   }
-  .icon-btn:hover { filter: brightness(1.1); transform: translateY(-0.5px); }
+  .icon-btn:hover { filter: brightness(1.1); }
+  .icon-btn.primary {
+    background: var(--orange);
+    color: #000;
+    border-color: transparent;
+  }
   .color-chip {
-    width: 38px; height: 38px;
+    width: 36px; height: 36px;
     border-radius: 10px;
     border: 1px solid var(--panel-border);
     padding: 3px;
     background: var(--input-bg);
     cursor: pointer;
-    transition: transform 0.15s var(--ease);
   }
-  .color-chip:hover { transform: scale(1.05); }
+
+  /* 드로어 (설정 패널) */
+  .drawer-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 200;
+  }
+  .drawer-backdrop.show { display: block; }
+  .side-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: min(400px, 92vw);
+    height: 100vh;
+    height: 100dvh;
+    background: var(--panel);
+    border-left: 1px solid var(--panel-border);
+    padding: 24px 20px 80px;
+    overflow-y: auto;
+    z-index: 210;
+    transform: translateX(105%);
+    transition: transform 0.32s var(--ease-out);
+    box-shadow: -12px 0 40px rgba(0,0,0,0.35);
+    scrollbar-width: thin;
+  }
+  .side-panel.open { transform: translateX(0); }
+  .side-panel::-webkit-scrollbar { width: 6px; }
+  .side-panel::-webkit-scrollbar-thumb { background: var(--panel-border-strong); border-radius: 3px; }
+  .drawer-close-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .drawer-close-row h2 {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .side-header { display: none; }
+  .side-tools { display: none; }
 
   .storage-box {
     background: var(--input-bg);
@@ -366,12 +411,109 @@
   .btn-block { width: 100%; border-radius: 12px !important; }
 
   .main-area {
-    padding: 36px 40px 140px;
+    padding: 28px 28px 120px;
     background: var(--dark-bg);
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
   }
   @media (max-width: 767px) {
-    .main-area { padding: 18px 14px max(100px, env(safe-area-inset-bottom) + 80px); }
+    .main-area { padding: 16px 14px max(100px, env(safe-area-inset-bottom) + 80px); }
+    .topbar { padding: 12px 14px; }
+    .topbar-brand h1 { font-size: 15px; }
   }
+  .workspace-hero {
+    text-align: center;
+    margin-bottom: 22px;
+    padding: 12px 0 4px;
+  }
+  .workspace-hero h2 {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.045em;
+  }
+  .workspace-hero p {
+    font-size: 14px;
+    color: var(--gray);
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  /* 커버 / 카드 모드 탭 */
+  .mode-tabs {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 28px;
+    padding: 6px;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 16px;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .mode-tab {
+    flex: 1;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    background: transparent;
+    color: var(--gray);
+    border: none;
+    transition: all 0.2s var(--ease);
+  }
+  .mode-tab:hover { color: var(--text); }
+  .mode-tab.active {
+    background: var(--orange);
+    color: #000;
+    box-shadow: 0 2px 12px var(--orange-glow);
+  }
+  .studio { display: none; }
+  .studio.active { display: block; }
+  .studio-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--orange);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .studio-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+    gap: 24px;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .studio-grid { grid-template-columns: 1fr; }
+  }
+
+  .scroll-fab {
+    position: fixed;
+    right: 18px;
+    bottom: 22px;
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .scroll-fab button {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    color: var(--text);
+    font-size: 16px;
+    font-weight: 700;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.15s var(--ease), filter 0.15s;
+  }
+  .scroll-fab button:hover { filter: brightness(1.1); transform: scale(1.05); }
+  .scroll-fab button:active { transform: scale(0.96); }
 
   .batch-card, .tool-card, .cover-card, .card-editor {
     background: var(--panel);
@@ -636,6 +778,11 @@
 </head>
 <body>
 
+<div class="scroll-fab" aria-label="페이지 이동">
+  <button type="button" title="맨 위로" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+  <button type="button" title="맨 아래로" onclick="window.scrollTo({top:document.documentElement.scrollHeight,behavior:'smooth'})">↓</button>
+</div>
+
 <div id="lockScreen" style="display:none; position:fixed; inset:0; background:#000; z-index:9999; align-items:center; justify-content:center; flex-direction:column; gap:18px;">
   <div style="font-size:24px; font-weight:700; color:#fff; letter-spacing:-0.02em;">잠금 해제</div>
   <input type="password" id="lockInput" placeholder="비밀번호 입력" style="width:280px; padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.12); background:#1C1C1E; color:#fff; font-size:16px;" onkeydown="if(event.key==='Enter') tryUnlock()">
@@ -659,35 +806,35 @@
 
 <div id="main-content" class="app">
 
-  <aside class="side-panel">
-    <div class="side-header">
+  <header class="topbar">
+    <div class="topbar-brand">
       <h1>WEST150.DAILY</h1>
-      <p class="sub">NEWS V4 · Apple Edition</p>
-      <div class="side-tools">
-        <input type="color" id="themeColor" class="color-chip" value="#FF8228" title="강조 색상" oninput="updateAll()">
-        <button type="button" class="icon-btn" id="themeBtn" onclick="toggleUiTheme()">라이트 UI</button>
-      </div>
+      <span class="sub">NEWS V4 · Apple Edition</span>
+    </div>
+    <div class="topbar-actions">
+      <input type="color" id="themeColor" class="color-chip" value="#FF8228" title="강조 색상" oninput="updateAll()">
+      <button type="button" class="icon-btn" id="themeBtn" onclick="toggleUiTheme()">라이트 UI</button>
+      <button type="button" class="icon-btn" onclick="openDrawer()">설정</button>
+      <button type="button" class="icon-btn" onclick="addCard()">+ 카드</button>
+      <button type="button" class="icon-btn primary" onclick="requestDownload('zip')">ZIP 저장</button>
+    </div>
+  </header>
+
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
+
+  <aside class="side-panel" id="settingsDrawer">
+    <div class="drawer-close-row">
+      <h2>설정</h2>
+      <button type="button" class="icon-btn" onclick="closeDrawer()">닫기</button>
     </div>
 
-    <div class="storage-box">
-      <div class="storage-header">
-        <span>브라우저 저장 공간</span>
-        <span id="storage-text">계산 중…</span>
-      </div>
-      <div class="storage-bar-bg">
-        <div id="storage-bar" class="storage-bar-fill"></div>
-      </div>
-    </div>
-
+    <!-- 1. 자주 쓰는 것: 펼침 -->
     <div class="sec" id="sec-common">
       <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')">
-        <span>공통 설정</span><span class="chev">▼</span>
+        <span>기본 설정</span><span class="chev">▼</span>
       </div>
       <div class="sec-body">
-        <label class="field">워터마크 태그 (카드 고정)
-          <input type="text" id="pillTag" value="@west150daily" readonly style="opacity:0.55; cursor:not-allowed;">
-        </label>
-        <label class="field">활성 폰트 선택
+        <label class="field">활성 폰트
           <select id="activeFont" onchange="updateAll()">
             <option value="default">노토 세리프 (기본 명조)</option>
             <option value="Pretendard">프리텐다드 (Pretendard)</option>
@@ -696,200 +843,305 @@
             <option value="Nanum Myeongjo">나눔 명조 (Nanum Myeongjo)</option>
           </select>
         </label>
+        <label class="field">워터마크 태그 (카드 고정)
+          <input type="text" id="pillTag" value="@west150daily" readonly style="opacity:0.55; cursor:not-allowed;">
+        </label>
       </div>
     </div>
 
-    <div class="sec" id="sec-cover">
-      <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')">
-        <span>커버 설정</span><span class="chev">▼</span>
-      </div>
-      <div class="sec-body">
-        <div class="sec-grid">
-          <label class="field">커버 제목 1
-            <input type="text" id="coverTitle1" value="오늘의" oninput="debouncedUpdateAll()">
-          </label>
-          <label class="field">커버 제목 2
-            <input type="text" id="coverTitle2" value="뉴스 브리핑" oninput="debouncedUpdateAll()">
-          </label>
-          <label class="field full">커버 스타일
-            <select id="coverStyle" onchange="updateAll()">
-              <option value="default">기본형 (Dark)</option>
-              <option value="full">전체 이미지 배경</option>
-              <option value="top">상단 이미지형</option>
-            </select>
-          </label>
-          <label class="field full">커버 배경 이미지
-            <input type="file" accept="image/*" onchange="handleCoverImg(event)">
-          </label>
-          <label class="field full">밝기(어둡게)
-            <input type="range" id="coverBright" min="0" max="90" value="40" oninput="updateAll()">
-          </label>
-          <label class="checkbox-label full"><input type="checkbox" id="coverVig" onchange="updateAll()"> 비네팅 적용</label>
-          <label class="checkbox-label full"><input type="checkbox" id="coverGrain" onchange="toggleCoverGrainUI(); updateAll();"> 그레인 (필름 노이즈)</label>
-          <label class="field full" id="coverGrainField" style="display:none;">그레인 강도
-            <input type="range" id="coverGrainAmt" min="5" max="50" value="20" oninput="updateAll()">
-          </label>
-          <label class="field full">프레임 / 테두리
-            <select id="coverFrame" onchange="updateAll()">
-              <option value="none">없음</option>
-              <option value="thin">얇은 단선</option>
-              <option value="thick">두꺼운 단선</option>
-              <option value="double">이중 라인</option>
-            </select>
-          </label>
-          <label class="checkbox-label full"><input type="checkbox" id="coverSafeGuide" onchange="updateAll()"> 안전 영역 가이드 (미리보기만)</label>
-          <label class="field">위치(Y)
-            <input type="range" id="coverYOff" min="0" max="100" value="50" oninput="updateAll()">
-          </label>
-          <label class="field">확대(Zoom)
-            <input type="range" id="coverScale" min="100" max="250" value="100" oninput="updateAll()">
-          </label>
-        </div>
-
-        <div style="font-size:12px; color:var(--gray); font-weight:600; margin-top:4px;">커버 워터마크 (최대 3개)</div>
-        <div class="wm-row">
-          <label class="field">1. 텍스트
-            <input type="text" id="coverWmText1" value="@west150daily" oninput="debouncedUpdateAll()" placeholder="@west150daily">
-          </label>
-          <label class="field">위치
-            <select id="coverWmPos1" onchange="updateAll()">
-              <option value="tr">우측 상단</option>
-              <option value="br">우측 하단</option>
-              <option value="tl">좌측 상단</option>
-              <option value="bl">좌측 하단</option>
-              <option value="tm">상단 중앙</option>
-              <option value="bm">하단 중앙</option>
-            </select>
-          </label>
-          <label class="checkbox-label" style="padding-bottom:8px;"><input type="checkbox" id="coverWmShow1" checked onchange="updateAll()"> 표시</label>
-        </div>
-        <div class="wm-row">
-          <label class="field">2. 텍스트
-            <input type="text" id="coverWmText2" value="" oninput="debouncedUpdateAll()" placeholder="비우면 미사용">
-          </label>
-          <label class="field">위치
-            <select id="coverWmPos2" onchange="updateAll()">
-              <option value="tr">우측 상단</option>
-              <option value="br" selected>우측 하단</option>
-              <option value="tl">좌측 상단</option>
-              <option value="bl">좌측 하단</option>
-              <option value="tm">상단 중앙</option>
-              <option value="bm">하단 중앙</option>
-            </select>
-          </label>
-          <label class="checkbox-label" style="padding-bottom:8px;"><input type="checkbox" id="coverWmShow2" checked onchange="updateAll()"> 표시</label>
-        </div>
-        <div class="wm-row">
-          <label class="field">3. 텍스트
-            <input type="text" id="coverWmText3" value="" oninput="debouncedUpdateAll()" placeholder="비우면 미사용">
-          </label>
-          <label class="field">위치
-            <select id="coverWmPos3" onchange="updateAll()">
-              <option value="tr">우측 상단</option>
-              <option value="br">우측 하단</option>
-              <option value="tl" selected>좌측 상단</option>
-              <option value="bl">좌측 하단</option>
-              <option value="tm">상단 중앙</option>
-              <option value="bm">하단 중앙</option>
-            </select>
-          </label>
-          <label class="checkbox-label" style="padding-bottom:8px;"><input type="checkbox" id="coverWmShow3" checked onchange="updateAll()"> 표시</label>
-        </div>
-      </div>
+    <div class="side-actions" style="margin-top:8px;">
+      <button class="btn-secondary btn-block" onclick="undo(); closeDrawer();">실행취소 (Ctrl+Z)</button>
     </div>
 
-    <div class="sec" id="sec-font">
+    <!-- 고급 / 데이터: 기본 접힘 -->
+    <div class="sec collapsed" id="sec-advanced" style="margin-top:12px;">
       <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')">
-        <span>커스텀 폰트</span><span class="chev">▼</span>
+        <span>고급 · 데이터</span><span class="chev">▼</span>
       </div>
       <div class="sec-body">
-        <label class="field">폰트 저장 (TTF/OTF/WOFF)
+        <div class="storage-box" style="margin-bottom:12px;">
+          <div class="storage-header">
+            <span>브라우저 저장 공간</span>
+            <span id="storage-text">계산 중…</span>
+          </div>
+          <div class="storage-bar-bg">
+            <div id="storage-bar" class="storage-bar-fill"></div>
+          </div>
+        </div>
+        <label class="field">커스텀 폰트 (TTF/OTF/WOFF)
           <input type="file" id="fontUpload" accept=".otf,.ttf,.woff,.woff2" onchange="handleFontUpload(event)">
         </label>
-        <div class="font-manager" id="fontList"></div>
+        <div class="font-manager" id="fontList" style="margin-bottom:12px;"></div>
+        <button class="btn-secondary btn-block" onclick="exportJSON()" style="margin-bottom:8px;">데이터 백업</button>
+        <button class="btn-secondary btn-block" onclick="document.getElementById('importFile').click()" style="margin-bottom:8px;">불러오기</button>
+        <input type="file" id="importFile" style="display:none" accept=".json" onchange="importJSON(event)">
+        <button class="btn-secondary btn-block" onclick="managePassword()" style="margin-bottom:8px;">비밀번호 설정</button>
+        <button class="btn-danger btn-block" onclick="clearAllData()">초기화 (전체삭제)</button>
       </div>
-    </div>
-
-    <div class="side-actions">
-      <button class="btn-primary btn-block" onclick="addCard()">+ 새 카드 추가</button>
-      <button class="btn-secondary btn-block" onclick="requestDownload('zip')">모든 카드 ZIP</button>
-      <button class="btn-secondary btn-block" onclick="undo()">실행취소 (Ctrl+Z)</button>
-      <button class="btn-secondary btn-block" onclick="exportJSON()">데이터 백업</button>
-      <button class="btn-secondary btn-block" onclick="document.getElementById('importFile').click()">불러오기</button>
-      <input type="file" id="importFile" style="display:none" accept=".json" onchange="importJSON(event)">
-      <button class="btn-secondary btn-block" onclick="managePassword()">비밀번호 설정</button>
-      <button class="btn-danger btn-block" onclick="clearAllData()">초기화 (전체삭제)</button>
     </div>
   </aside>
 
   <main class="main-area">
 
-    <div class="batch-card">
-      <div class="card-title">일괄 이미지 · 레이아웃 · 효과</div>
-      <div class="batch-row">
-        <label style="font-size:13px; color:var(--gray); font-weight:500;">여러 장 한 번에 불러오기
-          <input type="file" id="batchImgInput" accept="image/*" multiple style="margin-top:6px;">
-        </label>
-        <button class="btn-primary btn-sm" onclick="applyBatchImages()">순서대로 카드에 적용</button>
-      </div>
-      <p class="batch-hint">선택한 이미지를 위에서부터 순서대로 기존 카드에 넣고, 이미지가 더 많으면 새 카드를 자동 생성합니다.</p>
-
-      <div class="batch-row" style="margin-top:16px;">
-        <span class="batch-label">레이아웃</span>
-        <button class="btn-secondary btn-sm" onclick="batchSetLayout('standard')">모든 카드 · 기본형</button>
-        <button class="btn-secondary btn-sm" onclick="batchSetLayout('full')">모든 카드 · 이미지배경형</button>
-        <button class="btn-secondary btn-sm" onclick="batchSetLayout('video')">모든 카드 · 영상합성용</button>
-      </div>
-      <div class="batch-row">
-        <span class="batch-label">위치 / 확대</span>
-        <label style="font-size:12px; color:var(--muted); display:flex; align-items:center; gap:8px;">
-          Y <input type="range" id="batchYOff" min="0" max="100" value="50" style="width:100px;">
-        </label>
-        <label style="font-size:12px; color:var(--muted); display:flex; align-items:center; gap:8px;">
-          Zoom <input type="range" id="batchScale" min="100" max="250" value="100" style="width:100px;">
-        </label>
-        <button class="btn-secondary btn-sm" onclick="batchApplyZoom()">모든 카드에 적용</button>
-      </div>
-      <div class="batch-row">
-        <span class="batch-label">효과</span>
-        <button class="btn-secondary btn-sm" onclick="batchToggleEffect('vignette', true)">비네팅 ON</button>
-        <button class="btn-secondary btn-sm" onclick="batchToggleEffect('vignette', false)">비네팅 OFF</button>
-        <button class="btn-secondary btn-sm" onclick="batchToggleEffect('grain', true)">그레인 ON</button>
-        <button class="btn-secondary btn-sm" onclick="batchToggleEffect('grain', false)">그레인 OFF</button>
-        <label style="font-size:12px; color:var(--muted); display:flex; align-items:center; gap:8px;">
-          그레인 강도 <input type="range" id="batchGrainAmt" min="5" max="50" value="20" style="width:90px;">
-        </label>
-        <button class="btn-secondary btn-sm" onclick="batchApplyGrainAmt()">강도 적용</button>
-      </div>
-      <div class="batch-row">
-        <span class="batch-label">프레임</span>
-        <button class="btn-secondary btn-sm" onclick="batchSetFrame('none')">없음</button>
-        <button class="btn-secondary btn-sm" onclick="batchSetFrame('thick')">두꺼운 단선</button>
-        <button class="btn-secondary btn-sm" onclick="batchSetFrame('thin')">얇은 단선</button>
-        <button class="btn-secondary btn-sm" onclick="batchSetFrame('double')">이중 라인</button>
-      </div>
+    <div class="workspace-hero">
+      <h2>WEST150 News Studio</h2>
+      <p>커버와 카드를 나눠 작업합니다. 공통 설정은 상단 「설정」에서 엽니다.</p>
     </div>
 
-    <div class="tool-card">
-      <div class="card-title">전체 카드 찾기/바꾸기</div>
-      <div style="display:grid; grid-template-columns: 1fr 1fr auto; gap:14px; align-items:end;">
-        <label class="field">찾을 텍스트
-          <input type="text" id="findText" placeholder="예: @Source">
-        </label>
-        <label class="field">바꿀 텍스트
-          <input type="text" id="replaceText" placeholder="예: @실제출처">
-        </label>
-        <button class="btn-primary" style="padding:12px 20px; white-space:nowrap; border-radius:12px;" onclick="findReplaceAll()">적용</button>
-      </div>
+    <div class="mode-tabs" role="tablist">
+      <button type="button" class="mode-tab active" id="tabCover" onclick="switchStudio('cover')">커버 제작</button>
+      <button type="button" class="mode-tab" id="tabCards" onclick="switchStudio('cards')">카드 제작</button>
     </div>
 
-    <div class="tool-card">
-      <div class="card-title">텍스트 붙여넣기 → 카드에 자동 입력</div>
-      <div style="font-size:13px; color:var(--gray); line-height:1.6; margin-bottom:12px;">
-        <span style="color:var(--orange);">카테고리: / 출처: / 헤드라인: / 부제: / 서브라벨: / 인용: / 본문:</span><br>
-        여러 건은 블록 사이에 <span style="color:var(--orange);">---</span>
+    <!-- ===== 커버 스튜디오 ===== -->
+    <section class="studio active" id="studioCover">
+      <div class="cover-card">
+        <div class="studio-section-title">커버 제작</div>
+        <div class="studio-grid">
+          <div class="preview-zone">
+            <canvas id="coverCanvas" width="1080" height="1080"></canvas>
+            <button class="btn-primary" style="margin-top:12px; width:100%;" onclick="requestDownload('cover')">커버 이미지 저장</button>
+          </div>
+          <div class="fields">
+            <div class="sec-grid">
+              <label class="field">제목 1
+                <input type="text" id="coverTitle1" value="오늘의" oninput="debouncedUpdateAll()">
+              </label>
+              <label class="field">제목 2
+                <input type="text" id="coverTitle2" value="뉴스 브리핑" oninput="debouncedUpdateAll()">
+              </label>
+              <label class="field full">스타일
+                <select id="coverStyle" onchange="updateAll()">
+                  <option value="default">기본형 (Dark)</option>
+                  <option value="full">전체 이미지 배경</option>
+                  <option value="top">상단 이미지형</option>
+                </select>
+              </label>
+              <label class="field full">배경 이미지
+                <input type="file" accept="image/*" onchange="handleCoverImg(event)">
+              </label>
+              <label class="field">위치(Y)
+                <input type="range" id="coverYOff" min="0" max="100" value="50" oninput="updateAll()">
+              </label>
+              <label class="field">확대(Zoom)
+                <input type="range" id="coverScale" min="100" max="250" value="100" oninput="updateAll()">
+              </label>
+            </div>
+
+            <div class="sec collapsed" id="sec-cover-advanced" style="margin-top:12px; background:var(--input-bg);">
+              <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')">
+                <span>효과 · 워터마크</span><span class="chev">▼</span>
+              </div>
+              <div class="sec-body">
+                <div class="sec-grid">
+                  <label class="field full">밝기(어둡게)
+                    <input type="range" id="coverBright" min="0" max="90" value="40" oninput="updateAll()">
+                  </label>
+                  <label class="checkbox-label full"><input type="checkbox" id="coverVig" onchange="updateAll()"> 비네팅</label>
+                  <label class="checkbox-label full"><input type="checkbox" id="coverGrain" onchange="toggleCoverGrainUI(); updateAll();"> 그레인</label>
+                  <label class="field full" id="coverGrainField" style="display:none;">그레인 강도
+                    <input type="range" id="coverGrainAmt" min="5" max="50" value="20" oninput="updateAll()">
+                  </label>
+                  <label class="field full">프레임
+                    <select id="coverFrame" onchange="updateAll()">
+                      <option value="none">없음</option>
+                      <option value="thin">얇은 단선</option>
+                      <option value="thick">두꺼운 단선</option>
+                      <option value="double">이중 라인</option>
+                    </select>
+                  </label>
+                  <label class="checkbox-label full"><input type="checkbox" id="coverSafeGuide" onchange="updateAll()"> 안전 영역 가이드</label>
+                </div>
+                <div style="font-size:12px; color:var(--gray); font-weight:600; margin-top:8px;">워터마크 (최대 3개)</div>
+                <div class="wm-row">
+                  <label class="field">1. 텍스트
+                    <input type="text" id="coverWmText1" value="@west150daily" oninput="debouncedUpdateAll()" placeholder="@west150daily">
+                  </label>
+                  <label class="field">위치
+                    <select id="coverWmPos1" onchange="updateAll()">
+                      <option value="tr">우측 상단</option>
+                      <option value="br">우측 하단</option>
+                      <option value="tl">좌측 상단</option>
+                      <option value="bl">좌측 하단</option>
+                      <option value="tm">상단 중앙</option>
+                      <option value="bm">하단 중앙</option>
+                    </select>
+                  </label>
+                  <label class="checkbox-label" style="padding-bottom:8px;"><input type="checkbox" id="coverWmShow1" checked onchange="updateAll()"> 표시</label>
+                </div>
+                <div class="wm-row">
+                  <label class="field">2. 텍스트
+                    <input type="text" id="coverWmText2" value="" oninput="debouncedUpdateAll()" placeholder="비우면 미사용">
+                  </label>
+                  <label class="field">위치
+                    <select id="coverWmPos2" onchange="updateAll()">
+                      <option value="tr">우측 상단</option>
+                      <option value="br" selected>우측 하단</option>
+                      <option value="tl">좌측 상단</option>
+                      <option value="bl">좌측 하단</option>
+                      <option value="tm">상단 중앙</option>
+                      <option value="bm">하단 중앙</option>
+                    </select>
+                  </label>
+                  <label class="checkbox-label" style="padding-bottom:8px;"><input type="checkbox" id="coverWmShow2" checked onchange="updateAll()"> 표시</label>
+                </div>
+                <div class="wm-row">
+                  <label class="field">3. 텍스트
+                    <input type="text" id="coverWmText3" value="" oninput="debouncedUpdateAll()" placeholder="비우면 미사용">
+                  </label>
+                  <label class="field">위치
+                    <select id="coverWmPos3" onchange="updateAll()">
+                      <option value="tr">우측 상단</option>
+                      <option value="br">우측 하단</option>
+                      <option value="tl" selected>좌측 상단</option>
+                      <option value="bl">좌측 하단</option>
+                      <option value="tm">상단 중앙</option>
+                      <option value="bm">하단 중앙</option>
+                    </select>
+                  </label>
+                  <label class="checkbox-label" style="padding-bottom:8px;"><input type="checkbox" id="coverWmShow3" checked onchange="updateAll()"> 표시</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <textarea id="bulkPasteText" style="min-height:140px;" placeholder="카테고리: 정치
+    </section>
+
+    <!-- ===== 카드 스튜디오 ===== -->
+    <section class="studio" id="studioCards">
+      <div class="batch-card">
+        <div class="studio-section-title">카드 제작 · 일괄</div>
+        <div class="batch-row">
+          <label style="font-size:13px; color:var(--gray); font-weight:500;">여러 장 한 번에 불러오기
+            <input type="file" id="batchImgInput" accept="image/*" multiple style="margin-top:6px;">
+          </label>
+          <button class="btn-primary btn-sm" onclick="applyBatchImages()">순서대로 카드에 적용</button>
+        </div>
+        <p class="batch-hint">선택한 이미지를 위에서부터 순서대로 기존 카드에 넣고, 이미지가 더 많으면 새 카드를 자동 생성합니다.</p>
+
+        <!-- 공통 구간 강조 (우선 적용) -->
+        <div class="hl-help" style="margin-top:16px;">
+          <div class="hl-help-title">카드 공통 · 구간 강조</div>
+          <div class="hl-help-body">
+            <b>**1단어**</b> / <b>**1a단어**</b> → 색 A + 굵게 ·
+            <b>**1b단어**</b> → 색 B ·
+            <b>**1c단어**</b> → 색 C<br>
+            <b>**2단어**</b> → 빨간 밑줄만 ·
+            <b>**단어**</b>(숫자 없음) → 아래 강조 스타일<br>
+            공통 설정을 적용하면 모든 카드에 우선 반영됩니다. 카드별 메뉴에서 개별 변경 가능합니다.
+          </div>
+          <div class="field-row" style="align-items:flex-start; margin-top:10px;">
+            <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">색 A (**1 / **1a)
+              <input type="color" id="globalHlColorA" value="#FF8228">
+              <div class="hl-preset-row" id="globalHlPresetA"></div>
+            </label>
+            <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">색 B (**1b)
+              <input type="color" id="globalHlColorB" value="#FFD166">
+              <div class="hl-preset-row" id="globalHlPresetB"></div>
+            </label>
+            <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">색 C (**1c)
+              <input type="color" id="globalHlColorC" value="#5B8DEF">
+              <div class="hl-preset-row" id="globalHlPresetC"></div>
+            </label>
+          </div>
+          <div class="field-row" style="margin-top:10px;">
+            <select id="globalHlStyleHead">
+              <option value="color">헤드라인(숫자없음): 색·굵게</option>
+              <option value="underline">헤드라인(숫자없음): 밑줄</option>
+              <option value="both" selected>헤드라인(숫자없음): 색·굵게+밑줄</option>
+            </select>
+            <select id="globalHlStyleSub">
+              <option value="color">인용(숫자없음): 색·굵게</option>
+              <option value="underline">인용(숫자없음): 밑줄</option>
+              <option value="both" selected>인용(숫자없음): 색·굵게+밑줄</option>
+            </select>
+          </div>
+          <div class="field-row" style="margin-top:8px;">
+            <select id="globalHlStyleBody">
+              <option value="color">본문(숫자없음): 색·굵게</option>
+              <option value="underline">본문(숫자없음): 밑줄</option>
+              <option value="both" selected>본문(숫자없음): 색·굵게+밑줄</option>
+            </select>
+            <button type="button" class="btn-primary btn-sm" onclick="applyGlobalHighlight()">모든 카드에 강조 적용</button>
+          </div>
+        </div>
+
+        <div class="sec collapsed" style="margin-top:14px; background:var(--input-bg);">
+          <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')" style="padding:12px 14px;">
+            <span>레이아웃 · 위치 · 확대 (일괄)</span><span class="chev">▼</span>
+          </div>
+          <div class="sec-body">
+            <div class="batch-row">
+              <span class="batch-label">레이아웃</span>
+              <button class="btn-secondary btn-sm" onclick="batchSetLayout('standard')">모든 카드 · 기본형</button>
+              <button class="btn-secondary btn-sm" onclick="batchSetLayout('full')">모든 카드 · 이미지배경형</button>
+              <button class="btn-secondary btn-sm" onclick="batchSetLayout('video')">모든 카드 · 영상합성용</button>
+            </div>
+            <div class="batch-row">
+              <span class="batch-label">위치 / 확대</span>
+              <label style="font-size:12px; color:var(--muted); display:flex; align-items:center; gap:8px;">
+                Y <input type="range" id="batchYOff" min="0" max="100" value="50" style="width:100px;">
+              </label>
+              <label style="font-size:12px; color:var(--muted); display:flex; align-items:center; gap:8px;">
+                Zoom <input type="range" id="batchScale" min="100" max="250" value="100" style="width:100px;">
+              </label>
+              <button class="btn-secondary btn-sm" onclick="batchApplyZoom()">모든 카드에 적용</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec collapsed" style="margin-top:10px; background:var(--input-bg);">
+          <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')" style="padding:12px 14px;">
+            <span>효과 · 프레임 (일괄)</span><span class="chev">▼</span>
+          </div>
+          <div class="sec-body">
+            <div class="batch-row">
+              <span class="batch-label">효과</span>
+              <button class="btn-secondary btn-sm" onclick="batchToggleEffect('vignette', true)">비네팅 ON</button>
+              <button class="btn-secondary btn-sm" onclick="batchToggleEffect('vignette', false)">비네팅 OFF</button>
+              <button class="btn-secondary btn-sm" onclick="batchToggleEffect('grain', true)">그레인 ON</button>
+              <button class="btn-secondary btn-sm" onclick="batchToggleEffect('grain', false)">그레인 OFF</button>
+              <label style="font-size:12px; color:var(--muted); display:flex; align-items:center; gap:8px;">
+                그레인 강도 <input type="range" id="batchGrainAmt" min="5" max="50" value="20" style="width:90px;">
+              </label>
+              <button class="btn-secondary btn-sm" onclick="batchApplyGrainAmt()">강도 적용</button>
+            </div>
+            <div class="batch-row">
+              <span class="batch-label">프레임</span>
+              <button class="btn-secondary btn-sm" onclick="batchSetFrame('none')">없음</button>
+              <button class="btn-secondary btn-sm" onclick="batchSetFrame('thick')">두꺼운 단선</button>
+              <button class="btn-secondary btn-sm" onclick="batchSetFrame('thin')">얇은 단선</button>
+              <button class="btn-secondary btn-sm" onclick="batchSetFrame('double')">이중 라인</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec collapsed tool-card" style="padding:0; overflow:hidden; margin-bottom:22px;">
+        <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')" style="padding:16px 22px;">
+          <span>텍스트 도구 (찾기/바꾸기 · 붙여넣기)</span><span class="chev">▼</span>
+        </div>
+        <div class="sec-body" style="padding:4px 22px 22px;">
+          <div style="margin-bottom:20px;">
+            <div class="card-title" style="margin-bottom:12px;">전체 카드 찾기/바꾸기</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr auto; gap:14px; align-items:end;">
+              <label class="field">찾을 텍스트
+                <input type="text" id="findText" placeholder="예: @Source">
+              </label>
+              <label class="field">바꿀 텍스트
+                <input type="text" id="replaceText" placeholder="예: @실제출처">
+              </label>
+              <button class="btn-primary" style="padding:12px 20px; white-space:nowrap; border-radius:12px;" onclick="findReplaceAll()">적용</button>
+            </div>
+          </div>
+          <div>
+            <div class="card-title" style="margin-bottom:12px;">텍스트 붙여넣기 → 카드에 자동 입력</div>
+            <div style="font-size:13px; color:var(--gray); line-height:1.6; margin-bottom:12px;">
+              <span style="color:var(--orange);">카테고리: / 출처: / 헤드라인: / 부제: / 서브라벨: / 인용: / 본문:</span><br>
+              여러 건은 블록 사이에 <span style="color:var(--orange);">---</span>
+            </div>
+            <textarea id="bulkPasteText" style="min-height:140px;" placeholder="카테고리: 정치
 출처: @Foxnews
 헤드라인: 3개 주, 파우치 조사 착수
 부제: 주정부 차원 조사 착수
@@ -897,26 +1149,21 @@
 인용: 주 차원의 조사는 사면 대상이 아니다.
 본문:
 플로리다·앨라배마·루이지애나주가 앤서니 파우치 박사에 대한 조사에 착수했다."></textarea>
-      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
-        <button class="btn-primary" onclick="applyBulkPaste('first')">첫 번째 카드에 적용</button>
-        <button class="btn-secondary" onclick="applyBulkPaste('new')">새 카드로 추가</button>
-        <button class="btn-secondary" onclick="document.getElementById('bulkPasteText').value=''">입력창 비우기</button>
-      </div>
-    </div>
-
-    <div class="cover-card">
-      <div class="card-title">커버</div>
-      <div class="editor-grid">
-        <div class="fields">
-          <button class="btn-secondary" onclick="requestDownload('cover')">커버 저장</button>
-        </div>
-        <div class="preview-zone">
-          <canvas id="coverCanvas" width="1080" height="1080"></canvas>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+              <button class="btn-primary" onclick="applyBulkPaste('first')">첫 번째 카드에 적용</button>
+              <button class="btn-secondary" onclick="applyBulkPaste('new')">새 카드로 추가</button>
+              <button class="btn-secondary" onclick="document.getElementById('bulkPasteText').value=''">입력창 비우기</button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div id="cardsWrap"></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:12px; flex-wrap:wrap;">
+        <div class="studio-section-title" style="margin:0;">개별 카드</div>
+        <button type="button" class="btn-primary btn-sm" onclick="addCard()">+ 새 카드 추가</button>
+      </div>
+      <div id="cardsWrap"></div>
+    </section>
   </main>
 </div>
 
@@ -978,52 +1225,123 @@ function toggleCoverGrainUI() {
   document.getElementById('coverGrainField').style.display =
     document.getElementById('coverGrain').checked ? 'block' : 'none';
 }
+/* localStorage / sessionStorage 샌드박스 안전 래퍼 */
+const _memStore = {};
+function storageAvailable(kind) {
+  try {
+    const s = kind === 'session' ? sessionStorage : localStorage;
+    const k = '__st_test__';
+    s.setItem(k, '1');
+    s.removeItem(k);
+    return true;
+  } catch (e) { return false; }
+}
+const canLocal = storageAvailable('local');
+const canSession = storageAvailable('session');
+function safeGet(key, kind) {
+  try {
+    if (kind === 'session' && canSession) return sessionStorage.getItem(key);
+    if (kind !== 'session' && canLocal) return localStorage.getItem(key);
+  } catch (e) {}
+  return _memStore[key] || null;
+}
+function safeSet(key, value, kind) {
+  try {
+    if (kind === 'session' && canSession) { sessionStorage.setItem(key, value); return; }
+    if (kind !== 'session' && canLocal) { localStorage.setItem(key, value); return; }
+  } catch (e) {}
+  _memStore[key] = value;
+}
+function safeRemove(key, kind) {
+  try {
+    if (kind === 'session' && canSession) { sessionStorage.removeItem(key); return; }
+    if (kind !== 'session' && canLocal) { localStorage.removeItem(key); return; }
+  } catch (e) {}
+  delete _memStore[key];
+}
+
 function applyUiTheme(mode) {
   const light = mode === 'light';
   document.body.classList.toggle('light', light);
   const btn = document.getElementById('themeBtn');
   if (btn) btn.textContent = light ? '다크 UI' : '라이트 UI';
-  localStorage.setItem(UI_THEME_KEY, light ? 'light' : 'dark');
+  safeSet(UI_THEME_KEY, light ? 'light' : 'dark');
 }
 function toggleUiTheme() {
   applyUiTheme(document.body.classList.contains('light') ? 'dark' : 'light');
 }
 function initUiTheme() {
-  applyUiTheme(localStorage.getItem(UI_THEME_KEY) || 'dark');
+  applyUiTheme(safeGet(UI_THEME_KEY) || 'dark');
 }
 
 async function updateStorageGauge() {
-  if (navigator.storage && navigator.storage.estimate) {
-    try {
-      const estimate = await navigator.storage.estimate();
-      const usageMB = (estimate.usage / (1024 * 1024)).toFixed(1);
-      const quotaMB = (estimate.quota / (1024 * 1024)).toFixed(0);
-      const percent = ((estimate.usage / estimate.quota) * 100).toFixed(1);
-      const barElement = document.getElementById('storage-bar');
-      const textElement = document.getElementById('storage-text');
-      if (barElement && textElement) {
-        textElement.innerText = `${usageMB} MB / ${quotaMB} MB (${percent}%)`;
-        barElement.style.width = `${Math.max(percent, 1)}%`;
-        barElement.classList.remove('warning', 'danger');
-        if (percent >= 80) barElement.classList.add('danger');
-        else if (percent >= 50) barElement.classList.add('warning');
-      }
-    } catch (error) {
-      console.error('용량 측정 실패:', error);
+  const textElement = document.getElementById('storage-text');
+  const barElement = document.getElementById('storage-bar');
+  try {
+    if (!(navigator.storage && typeof navigator.storage.estimate === 'function')) {
+      if (textElement) textElement.innerText = '용량 측정 비지원';
+      if (barElement) barElement.style.width = '0%';
+      return;
     }
-  } else {
-    const textElement = document.getElementById('storage-text');
-    if (textElement) textElement.innerText = '용량 측정 비지원 브라우저';
+    const estimate = await navigator.storage.estimate();
+    if (!estimate || estimate.quota == null) {
+      if (textElement) textElement.innerText = '용량 측정 비지원';
+      return;
+    }
+    const usageMB = ((estimate.usage || 0) / (1024 * 1024)).toFixed(1);
+    const quotaMB = (estimate.quota / (1024 * 1024)).toFixed(0);
+    const percent = (((estimate.usage || 0) / estimate.quota) * 100).toFixed(1);
+    if (barElement && textElement) {
+      textElement.innerText = `${usageMB} MB / ${quotaMB} MB (${percent}%)`;
+      barElement.style.width = `${Math.max(Number(percent), 1)}%`;
+      barElement.classList.remove('warning', 'danger');
+      if (percent >= 80) barElement.classList.add('danger');
+      else if (percent >= 50) barElement.classList.add('warning');
+    }
+  } catch (error) {
+    // 샌드박스 등에서 estimate 자체가 거부되는 경우 — 조용히 처리
+    if (textElement) textElement.innerText = '용량 측정 비지원';
+    if (barElement) barElement.style.width = '0%';
   }
 }
 
+function openDrawer() {
+  const d = document.getElementById('settingsDrawer');
+  const b = document.getElementById('drawerBackdrop');
+  if (d) d.classList.add('open');
+  if (b) b.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeDrawer() {
+  const d = document.getElementById('settingsDrawer');
+  const b = document.getElementById('drawerBackdrop');
+  if (d) d.classList.remove('open');
+  if (b) b.classList.remove('show');
+  document.body.style.overflow = '';
+}
+function switchStudio(mode) {
+  const isCover = mode === 'cover';
+  const sc = document.getElementById('studioCover');
+  const sd = document.getElementById('studioCards');
+  const tc = document.getElementById('tabCover');
+  const td = document.getElementById('tabCards');
+  if (sc) sc.classList.toggle('active', isCover);
+  if (sd) sd.classList.toggle('active', !isCover);
+  if (tc) tc.classList.toggle('active', isCover);
+  if (td) td.classList.toggle('active', !isCover);
+  try { safeSet('studio_mode', mode); } catch (e) {}
+}
+
 window.onload = () => {
-  try { undoStack = JSON.parse(sessionStorage.getItem('undo_stack') || '[]'); } catch(e) { undoStack = []; }
+  try { undoStack = JSON.parse(safeGet('undo_stack', 'session') || '[]'); } catch(e) { undoStack = []; }
   initUiTheme();
   checkLock();
   initApp();
+  initGlobalHighlightUI();
+  switchStudio(safeGet('studio_mode') || 'cover');
   document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); }
+    if (e.key === 'Escape') closeDrawer();
   });
 };
 
@@ -1034,14 +1352,14 @@ async function sha256(text) {
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 async function checkLock() {
-  const hash = localStorage.getItem(PW_KEY);
+  const hash = safeGet(PW_KEY);
   if (!hash) return;
   document.getElementById('lockScreen').style.display = 'flex';
   document.getElementById('main-content').style.display = 'none';
 }
 async function tryUnlock() {
   const input = document.getElementById('lockInput').value;
-  const hash = localStorage.getItem(PW_KEY);
+  const hash = safeGet(PW_KEY);
   if ((await sha256(input)) === hash) {
     document.getElementById('lockScreen').style.display = 'none';
     document.getElementById('main-content').style.display = '';
@@ -1049,19 +1367,23 @@ async function tryUnlock() {
   } else alert('비밀번호가 틀렸습니다.');
 }
 async function managePassword() {
-  const hasPw = !!localStorage.getItem(PW_KEY);
+  if (!canLocal) {
+    alert('현재 환경에서는 비밀번호 저장이 지원되지 않습니다.\n(샌드박스 또는 제한된 브라우저)');
+    return;
+  }
+  const hasPw = !!safeGet(PW_KEY);
   if (hasPw) {
     const wantsChange = confirm('비밀번호 변경은 확인, 삭제는 취소');
     const cur = prompt('현재 비밀번호:');
     if (cur === null) return;
-    if (await sha256(cur) !== localStorage.getItem(PW_KEY)) return alert('불일치');
+    if (await sha256(cur) !== safeGet(PW_KEY)) return alert('불일치');
     if (wantsChange) {
       const np = prompt('새 비밀번호:');
       if (!np) return;
-      localStorage.setItem(PW_KEY, await sha256(np));
+      safeSet(PW_KEY, await sha256(np));
       alert('비밀번호가 변경되었습니다.');
     } else {
-      localStorage.removeItem(PW_KEY);
+      safeRemove(PW_KEY);
       alert('비밀번호 잠금이 해제되었습니다.');
     }
   } else {
@@ -1070,7 +1392,7 @@ async function managePassword() {
     const np2 = prompt('한 번 더 입력:');
     if (np2 === null) return;
     if (np !== np2) return alert('비밀번호가 서로 다릅니다.');
-    localStorage.setItem(PW_KEY, await sha256(np));
+    safeSet(PW_KEY, await sha256(np));
     alert('비밀번호가 설정되었습니다.');
   }
 }
@@ -1098,48 +1420,68 @@ function compressImage(base64Str, maxWidth = 1200) {
 
 function openDB() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("FontStore_V6", 2);
+    // 샌드박스·비보안 컨텍스트에서는 IndexedDB 자체가 차단됨
+    if (typeof indexedDB === 'undefined' || !indexedDB) {
+      db = null;
+      return resolve(null);
+    }
+    let request;
+    try {
+      request = indexedDB.open("FontStore_V6", 2);
+    } catch (e) {
+      db = null;
+      return resolve(null);
+    }
     request.onupgradeneeded = (e) => {
       db = e.target.result;
-      if (!db.objectStoreNames.contains("fonts")) db.createObjectStore("fonts", { keyPath: "name" });
-      if (!db.objectStoreNames.contains("images")) db.createObjectStore("images", { keyPath: "id" });
+      try {
+        if (!db.objectStoreNames.contains("fonts")) db.createObjectStore("fonts", { keyPath: "name" });
+        if (!db.objectStoreNames.contains("images")) db.createObjectStore("images", { keyPath: "id" });
+      } catch (err) { /* ignore */ }
     };
     request.onsuccess = (e) => { db = e.target.result; resolve(db); };
-    request.onerror = () => reject(request.error);
+    request.onerror = () => { db = null; resolve(null); };
+    request.onblocked = () => { db = null; resolve(null); };
   });
 }
 function saveImageToDB(id, data) {
   return new Promise((resolve) => {
     if (!db || !data) return resolve();
-    const tx = db.transaction("images", "readwrite");
-    tx.objectStore("images").put({ id, data });
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => resolve();
+    try {
+      const tx = db.transaction("images", "readwrite");
+      tx.objectStore("images").put({ id, data });
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => resolve();
+    } catch (e) { resolve(); }
   });
 }
 function loadImageFromDB(id) {
   return new Promise((resolve) => {
     if (!db) return resolve(null);
-    const tx = db.transaction("images", "readonly");
-    const req = tx.objectStore("images").get(id);
-    req.onsuccess = () => resolve(req.result ? req.result.data : null);
-    req.onerror = () => resolve(null);
+    try {
+      const tx = db.transaction("images", "readonly");
+      const req = tx.objectStore("images").get(id);
+      req.onsuccess = () => resolve(req.result ? req.result.data : null);
+      req.onerror = () => resolve(null);
+    } catch (e) { resolve(null); }
   });
 }
 function deleteImageFromDB(id) {
   return new Promise((resolve) => {
     if (!db) return resolve();
-    const tx = db.transaction("images", "readwrite");
-    tx.objectStore("images").delete(id);
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => resolve();
+    try {
+      const tx = db.transaction("images", "readwrite");
+      tx.objectStore("images").delete(id);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => resolve();
+    } catch (e) { resolve(); }
   });
 }
 
 async function initApp() {
-  try { await openDB(); } catch (e) { console.error("DB 열기 실패", e); }
+  try { await openDB(); } catch (e) { db = null; /* 샌드박스 등에서 DB 불가 — 메모리만 사용 */ }
 
-  const saved = localStorage.getItem('card_news_data');
+  const saved = safeGet('card_news_data');
   if (saved) {
     try {
       const parsed = JSON.parse(saved);
@@ -1197,18 +1539,18 @@ async function initApp() {
 
 function pushHistory() {
   if (!appReady) return;
-  const cur = localStorage.getItem('card_news_data');
+  const cur = safeGet('card_news_data');
   if (!cur || (undoStack.length && undoStack[undoStack.length - 1] === cur)) return;
   undoStack.push(cur);
   if (undoStack.length > 20) undoStack.shift();
-  try { sessionStorage.setItem('undo_stack', JSON.stringify(undoStack)); }
+  try { safeSet('undo_stack', JSON.stringify(undoStack), 'session'); }
   catch(e) { console.warn("히스토리 저장 용량이 초과되었지만 작업을 계속 진행합니다."); }
 }
 function undo() {
   if (undoStack.length === 0) return;
   const prev = undoStack.pop();
-  sessionStorage.setItem('undo_stack', JSON.stringify(undoStack));
-  localStorage.setItem('card_news_data', prev);
+  safeSet('undo_stack', JSON.stringify(undoStack), 'session');
+  safeSet('card_news_data', prev);
   location.reload();
 }
 
@@ -1232,49 +1574,77 @@ async function handleFontUpload(event) {
   const fontName = file.name.split('.')[0].replace(/[^a-zA-Z0-9_]/g, "_");
   const reader = new FileReader();
   reader.onload = async (e) => {
-    const buffer = e.target.result;
-    const fontFace = new FontFace(fontName, buffer);
-    await fontFace.load();
-    document.fonts.add(fontFace);
-    const tx = db.transaction("fonts", "readwrite");
-    tx.objectStore("fonts").put({ name: fontName, data: buffer });
-    await loadSavedFonts();
-    updateAll();
-    await updateStorageGauge();
+    try {
+      const buffer = e.target.result;
+      const fontFace = new FontFace(fontName, buffer);
+      await fontFace.load();
+      document.fonts.add(fontFace);
+      if (db) {
+        try {
+          const tx = db.transaction("fonts", "readwrite");
+          tx.objectStore("fonts").put({ name: fontName, data: buffer });
+        } catch (err) { /* DB 없으면 세션 동안만 사용 */ }
+      }
+      await loadSavedFonts();
+      // DB 없이도 현재 세션 선택지에 추가
+      const select = document.getElementById('activeFont');
+      if (select && !Array.from(select.options).some(o => o.value === fontName)) {
+        const opt = document.createElement('option');
+        opt.value = fontName; opt.textContent = fontName;
+        opt.dataset.custom = "true";
+        select.appendChild(opt);
+        select.value = fontName;
+      }
+      updateAll();
+      await updateStorageGauge();
+    } catch (err) {
+      alert('폰트 로드에 실패했습니다.');
+    }
   };
   reader.readAsArrayBuffer(file);
 }
 function loadSavedFonts() {
   return new Promise((resolve) => {
     if (!db) return resolve();
-    const tx = db.transaction("fonts", "readonly");
-    tx.objectStore("fonts").getAll().onsuccess = async (e) => {
-      const allFonts = e.target.result;
-      const select = document.getElementById('activeFont');
-      const list = document.getElementById('fontList');
-      list.innerHTML = "";
-      Array.from(select.options).forEach(opt => {
-        if (opt.dataset.custom === "true") opt.remove();
-      });
-      for (const f of allFonts) {
-        try {
-          const fontFace = new FontFace(f.name, f.data);
-          await fontFace.load();
-          document.fonts.add(fontFace);
-          const opt = document.createElement('option');
-          opt.value = f.name; opt.textContent = f.name;
-          opt.dataset.custom = "true";
-          select.appendChild(opt);
-          list.innerHTML += `<div class='font-list-item'>${f.name} <button class='btn-danger' style='padding:4px 10px; font-size:12px; border-radius:8px;' onclick="deleteFont('${f.name}')">삭제</button></div>`;
-        } catch(err) {}
-      }
-      resolve();
-    };
+    try {
+      const tx = db.transaction("fonts", "readonly");
+      tx.objectStore("fonts").getAll().onsuccess = async (e) => {
+        const allFonts = e.target.result || [];
+        const select = document.getElementById('activeFont');
+        const list = document.getElementById('fontList');
+        if (list) list.innerHTML = "";
+        if (select) {
+          Array.from(select.options).forEach(opt => {
+            if (opt.dataset.custom === "true") opt.remove();
+          });
+        }
+        for (const f of allFonts) {
+          try {
+            const fontFace = new FontFace(f.name, f.data);
+            await fontFace.load();
+            document.fonts.add(fontFace);
+            if (select) {
+              const opt = document.createElement('option');
+              opt.value = f.name; opt.textContent = f.name;
+              opt.dataset.custom = "true";
+              select.appendChild(opt);
+            }
+            if (list) {
+              list.innerHTML += `<div class='font-list-item'>${f.name} <button class='btn-danger' style='padding:4px 10px; font-size:12px; border-radius:8px;' onclick="deleteFont('${f.name}')">삭제</button></div>`;
+            }
+          } catch(err) {}
+        }
+        resolve();
+      };
+      tx.onerror = () => resolve();
+    } catch (e) { resolve(); }
   });
 }
 function deleteFont(name) {
   if (!confirm("삭제하시겠습니까?")) return;
-  db.transaction("fonts", "readwrite").objectStore("fonts").delete(name);
+  try {
+    if (db) db.transaction("fonts", "readwrite").objectStore("fonts").delete(name);
+  } catch (e) {}
   location.reload();
 }
 
@@ -1454,7 +1824,7 @@ function saveData() {
     })
   };
   try {
-    localStorage.setItem('card_news_data', JSON.stringify(data));
+    safeSet('card_news_data', JSON.stringify(data));
     updateStorageGauge();
   } catch(e) {
     console.error("저장소 용량 초과. 이미지를 줄여주세요.");
@@ -1488,8 +1858,66 @@ function fillHlPresets(id, slot) {
     box.appendChild(btn);
   });
 }
+function fillGlobalHlPresets(slot) {
+  const box = document.getElementById(`globalHlPreset${slot}`);
+  const input = document.getElementById(`globalHlColor${slot}`);
+  if (!box || !input) return;
+  box.innerHTML = '';
+  HL_PRESETS.forEach(p => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'hl-preset-btn';
+    btn.title = p.label;
+    btn.style.background = p.hex;
+    btn.onclick = () => { input.value = p.hex; };
+    box.appendChild(btn);
+  });
+}
+function initGlobalHighlightUI() {
+  const theme = document.getElementById('themeColor')?.value || '#FF8228';
+  const a = document.getElementById('globalHlColorA');
+  if (a && (!a.dataset.inited)) {
+    a.value = theme;
+    a.dataset.inited = '1';
+  }
+  fillGlobalHlPresets('A');
+  fillGlobalHlPresets('B');
+  fillGlobalHlPresets('C');
+}
+function applyGlobalHighlight() {
+  const a = document.getElementById('globalHlColorA')?.value;
+  const b = document.getElementById('globalHlColorB')?.value;
+  const c = document.getElementById('globalHlColorC')?.value;
+  const sh = document.getElementById('globalHlStyleHead')?.value || 'both';
+  const ss = document.getElementById('globalHlStyleSub')?.value || 'both';
+  const sb = document.getElementById('globalHlStyleBody')?.value || 'both';
+  if (!cards.length) {
+    alert('적용할 카드가 없습니다. 먼저 카드를 추가하세요.');
+    return;
+  }
+  pushHistory();
+  cards.forEach(card => {
+    const id = card.id;
+    const elA = document.getElementById(`hlColorA-${id}`);
+    const elB = document.getElementById(`hlColorB-${id}`);
+    const elC = document.getElementById(`hlColorC-${id}`);
+    const elH = document.getElementById(`highlightStyleHead-${id}`);
+    const elS = document.getElementById(`highlightStyleSub-${id}`);
+    const elBo = document.getElementById(`highlightStyleBody-${id}`);
+    if (elA && a) elA.value = a;
+    if (elB && b) elB.value = b;
+    if (elC && c) elC.value = c;
+    if (elH) elH.value = sh;
+    if (elS) elS.value = ss;
+    if (elBo) elBo.value = sb;
+    updateCard(id);
+  });
+  saveData();
+  alert(`강조 설정을 ${cards.length}개 카드에 적용했습니다.`);
+}
 
 function addCard(prefill = null) {
+  switchStudio('cards');
   const id = prefill?.id || Date.now() + Math.floor(Math.random()*1000);
   const layout = prefill?.layout || 'standard';
   const themeDefault = document.getElementById('themeColor')?.value || '#FF8228';
@@ -1498,6 +1926,9 @@ function addCard(prefill = null) {
   const div = document.createElement('div');
   div.className = 'card-editor';
   div.id = `card-editor-${id}`;
+  const gA = document.getElementById('globalHlColorA')?.value || themeDefault;
+  const gB = document.getElementById('globalHlColorB')?.value || '#FFD166';
+  const gC = document.getElementById('globalHlColorC')?.value || '#5B8DEF';
   div.innerHTML = `
     <div class="card-editor-header">
       <h3 id="cardNum-${id}" style="color:var(--orange); font-size:16px; margin:0; font-weight:700;">카드 #${cards.length}</h3>
@@ -1519,85 +1950,6 @@ function addCard(prefill = null) {
           <input type="text" id="cat-${id}" placeholder="카테고리" oninput="debouncedUpdateCard(${id})">
           <input type="text" id="src-${id}" placeholder="출처" oninput="debouncedUpdateCard(${id})">
         </div>
-        <div class="hl-help">
-          <div class="hl-help-title">구간 강조 사용법 (헤드라인·인용·본문 공통)</div>
-          <div class="hl-help-body">
-            <b>**1단어**</b> 또는 <b>**1a단어**</b> → 색 A + 굵게 · 
-            <b>**1b단어**</b> → 색 B + 굵게 · 
-            <b>**1c단어**</b> → 색 C + 굵게<br>
-            <b>**2단어**</b> → 빨간 밑줄만<br>
-            <b>**단어**</b> (숫자 없음) → 아래 “강조 스타일” 설정 따름<br>
-            예: <b>**1트럼프 대통령이** 오늘 **2중요한 연설** · **1b3개 주**</b>
-          </div>
-          <div class="field-row" style="align-items:flex-start;">
-            <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">색 A (**1 / **1a)
-              <input type="color" id="hlColorA-${id}" value="${prefill?.highlightColorA || themeDefault}" onchange="updateCard(${id})">
-              <div class="hl-preset-row" id="hlPresetA-${id}"></div>
-            </label>
-            <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">색 B (**1b)
-              <input type="color" id="hlColorB-${id}" value="${prefill?.highlightColorB || '#FFD166'}" onchange="updateCard(${id})">
-              <div class="hl-preset-row" id="hlPresetB-${id}"></div>
-            </label>
-            <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">색 C (**1c)
-              <input type="color" id="hlColorC-${id}" value="${prefill?.highlightColorC || '#5B8DEF'}" onchange="updateCard(${id})">
-              <div class="hl-preset-row" id="hlPresetC-${id}"></div>
-            </label>
-          </div>
-        </div>
-        <div class="field-row">
-          <select id="highlightStyleHead-${id}" onchange="updateCard(${id})">
-            <option value="color">헤드라인 강조(숫자없음): 색상·굵게</option>
-            <option value="underline">헤드라인 강조(숫자없음): 빨간 밑줄</option>
-            <option value="both">헤드라인 강조(숫자없음): 색상·굵게 + 밑줄</option>
-          </select>
-          <select id="align-${id}" onchange="updateCard(${id})">
-            <option value="left">정렬: 좌측</option>
-            <option value="center">정렬: 가운데</option>
-          </select>
-        </div>
-        <div class="field-row">
-          <select id="highlightStyleSub-${id}" onchange="updateCard(${id})">
-            <option value="color">인용구 강조(숫자없음): 색상·굵게</option>
-            <option value="underline">인용구 강조(숫자없음): 빨간 밑줄</option>
-            <option value="both">인용구 강조(숫자없음): 색상·굵게 + 밑줄</option>
-          </select>
-          <select id="highlightStyleBody-${id}" onchange="updateCard(${id})">
-            <option value="color">본문 강조(숫자없음): 색상·굵게</option>
-            <option value="underline">본문 강조(숫자없음): 빨간 밑줄</option>
-            <option value="both">본문 강조(숫자없음): 색상·굵게 + 밑줄</option>
-          </select>
-        </div>
-        <div class="field-row">
-          <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">헤드라인 글자색
-            <input type="color" id="fontColorHead-${id}" value="#FFFFFF" onchange="updateCard(${id})">
-          </label>
-          <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">인용구 글자색
-            <input type="color" id="fontColorSub-${id}" value="#D8D5D0" onchange="updateCard(${id})">
-          </label>
-          <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">본문 글자색
-            <input type="color" id="fontColorBody-${id}" value="#C4C4CA" onchange="updateCard(${id})">
-          </label>
-        </div>
-        <!-- 글꼴 크기 조절 (카드별 독립) -->
-        <div style="background:var(--input-bg); border:1px solid var(--panel-border); border-radius:var(--radius-sm); padding:14px; display:flex; flex-direction:column; gap:12px;">
-          <div style="font-size:12px; font-weight:700; color:var(--orange); letter-spacing:0.02em;">글꼴 크기</div>
-          <div class="field-row" style="align-items:flex-start;">
-            <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">헤드라인
-              <input type="range" id="fontSizeHead-${id}" min="36" max="72" value="${prefill?.fontSizeHead || 50}" oninput="updateCard(${id})">
-            </label>
-            <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">인용구
-              <input type="range" id="fontSizeSub-${id}" min="30" max="60" value="${prefill?.fontSizeSub || 42}" oninput="updateCard(${id})">
-            </label>
-          </div>
-          <div class="field-row" style="align-items:flex-start;">
-            <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">본문
-              <input type="range" id="fontSizeBody-${id}" min="24" max="48" value="${prefill?.fontSizeBody || 34}" oninput="updateCard(${id})">
-            </label>
-            <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">부제·서브라벨
-              <input type="range" id="fontSizeMeta-${id}" min="20" max="40" value="${prefill?.fontSizeMeta || 28}" oninput="updateCard(${id})">
-            </label>
-          </div>
-        </div>
         <textarea id="head-${id}" placeholder="헤드라인 예: **1트럼프** 오늘 **2연설** · **1b3개 주**" oninput="debouncedUpdateCard(${id})"></textarea>
         <div class="meta-row"><span id="textStats-${id}">글자 0 · 줄 0</span></div>
         <div id="readWarn-${id}" class="warn-box"></div>
@@ -1605,30 +1957,119 @@ function addCard(prefill = null) {
         <input type="text" id="sublabel-${id}" placeholder="서브라벨 (태그·BREAKING 등)" oninput="debouncedUpdateCard(${id})">
         <textarea id="subhead-${id}" placeholder="인용구 (비우면 자동 숨김)" oninput="debouncedUpdateCard(${id})"></textarea>
         <textarea id="body-${id}" style="min-height:90px;" placeholder="본문 (**1색A** · **1b색B** · **2밑줄**)" oninput="debouncedUpdateCard(${id})"></textarea>
-        <div id="videoControls-${id}" style="display:${layout==='video'?'flex':'none'}; flex-direction:column; gap:10px; background:var(--input-bg); border:1px solid var(--panel-border); border-radius:10px; padding:14px;">
-          <label style="font-size:13px;">상단 투명 영역 높이: <input type="range" id="videoH-${id}" min="300" max="800" value="${prefill?.videoH || 500}" oninput="updateCard(${id})"></label>
-          <label class="checkbox-label"><input type="checkbox" id="guide-${id}" ${prefill?.showGuide !== false ? 'checked' : ''} onchange="updateCard(${id})"> 영상 가이드 표시</label>
-        </div>
-        <div class="image-control-box">
-          <label style="font-size:13px;">이미지Y/줌: <input type="range" id="yOff-${id}" min="0" max="100" value="${prefill?.yOffset || 50}" oninput="updateCard(${id})"><input type="range" id="scale-${id}" min="100" max="250" value="${prefill?.scale || 100}" oninput="updateCard(${id})"></label>
-          <label class="checkbox-label"><input type="checkbox" id="vig-${id}" ${prefill?.vignette ? 'checked' : ''} onchange="updateCard(${id})"> 비네팅</label>
-          <label class="checkbox-label"><input type="checkbox" id="grain-${id}" ${prefill?.grain ? 'checked' : ''} onchange="toggleCardGrainUI(${id}); updateCard(${id});"> 그레인 (필름 노이즈)</label>
-          <div id="grainField-${id}" style="display:${prefill?.grain ? 'block' : 'none'};">
-            <label style="font-size:13px; color:var(--gray);">그레인 강도
-              <input type="range" id="grainAmt-${id}" min="5" max="50" value="${prefill?.grainAmt || 20}" oninput="updateCard(${id})">
-            </label>
+        <input type="file" accept="image/*" onchange="handleImg(event, ${id})">
+        <div class="drop-zone" onpaste="handlePaste(event, ${id})" tabIndex="0">이미지 붙여넣기 (Ctrl+V)</div>
+
+        <div class="sec collapsed" style="margin-top:8px; background:var(--input-bg);">
+          <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')" style="padding:12px 14px;">
+            <span>구간 강조 (이 카드만)</span><span class="chev">▼</span>
           </div>
-          <label style="font-size:13px; color:var(--gray);">프레임 / 테두리
-            <select id="frame-${id}" onchange="updateCard(${id})">
-              <option value="none">없음</option>
-              <option value="thin">얇은 단선</option>
-              <option value="thick">두꺼운 단선</option>
-              <option value="double">이중 라인</option>
-            </select>
-          </label>
-          <label class="checkbox-label"><input type="checkbox" id="safe-${id}" ${prefill?.showSafeGuide ? 'checked' : ''} onchange="updateCard(${id})"> 안전 영역 가이드 (미리보기만, 저장 제외)</label>
-          <input type="file" accept="image/*" onchange="handleImg(event, ${id})">
-          <div class="drop-zone" onpaste="handlePaste(event, ${id})" tabIndex="0">이미지 붙여넣기 (Ctrl+V)</div>
+          <div class="sec-body">
+            <div class="hl-help-body" style="margin-bottom:10px;">공통 설정보다 이 값이 우선합니다. 공통을 다시 적용하면 덮어씁니다.</div>
+            <div class="field-row" style="align-items:flex-start;">
+              <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">색 A
+                <input type="color" id="hlColorA-${id}" value="${prefill?.highlightColorA || gA}" onchange="updateCard(${id})">
+                <div class="hl-preset-row" id="hlPresetA-${id}"></div>
+              </label>
+              <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">색 B
+                <input type="color" id="hlColorB-${id}" value="${prefill?.highlightColorB || gB}" onchange="updateCard(${id})">
+                <div class="hl-preset-row" id="hlPresetB-${id}"></div>
+              </label>
+              <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">색 C
+                <input type="color" id="hlColorC-${id}" value="${prefill?.highlightColorC || gC}" onchange="updateCard(${id})">
+                <div class="hl-preset-row" id="hlPresetC-${id}"></div>
+              </label>
+            </div>
+            <div class="field-row" style="margin-top:8px;">
+              <select id="highlightStyleHead-${id}" onchange="updateCard(${id})">
+                <option value="color">헤드라인(숫자없음): 색·굵게</option>
+                <option value="underline">헤드라인(숫자없음): 밑줄</option>
+                <option value="both">헤드라인(숫자없음): 색·굵게+밑줄</option>
+              </select>
+              <select id="align-${id}" onchange="updateCard(${id})">
+                <option value="left">정렬: 좌측</option>
+                <option value="center">정렬: 가운데</option>
+              </select>
+            </div>
+            <div class="field-row">
+              <select id="highlightStyleSub-${id}" onchange="updateCard(${id})">
+                <option value="color">인용(숫자없음): 색·굵게</option>
+                <option value="underline">인용(숫자없음): 밑줄</option>
+                <option value="both">인용(숫자없음): 색·굵게+밑줄</option>
+              </select>
+              <select id="highlightStyleBody-${id}" onchange="updateCard(${id})">
+                <option value="color">본문(숫자없음): 색·굵게</option>
+                <option value="underline">본문(숫자없음): 밑줄</option>
+                <option value="both">본문(숫자없음): 색·굵게+밑줄</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec collapsed" style="margin-top:8px; background:var(--input-bg);">
+          <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')" style="padding:12px 14px;">
+            <span>글자색 · 크기</span><span class="chev">▼</span>
+          </div>
+          <div class="sec-body">
+            <div class="field-row">
+              <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">헤드라인 글자색
+                <input type="color" id="fontColorHead-${id}" value="#FFFFFF" onchange="updateCard(${id})">
+              </label>
+              <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">인용구 글자색
+                <input type="color" id="fontColorSub-${id}" value="#D8D5D0" onchange="updateCard(${id})">
+              </label>
+              <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">본문 글자색
+                <input type="color" id="fontColorBody-${id}" value="#C4C4CA" onchange="updateCard(${id})">
+              </label>
+            </div>
+            <div class="field-row" style="align-items:flex-start; margin-top:8px;">
+              <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">헤드라인 크기
+                <input type="range" id="fontSizeHead-${id}" min="36" max="72" value="${prefill?.fontSizeHead || 50}" oninput="updateCard(${id})">
+              </label>
+              <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">인용구 크기
+                <input type="range" id="fontSizeSub-${id}" min="30" max="60" value="${prefill?.fontSizeSub || 42}" oninput="updateCard(${id})">
+              </label>
+            </div>
+            <div class="field-row" style="align-items:flex-start;">
+              <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">본문 크기
+                <input type="range" id="fontSizeBody-${id}" min="24" max="48" value="${prefill?.fontSizeBody || 34}" oninput="updateCard(${id})">
+              </label>
+              <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">부제·서브라벨
+                <input type="range" id="fontSizeMeta-${id}" min="20" max="40" value="${prefill?.fontSizeMeta || 28}" oninput="updateCard(${id})">
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec collapsed" style="margin-top:8px; background:var(--input-bg);">
+          <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')" style="padding:12px 14px;">
+            <span>이미지 · 효과 · 프레임</span><span class="chev">▼</span>
+          </div>
+          <div class="sec-body">
+            <div id="videoControls-${id}" style="display:${layout==='video'?'flex':'none'}; flex-direction:column; gap:10px; margin-bottom:10px;">
+              <label style="font-size:13px;">상단 투명 영역 높이: <input type="range" id="videoH-${id}" min="300" max="800" value="${prefill?.videoH || 500}" oninput="updateCard(${id})"></label>
+              <label class="checkbox-label"><input type="checkbox" id="guide-${id}" ${prefill?.showGuide !== false ? 'checked' : ''} onchange="updateCard(${id})"> 영상 가이드 표시</label>
+            </div>
+            <div class="image-control-box">
+              <label style="font-size:13px;">이미지Y/줌: <input type="range" id="yOff-${id}" min="0" max="100" value="${prefill?.yOffset || 50}" oninput="updateCard(${id})"><input type="range" id="scale-${id}" min="100" max="250" value="${prefill?.scale || 100}" oninput="updateCard(${id})"></label>
+              <label class="checkbox-label"><input type="checkbox" id="vig-${id}" ${prefill?.vignette ? 'checked' : ''} onchange="updateCard(${id})"> 비네팅</label>
+              <label class="checkbox-label"><input type="checkbox" id="grain-${id}" ${prefill?.grain ? 'checked' : ''} onchange="toggleCardGrainUI(${id}); updateCard(${id});"> 그레인</label>
+              <div id="grainField-${id}" style="display:${prefill?.grain ? 'block' : 'none'};">
+                <label style="font-size:13px; color:var(--gray);">그레인 강도
+                  <input type="range" id="grainAmt-${id}" min="5" max="50" value="${prefill?.grainAmt || 20}" oninput="updateCard(${id})">
+                </label>
+              </div>
+              <label style="font-size:13px; color:var(--gray);">프레임
+                <select id="frame-${id}" onchange="updateCard(${id})">
+                  <option value="none">없음</option>
+                  <option value="thin">얇은 단선</option>
+                  <option value="thick">두꺼운 단선</option>
+                  <option value="double">이중 라인</option>
+                </select>
+              </label>
+              <label class="checkbox-label"><input type="checkbox" id="safe-${id}" ${prefill?.showSafeGuide ? 'checked' : ''} onchange="updateCard(${id})"> 안전 영역 가이드</label>
+            </div>
+          </div>
         </div>
       </div>
       <div class="preview-zone">
@@ -1640,9 +2081,12 @@ function addCard(prefill = null) {
   document.getElementById('cardsWrap').appendChild(div);
   document.getElementById(`cat-${id}`).value = prefill?.cat ?? 'NEWS';
   document.getElementById(`src-${id}`).value = prefill?.src ?? '@west150daily';
-  document.getElementById(`highlightStyleHead-${id}`).value = prefill?.highlightStyleHead ?? prefill?.highlightStyle ?? 'both';
-  document.getElementById(`highlightStyleSub-${id}`).value = prefill?.highlightStyleSub ?? prefill?.highlightStyle ?? 'both';
-  document.getElementById(`highlightStyleBody-${id}`).value = prefill?.highlightStyleBody ?? prefill?.highlightStyle ?? 'both';
+  const defH = document.getElementById('globalHlStyleHead')?.value || 'both';
+  const defS = document.getElementById('globalHlStyleSub')?.value || 'both';
+  const defB = document.getElementById('globalHlStyleBody')?.value || 'both';
+  document.getElementById(`highlightStyleHead-${id}`).value = prefill?.highlightStyleHead ?? prefill?.highlightStyle ?? defH;
+  document.getElementById(`highlightStyleSub-${id}`).value = prefill?.highlightStyleSub ?? prefill?.highlightStyle ?? defS;
+  document.getElementById(`highlightStyleBody-${id}`).value = prefill?.highlightStyleBody ?? prefill?.highlightStyle ?? defB;
   document.getElementById(`align-${id}`).value = prefill?.align ?? 'left';
   document.getElementById(`fontColorHead-${id}`).value = prefill?.fontColorHead ?? '#FFFFFF';
   document.getElementById(`fontColorSub-${id}`).value = prefill?.fontColorSub ?? '#D8D5D0';
@@ -2634,13 +3078,33 @@ function isIOS() {
 }
 function saveCanvasImage(canvas, filename) {
   if (!canvas) return;
-  canvas.toBlob((blob) => {
+  canvas.toBlob(async (blob) => {
     if (!blob) { alert('이미지 생성에 실패했습니다. 다시 시도해주세요.'); return; }
+
+    const file = new File([blob], filename, { type: 'image/png' });
+
+    // iOS/Android: Web Share API가 가장 안정적 (사진 앱에 저장/공유)
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: filename });
+        return;
+      } catch (err) {
+        if (err && err.name === 'AbortError') return; // 사용자가 취소
+      }
+    }
+
     const url = URL.createObjectURL(blob);
     if (isIOS()) {
+      // 공유 불가 시 새 탭에서 이미지 열어 길게 누르기 안내
       const w = window.open(url, '_blank');
-      if (!w) location.href = url;
-      else setTimeout(() => alert('이미지를 길게 누른 뒤 "이미지 저장"을 선택하세요.'), 300);
+      if (!w) {
+        // 팝업 차단 시 data URL로 폴백
+        const reader = new FileReader();
+        reader.onload = () => { location.href = reader.result; };
+        reader.readAsDataURL(blob);
+      } else {
+        setTimeout(() => alert('이미지를 길게 누른 뒤 "이미지 저장" 또는 "사진에 추가"를 선택하세요.'), 300);
+      }
       setTimeout(() => URL.revokeObjectURL(url), 60000);
     } else {
       const a = document.createElement('a');
@@ -2719,7 +3183,7 @@ async function downloadAllAsZip(){
   for (const c of cards) await updateCard(c.id);
 }
 async function exportJSON() {
-  const base = JSON.parse(localStorage.getItem('card_news_data') || '{}');
+  const base = JSON.parse(safeGet('card_news_data') || '{}');
   base.coverImgData = coverImgData || await loadImageFromDB('cover');
   if (base.cards) {
     for (const c of base.cards) {
@@ -2749,7 +3213,7 @@ function importJSON(e) {
           }
         }
       }
-      localStorage.setItem('card_news_data', JSON.stringify(parsed));
+      safeSet('card_news_data', JSON.stringify(parsed));
       location.reload();
     } catch (err) {
       alert('불러오기 실패: ' + err.message);
@@ -2759,7 +3223,7 @@ function importJSON(e) {
 }
 async function clearAllData() {
   if (!confirm('모든 데이터가 삭제됩니다.')) return;
-  localStorage.removeItem('card_news_data');
+  safeRemove('card_news_data');
   if (db && db.objectStoreNames.contains('images')) {
     const tx = db.transaction('images', 'readwrite');
     tx.objectStore('images').clear();
