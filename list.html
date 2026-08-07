@@ -1352,6 +1352,25 @@
     return isDark ? '#1C1C1E' : '#FFFFFF';
   }
 
+  function simplifyNodeForCapture(root, solidBg) {
+    root.querySelectorAll('*').forEach(el => {
+      el.style.filter = 'none';
+      el.style.backdropFilter = 'none';
+      el.style.webkitBackdropFilter = 'none';
+      if (el.classList && el.classList.contains('text-grad')) {
+        el.style.background = 'none';
+        el.style.webkitBackgroundClip = 'unset';
+        el.style.backgroundClip = 'unset';
+        const acc = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#007AFF';
+        el.style.color = acc;
+        el.style.webkitTextFillColor = acc;
+      }
+    });
+    if (typeof currentBgPreset === 'undefined' || currentBgPreset === 'none') {
+      root.style.background = solidBg;
+    }
+  }
+
   async function generateCanvas() {
     const inner = document.getElementById('card-inner');
     if (!inner) return null;
@@ -1359,11 +1378,24 @@
     const solidBg = resolveCaptureBg();
     const w = currentSize.w;
     const h = currentSize.h;
+    const heavy = (currentType === 'compare' && typeof compareCols !== 'undefined' && compareCols === 3)
+      || (currentType === 'sequence' && seqStyle === 'timeline-h')
+      || (currentType === 'list' && listStyle === 'grid3')
+      || (w * h > 1080 * 1400);
+    const preferredScale = heavy ? 1.5 : 2;
 
-    // 원본은 건드리지 않고, 화면 안 클론으로 캡처
     const host = document.createElement('div');
     host.setAttribute('data-capture-host', '1');
-    host.style.cssText = 'position:fixed;left:0;top:0;width:' + w + 'px;height:' + h + 'px;overflow:hidden;z-index:99999;pointer-events:none;opacity:0.02;background:' + solidBg + ';';
+    host.style.cssText = 'position:fixed;left:0;top:0;width:' + w + 'px;height:' + h + 'px;overflow:hidden;z-index:99999;pointer-events:none;opacity:0.03;background:' + solidBg + ';';
+
+    const fixStyle = document.createElement('style');
+    fixStyle.textContent = [
+      '#card-inner-capture, #card-inner-capture * { filter:none !important; backdrop-filter:none !important; -webkit-backdrop-filter:none !important; }',
+      '#card-inner-capture .seq-step-num, #card-inner-capture .tl-h-dot, #card-inner-capture .tl-v-dot, #card-inner-capture .list-horizontal .list-num {',
+      '  background: var(--accent) !important; box-shadow: none !important; }',
+      '#card-inner-capture .text-grad { -webkit-text-fill-color: var(--accent) !important; color: var(--accent) !important; background: none !important; }'
+    ].join('\\n');
+    host.appendChild(fixStyle);
 
     const clone = inner.cloneNode(true);
     clone.id = 'card-inner-capture';
@@ -1378,72 +1410,64 @@
     clone.style.position = 'relative';
     clone.style.boxSizing = 'border-box';
     clone.style.margin = '0';
-    if (currentBgPreset === 'none') {
-      clone.style.background = solidBg;
-    }
     clone.className = inner.className;
+    simplifyNodeForCapture(clone, solidBg);
 
     host.appendChild(clone);
     document.body.appendChild(host);
-
     host.offsetHeight;
     await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-    await new Promise(r => setTimeout(r, 150));
+    await new Promise(r => setTimeout(r, 180));
+
+    const baseOpts = {
+      useCORS: true,
+      backgroundColor: solidBg,
+      width: w,
+      height: h,
+      logging: false,
+      allowTaint: true,
+      foreignObjectRendering: false,
+      imageTimeout: 10000
+    };
 
     try {
-      const opts = {
-        useCORS: true,
-        backgroundColor: solidBg,
-        width: w,
-        height: h,
-        logging: false,
-        allowTaint: true,
-        foreignObjectRendering: false,
-        imageTimeout: 8000
-      };
-      try {
-        return await html2canvas(clone, Object.assign({}, opts, { scale: 2 }));
-      } catch (e1) {
-        console.warn('html2canvas x2 fail, retry x1', e1);
-        return await html2canvas(clone, Object.assign({}, opts, { scale: 1 }));
+      const scales = [preferredScale, 1.25, 1];
+      for (let i = 0; i < scales.length; i++) {
+        try {
+          const canvas = await html2canvas(clone, Object.assign({}, baseOpts, { scale: scales[i] }));
+          if (canvas && canvas.width > 0 && canvas.height > 0) return canvas;
+        } catch (e) {
+          console.warn('capture scale', scales[i], e);
+        }
       }
     } catch (err) {
-      console.error('generateCanvas clone failed, fallback in-place', err);
-      // 최후 폴백: 원본을 잠깐 1배율로 만들어 캡처
-      const wrap = document.getElementById('preview-wrap');
-      const ot = inner.style.transform;
-      const ow = wrap ? wrap.style.width : '';
-      const oh = wrap ? wrap.style.height : '';
-      try {
-        inner.style.transform = 'none';
-        if (wrap) {
-          wrap.style.width = w + 'px';
-          wrap.style.height = h + 'px';
-        }
-        inner.style.width = w + 'px';
-        inner.style.height = h + 'px';
-        await new Promise(r => setTimeout(r, 100));
-        return await html2canvas(inner, {
-          scale: 1,
-          useCORS: true,
-          backgroundColor: solidBg,
-          width: w,
-          height: h,
-          logging: false,
-          allowTaint: true
-        });
-      } catch (err2) {
-        console.error('generateCanvas fallback failed', err2);
-        return null;
-      } finally {
-        inner.style.transform = ot;
-        if (wrap) {
-          wrap.style.width = ow;
-          wrap.style.height = oh;
-        }
-      }
+      console.error('generateCanvas clone', err);
     } finally {
       if (host.parentNode) host.parentNode.removeChild(host);
+    }
+
+    const wrap = document.getElementById('preview-wrap');
+    const ot = inner.style.transform;
+    const ow = wrap ? wrap.style.width : '';
+    const oh = wrap ? wrap.style.height : '';
+    const prevBg = inner.style.background;
+    try {
+      inner.style.transform = 'none';
+      inner.style.webkitTransform = 'none';
+      if (wrap) { wrap.style.width = w + 'px'; wrap.style.height = h + 'px'; }
+      inner.style.width = w + 'px';
+      inner.style.height = h + 'px';
+      if (typeof currentBgPreset === 'undefined' || currentBgPreset === 'none') inner.style.background = solidBg;
+      await new Promise(r => setTimeout(r, 120));
+      return await html2canvas(inner, Object.assign({}, baseOpts, { scale: 1 }));
+    } catch (err2) {
+      console.error('generateCanvas in-place failed', err2);
+      return null;
+    } finally {
+      inner.style.transform = ot;
+      inner.style.webkitTransform = ot;
+      inner.style.background = prevBg;
+      if (wrap) { wrap.style.width = ow; wrap.style.height = oh; }
     }
   }
 
