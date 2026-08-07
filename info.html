@@ -196,7 +196,11 @@
     gap: 20px;
     width: 100%;
     flex: 1;
+<<<<<<< HEAD
     overflow: visible;
+=======
+    overflow: hidden;
+>>>>>>> f69541d130323d60e1a1a1fd77620ca6ca449af9
     position: relative;
     align-items: start;
   }
@@ -1204,6 +1208,26 @@
     return columns;
   }
 
+<<<<<<< HEAD
+=======
+  // 실제 렌더링(distributeBoxesToColumns)과 동일한 방식으로 컬럼을 나눈 뒤
+  // 각 컬럼의 실제 예상 높이 배열을 반환한다. 페이지 자동 분할 판단에 사용.
+  function columnHeightsFor(list, fonts, colW, cols) {
+    if (!list.length) return [0];
+    const columns = distributeBoxesToColumns(list, fonts, colW, cols);
+    return columns.map(colItems => {
+      let h = 0;
+      colItems.forEach((item, localIdx) => {
+        const box = item.box;
+        h += estimateBoxHeight(box, fonts, colW);
+        const isLast = localIdx === colItems.length - 1;
+        if (box.connectNext && flowLineStyle !== 'none' && !isLast) h += 30;
+      });
+      return h;
+    });
+  }
+
+>>>>>>> f69541d130323d60e1a1a1fd77620ca6ca449af9
   function renderColumnBoxesHtml(columnItems) {
     let html = '';
     columnItems.forEach((item, localIdx) => {
@@ -1268,6 +1292,7 @@
 
       const colW = (currentSize.w - 80 - (columnCount - 1) * 20) / columnCount;
 
+<<<<<<< HEAD
       const groups = [];
       let currentGroup = [];
       let usedContentH = 0;
@@ -1285,6 +1310,24 @@
         } else {
           currentGroup.push(box);
           usedContentH += addH;
+=======
+      // 컬럼 개수(1/2/3단)를 반영해 "실제로 렌더링될 컬럼 중 가장 높은 컬럼"이
+      // 카드 높이를 넘는 시점에 새 페이지를 만든다. (기존에는 누적높이를
+      // 단순히 컬럼 수로 나누기만 해서 2~3단일 때 새 페이지가 거의 안 생기던 버그)
+      const groups = [];
+      let currentGroup = [];
+
+      boxList.forEach((box) => {
+        const candidate = currentGroup.concat([box]);
+        const heights = columnHeightsFor(candidate, fonts, colW, columnCount);
+        const maxH = Math.max(...heights);
+
+        if (currentGroup.length > 0 && maxH > availableH * 0.98) {
+          groups.push(currentGroup);
+          currentGroup = [box];
+        } else {
+          currentGroup.push(box);
+>>>>>>> f69541d130323d60e1a1a1fd77620ca6ca449af9
         }
       });
       if (currentGroup.length) groups.push(currentGroup);
