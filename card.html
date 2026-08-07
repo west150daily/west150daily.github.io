@@ -16,15 +16,17 @@
 <style>
   :root {
     --orange: #FF8228;
-    --orange-soft: rgba(255, 130, 40, 0.14);
+    --orange-soft: rgba(255, 130, 40, 0.12);
+    --orange-glow: rgba(255, 130, 40, 0.25);
     --dark-bg: #000000;
     --panel: #1C1C1E;
     --panel-elevated: #2C2C2E;
     --panel-border: rgba(255,255,255,0.08);
+    --panel-border-strong: rgba(255,255,255,0.12);
     --input-bg: #2C2C2E;
     --text: #F5F5F7;
     --gray: #8E8E93;
-    --muted: #8E8E93;
+    --muted: #636366;
     --btn-sec: #3A3A3C;
     --danger-bg: #3A1F1F;
     --danger-text: #FF8A8A;
@@ -32,12 +34,15 @@
     --warn-border: #5A2A2A;
     --warn-text: #E8A0A0;
     --modal-bg: rgba(0,0,0,0.55);
-    --shadow: 0 8px 32px rgba(0,0,0,0.4);
-    --shadow-sm: 0 2px 12px rgba(0,0,0,0.28);
-    --radius: 16px;
-    --radius-sm: 12px;
-    --radius-xs: 10px;
+    --shadow: 0 12px 40px rgba(0,0,0,0.45);
+    --shadow-sm: 0 4px 16px rgba(0,0,0,0.28);
+    --shadow-xs: 0 1px 3px rgba(0,0,0,0.2);
+    --radius: 18px;
+    --radius-sm: 14px;
+    --radius-xs: 11px;
+    --radius-pill: 980px;
     --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   body.light {
@@ -45,19 +50,21 @@
     --panel: #FFFFFF;
     --panel-elevated: #F2F2F7;
     --panel-border: rgba(0,0,0,0.06);
+    --panel-border-strong: rgba(0,0,0,0.1);
     --input-bg: #F2F2F7;
     --text: #1D1D1F;
     --gray: #6E6E73;
-    --muted: #6E6E73;
+    --muted: #8E8E93;
     --btn-sec: #E8E8ED;
     --danger-bg: #FFF0F0;
     --danger-text: #C41E3A;
     --warn-bg: #FFF5F5;
     --warn-border: #FFD0D0;
     --warn-text: #8D1F24;
-    --modal-bg: rgba(0,0,0,0.35);
-    --shadow: 0 8px 32px rgba(0,0,0,0.08);
-    --shadow-sm: 0 2px 12px rgba(0,0,0,0.06);
+    --modal-bg: rgba(0,0,0,0.32);
+    --shadow: 0 12px 40px rgba(0,0,0,0.08);
+    --shadow-sm: 0 4px 16px rgba(0,0,0,0.06);
+    --shadow-xs: 0 1px 3px rgba(0,0,0,0.04);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -69,10 +76,12 @@
     -webkit-text-size-adjust: 100%;
     overscroll-behavior-y: contain;
     overflow-x: hidden;
-    transition: background 0.3s var(--ease), color 0.3s var(--ease);
+    transition: background 0.35s var(--ease), color 0.35s var(--ease);
     line-height: 1.47;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.022em;
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   input[type="text"], input[type="password"], input[type="color"], textarea, select {
@@ -81,7 +90,6 @@
   }
   button { font-family: inherit; cursor: pointer; border: none; color: inherit; }
 
-  /* ===== APP LAYOUT ===== */
   .app {
     display: grid;
     grid-template-columns: minmax(300px, 380px) 1fr;
@@ -98,40 +106,43 @@
     }
   }
 
-  /* ===== SIDE PANEL ===== */
   .side-panel {
     background: var(--panel);
     border-right: 1px solid var(--panel-border);
-    padding: 28px 20px 48px;
+    padding: 32px 22px 56px;
     overflow-y: auto;
     position: sticky;
     top: 0;
     height: 100vh;
     max-height: 100vh;
+    scrollbar-width: thin;
+    scrollbar-color: var(--panel-border) transparent;
   }
-  .side-header {
-    margin-bottom: 24px;
-  }
+  .side-panel::-webkit-scrollbar { width: 6px; }
+  .side-panel::-webkit-scrollbar-thumb { background: var(--panel-border-strong); border-radius: 3px; }
+
+  .side-header { margin-bottom: 28px; }
   .side-header h1 {
-    font-size: 22px;
+    font-size: 23px;
     font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1.25;
+    letter-spacing: -0.04em;
+    line-height: 1.2;
   }
   .side-header .sub {
     font-size: 13px;
     color: var(--gray);
-    margin-top: 6px;
-    font-weight: 400;
+    margin-top: 5px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
   .side-tools {
     display: flex;
     gap: 8px;
-    margin-top: 14px;
+    margin-top: 16px;
     align-items: center;
   }
   .icon-btn {
-    height: 40px;
+    height: 38px;
     padding: 0 14px;
     border-radius: 10px;
     background: var(--input-bg);
@@ -143,24 +154,26 @@
     align-items: center;
     gap: 6px;
     transition: all 0.2s var(--ease);
+    letter-spacing: -0.01em;
   }
-  .icon-btn:hover { filter: brightness(1.08); }
+  .icon-btn:hover { filter: brightness(1.1); transform: translateY(-0.5px); }
   .color-chip {
-    width: 40px; height: 40px;
+    width: 38px; height: 38px;
     border-radius: 10px;
     border: 1px solid var(--panel-border);
     padding: 3px;
     background: var(--input-bg);
     cursor: pointer;
+    transition: transform 0.15s var(--ease);
   }
+  .color-chip:hover { transform: scale(1.05); }
 
-  /* Storage */
   .storage-box {
     background: var(--input-bg);
     border: 1px solid var(--panel-border);
     border-radius: var(--radius-sm);
     padding: 14px 16px;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
   }
   .storage-header {
     display: flex;
@@ -168,52 +181,54 @@
     font-size: 12px;
     font-weight: 600;
     color: var(--gray);
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
   }
   .storage-bar-bg {
-    width: 100%; height: 5px;
+    width: 100%; height: 4px;
     background: var(--panel);
-    border-radius: 3px;
+    border-radius: 2px;
     overflow: hidden;
   }
   .storage-bar-fill {
     height: 100%; width: 0%;
     background: linear-gradient(90deg, #FF8228, #FFB028);
-    border-radius: 3px;
-    transition: width 0.4s var(--ease);
+    border-radius: 2px;
+    transition: width 0.45s var(--ease-out);
   }
   .storage-bar-fill.warning { background: linear-gradient(90deg, #ed8936, #ecc94b); }
   .storage-bar-fill.danger { background: linear-gradient(90deg, #e53e3e, #ff8a8a); }
 
-  /* Collapsible sections */
   .sec {
     background: var(--input-bg);
     border: 1px solid var(--panel-border);
     border-radius: var(--radius-sm);
     margin-bottom: 12px;
     overflow: hidden;
+    transition: border-color 0.2s var(--ease);
   }
+  .sec:hover { border-color: var(--panel-border-strong); }
   .sec-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 13px 16px;
+    padding: 14px 16px;
     cursor: pointer;
     user-select: none;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--orange);
   }
-  .sec-head .chev { font-size: 11px; opacity: 0.55; transition: transform 0.2s; color: var(--gray); }
+  .sec-head .chev { font-size: 10px; opacity: 0.5; transition: transform 0.25s var(--ease); color: var(--gray); }
   .sec.collapsed .sec-body { display: none; }
   .sec.collapsed .chev { transform: rotate(-90deg); }
   .sec-body {
-    padding: 4px 16px 16px;
+    padding: 2px 16px 18px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
   }
   .sec-grid {
     display: grid;
@@ -225,10 +240,11 @@
   label.field {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 7px;
     font-size: 12px;
     font-weight: 600;
     color: var(--gray);
+    letter-spacing: -0.01em;
   }
   label.field input[type="text"],
   label.field input[type="color"],
@@ -238,7 +254,7 @@
     border: 1px solid var(--panel-border);
     color: var(--text);
     border-radius: var(--radius-xs);
-    padding: 10px 12px;
+    padding: 11px 13px;
     width: 100%;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
@@ -257,7 +273,7 @@
     border-radius: 2px;
     border: none;
     width: 100%;
-    margin-top: 6px;
+    margin-top: 8px;
   }
   label.field input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -265,14 +281,16 @@
     border-radius: 50%;
     background: var(--orange);
     cursor: pointer;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.35);
+    transition: transform 0.15s;
   }
+  label.field input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.12); }
   label.field input[type="file"] {
     background: var(--panel);
     border: 1px dashed var(--panel-border);
     color: var(--gray);
     border-radius: var(--radius-xs);
-    padding: 10px;
+    padding: 11px;
     font-size: 12px !important;
     width: 100%;
   }
@@ -280,12 +298,13 @@
     display: flex !important;
     flex-direction: row !important;
     align-items: center;
-    gap: 8px !important;
+    gap: 9px !important;
     cursor: pointer;
     user-select: none;
     color: var(--text) !important;
     font-size: 13px;
     font-weight: 500;
+    letter-spacing: -0.01em;
   }
   .checkbox-label input { width: auto; accent-color: var(--orange); cursor: pointer; }
 
@@ -308,7 +327,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 6px 4px;
+    padding: 7px 4px;
     border-bottom: 1px solid var(--panel-border);
     font-size: 13px;
   }
@@ -318,52 +337,61 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-top: 16px;
+    margin-top: 20px;
   }
 
-  /* Buttons */
   button.btn-primary, button.btn-secondary, button.btn-danger, button.btn-ghost, button.btn-sm {
-    border-radius: 980px;
+    border-radius: var(--radius-pill);
     padding: 11px 18px;
     font-size: 14px;
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
     transition: all 0.2s var(--ease);
   }
   button:active { transform: scale(0.97); }
-  .btn-primary { background: var(--orange); color: #000; }
-  .btn-primary:hover { filter: brightness(1.08); }
-  .btn-secondary { background: var(--btn-sec); color: var(--text); }
+  .btn-primary {
+    background: var(--orange);
+    color: #000;
+    box-shadow: 0 2px 8px var(--orange-glow);
+  }
+  .btn-primary:hover { filter: brightness(1.08); box-shadow: 0 4px 14px var(--orange-glow); }
+  .btn-secondary {
+    background: var(--btn-sec);
+    color: var(--text);
+  }
   .btn-secondary:hover { filter: brightness(1.1); }
   .btn-danger { background: var(--danger-bg); color: var(--danger-text); }
   .btn-ghost { background: transparent; border: 1px solid var(--panel-border); color: var(--text); }
   .btn-sm { padding: 8px 14px; font-size: 13px; min-height: 34px; }
   .btn-block { width: 100%; border-radius: 12px !important; }
 
-  /* ===== MAIN AREA ===== */
   .main-area {
-    padding: 32px 36px 120px;
+    padding: 36px 40px 140px;
     background: var(--dark-bg);
   }
   @media (max-width: 767px) {
-    .main-area { padding: 16px 14px max(100px, env(safe-area-inset-bottom) + 80px); }
+    .main-area { padding: 18px 14px max(100px, env(safe-area-inset-bottom) + 80px); }
   }
 
   .batch-card, .tool-card, .cover-card, .card-editor {
     background: var(--panel);
     border: 1px solid var(--panel-border);
     border-radius: var(--radius);
-    padding: 24px;
-    margin-bottom: 20px;
+    padding: 26px;
+    margin-bottom: 22px;
     box-shadow: var(--shadow-sm);
+    transition: border-color 0.2s var(--ease), box-shadow 0.25s var(--ease);
+  }
+  .batch-card:hover, .tool-card:hover, .cover-card:hover, .card-editor:hover {
+    border-color: var(--panel-border-strong);
   }
   .card-title {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     color: var(--orange);
-    letter-spacing: 0.03em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
   }
   .batch-row {
     display: flex;
@@ -376,14 +404,15 @@
   .batch-hint {
     font-size: 12px;
     color: var(--muted);
-    line-height: 1.5;
-    margin-top: 6px;
+    line-height: 1.55;
+    margin-top: 8px;
   }
   .batch-label {
     font-size: 13px;
     color: var(--gray);
     font-weight: 600;
     min-width: 80px;
+    letter-spacing: -0.01em;
   }
 
   .btn-group {
@@ -396,14 +425,14 @@
   .editor-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(240px, 340px);
-    gap: 24px;
+    gap: 28px;
     width: 100%;
   }
   .editor-grid > * { min-width: 0; }
   .preview-zone {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
   }
   .preview-zone canvas {
     width: 100% !important;
@@ -419,24 +448,25 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 22px;
     gap: 12px;
     flex-wrap: wrap;
   }
-  .fields { display: flex; flex-direction: column; gap: 12px; }
+  .fields { display: flex; flex-direction: column; gap: 14px; }
   .field-row { display: flex; gap: 12px; align-items: center; }
   .field-row > * { flex: 1; min-width: 0; }
   .image-control-box { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
 
   .drop-zone {
     border: 1.5px dashed var(--panel-border);
-    padding: 18px;
+    padding: 20px;
     border-radius: var(--radius-xs);
     text-align: center;
     color: var(--gray);
     font-size: 13px;
     cursor: pointer;
     transition: 0.2s var(--ease);
+    letter-spacing: -0.01em;
   }
   .drop-zone:hover {
     border-color: var(--orange);
@@ -456,13 +486,13 @@
   .warn-box {
     display: none;
     margin-top: 4px;
-    padding: 10px 14px;
+    padding: 11px 14px;
     border-radius: var(--radius-xs);
     background: var(--warn-bg);
     border: 1px solid var(--warn-border);
     color: var(--warn-text);
     font-size: 12px;
-    line-height: 1.45;
+    line-height: 1.5;
   }
   .warn-box.show { display: block; }
 
@@ -470,20 +500,21 @@
     background: var(--input-bg);
     border: 1px solid var(--panel-border);
     border-radius: var(--radius-sm);
-    padding: 14px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
   }
   .hl-help-title {
     font-size: 12px;
     font-weight: 700;
     color: var(--orange);
+    letter-spacing: 0.02em;
   }
   .hl-help-body {
     font-size: 12px;
     color: var(--gray);
-    line-height: 1.6;
+    line-height: 1.65;
   }
   .hl-help-body b { color: var(--text); font-weight: 700; }
   .hl-preset-row {
@@ -493,19 +524,21 @@
     margin-top: 4px;
   }
   .hl-preset-btn {
-    width: 20px; height: 20px;
-    border-radius: 6px;
+    width: 22px; height: 22px;
+    border-radius: 7px;
     border: 1px solid var(--panel-border);
     padding: 0;
     cursor: pointer;
+    transition: transform 0.15s var(--ease);
   }
+  .hl-preset-btn:hover { transform: scale(1.15); }
 
   textarea, input[type="text"], select {
     background: var(--input-bg);
     border: 1px solid var(--panel-border);
     color: var(--text);
     border-radius: var(--radius-xs);
-    padding: 11px 13px;
+    padding: 12px 14px;
     width: 100%;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
@@ -528,14 +561,14 @@
     border-radius: 50%;
     background: var(--orange);
     cursor: pointer;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.3);
   }
   input[type="file"] {
     background: var(--input-bg);
     border: 1px dashed var(--panel-border);
     color: var(--gray);
     border-radius: var(--radius-xs);
-    padding: 10px;
+    padding: 11px;
     font-size: 12px !important;
     width: 100%;
   }
@@ -548,16 +581,15 @@
     height: 40px;
   }
 
-  #cardsWrap { display: flex; flex-direction: column; gap: 20px; }
+  #cardsWrap { display: flex; flex-direction: column; gap: 22px; }
 
-  /* Modal */
   .modal-backdrop {
     display: none;
     position: fixed;
     inset: 0;
     background: var(--modal-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     z-index: 10000;
     align-items: center;
     justify-content: center;
@@ -567,25 +599,26 @@
   .modal {
     background: var(--panel);
     border: 1px solid var(--panel-border);
-    border-radius: 20px;
-    padding: 28px;
+    border-radius: 22px;
+    padding: 32px;
     width: 100%;
     max-width: 420px;
     color: var(--text);
     box-shadow: var(--shadow);
   }
-  .modal h3 { margin: 0 0 8px; font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
-  .modal p { margin: 0 0 18px; font-size: 14px; color: var(--gray); line-height: 1.5; }
+  .modal h3 { margin: 0 0 8px; font-size: 20px; font-weight: 700; letter-spacing: -0.03em; }
+  .modal p { margin: 0 0 20px; font-size: 14px; color: var(--gray); line-height: 1.5; }
   .modal .check-item {
     display: flex;
     align-items: center;
     gap: 12px;
     margin-bottom: 14px;
     font-size: 15px;
+    letter-spacing: -0.01em;
   }
   .modal .check-item input { width: 20px; height: 20px; accent-color: var(--orange); }
-  .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 22px; }
-  .modal-actions button { padding: 14px; border-radius: 980px; font-weight: 700; }
+  .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 24px; }
+  .modal-actions button { padding: 14px; border-radius: var(--radius-pill); font-weight: 700; }
   .modal-ok:disabled { opacity: 0.4; cursor: not-allowed; }
 
   @media (max-width: 900px) {
@@ -594,7 +627,7 @@
     .cover-card .editor-grid { display: flex !important; flex-direction: column !important; }
   }
   @media (max-width: 767px) {
-    .batch-card, .tool-card, .cover-card, .card-editor { padding: 16px; border-radius: 14px; }
+    .batch-card, .tool-card, .cover-card, .card-editor { padding: 18px; border-radius: 16px; }
     .wm-row { grid-template-columns: 1fr; }
     .sec-grid { grid-template-columns: 1fr; }
     .btn-group button { min-height: 44px; }
@@ -626,7 +659,6 @@
 
 <div id="main-content" class="app">
 
-  <!-- ========== LEFT SIDE PANEL ========== -->
   <aside class="side-panel">
     <div class="side-header">
       <h1>WEST150.DAILY</h1>
@@ -647,7 +679,6 @@
       </div>
     </div>
 
-    <!-- 공통 -->
     <div class="sec" id="sec-common">
       <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')">
         <span>공통 설정</span><span class="chev">▼</span>
@@ -668,7 +699,6 @@
       </div>
     </div>
 
-    <!-- 커버 -->
     <div class="sec" id="sec-cover">
       <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')">
         <span>커버 설정</span><span class="chev">▼</span>
@@ -768,7 +798,6 @@
       </div>
     </div>
 
-    <!-- 폰트 -->
     <div class="sec" id="sec-font">
       <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')">
         <span>커스텀 폰트</span><span class="chev">▼</span>
@@ -793,10 +822,8 @@
     </div>
   </aside>
 
-  <!-- ========== MAIN ========== -->
   <main class="main-area">
 
-    <!-- 일괄 -->
     <div class="batch-card">
       <div class="card-title">일괄 이미지 · 레이아웃 · 효과</div>
       <div class="batch-row">
@@ -837,13 +864,12 @@
       <div class="batch-row">
         <span class="batch-label">프레임</span>
         <button class="btn-secondary btn-sm" onclick="batchSetFrame('none')">없음</button>
-        <button class="btn-secondary btn-sm" onclick="batchSetFrame('thin')">얇은 단선</button>
         <button class="btn-secondary btn-sm" onclick="batchSetFrame('thick')">두꺼운 단선</button>
+        <button class="btn-secondary btn-sm" onclick="batchSetFrame('thin')">얇은 단선</button>
         <button class="btn-secondary btn-sm" onclick="batchSetFrame('double')">이중 라인</button>
       </div>
     </div>
 
-    <!-- 찾기/바꾸기 -->
     <div class="tool-card">
       <div class="card-title">전체 카드 찾기/바꾸기</div>
       <div style="display:grid; grid-template-columns: 1fr 1fr auto; gap:14px; align-items:end;">
@@ -857,7 +883,6 @@
       </div>
     </div>
 
-    <!-- 벌크 붙여넣기 -->
     <div class="tool-card">
       <div class="card-title">텍스트 붙여넣기 → 카드에 자동 입력</div>
       <div style="font-size:13px; color:var(--gray); line-height:1.6; margin-bottom:12px;">
@@ -879,7 +904,6 @@
       </div>
     </div>
 
-    <!-- 커버 미리보기 -->
     <div class="cover-card">
       <div class="card-title">커버</div>
       <div class="editor-grid">
@@ -1254,7 +1278,6 @@ function deleteFont(name) {
   location.reload();
 }
 
-/* ===== 일괄 ===== */
 async function applyBatchImages() {
   const input = document.getElementById('batchImgInput');
   const files = Array.from(input.files || []);
@@ -1369,6 +1392,11 @@ function collectCardData(id) {
     fontColorHead: document.getElementById(`fontColorHead-${id}`)?.value || '#FFFFFF',
     fontColorSub: document.getElementById(`fontColorSub-${id}`)?.value || '#D8D5D0',
     fontColorBody: document.getElementById(`fontColorBody-${id}`)?.value || '#C4C4CA',
+    // 글꼴 크기 (카드별 독립 저장)
+    fontSizeHead: document.getElementById(`fontSizeHead-${id}`) ? Number(document.getElementById(`fontSizeHead-${id}`).value) : 50,
+    fontSizeSub: document.getElementById(`fontSizeSub-${id}`) ? Number(document.getElementById(`fontSizeSub-${id}`).value) : 42,
+    fontSizeBody: document.getElementById(`fontSizeBody-${id}`) ? Number(document.getElementById(`fontSizeBody-${id}`).value) : 34,
+    fontSizeMeta: document.getElementById(`fontSizeMeta-${id}`) ? Number(document.getElementById(`fontSizeMeta-${id}`).value) : 28,
     head: document.getElementById(`head-${id}`)?.value || '',
     subtitle: document.getElementById(`subtitle-${id}`)?.value || '',
     sublabel: document.getElementById(`sublabel-${id}`)?.value || '',
@@ -1550,6 +1578,26 @@ function addCard(prefill = null) {
             <input type="color" id="fontColorBody-${id}" value="#C4C4CA" onchange="updateCard(${id})">
           </label>
         </div>
+        <!-- 글꼴 크기 조절 (카드별 독립) -->
+        <div style="background:var(--input-bg); border:1px solid var(--panel-border); border-radius:var(--radius-sm); padding:14px; display:flex; flex-direction:column; gap:12px;">
+          <div style="font-size:12px; font-weight:700; color:var(--orange); letter-spacing:0.02em;">글꼴 크기</div>
+          <div class="field-row" style="align-items:flex-start;">
+            <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">헤드라인
+              <input type="range" id="fontSizeHead-${id}" min="36" max="72" value="${prefill?.fontSizeHead || 50}" oninput="updateCard(${id})">
+            </label>
+            <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">인용구
+              <input type="range" id="fontSizeSub-${id}" min="30" max="60" value="${prefill?.fontSizeSub || 42}" oninput="updateCard(${id})">
+            </label>
+          </div>
+          <div class="field-row" style="align-items:flex-start;">
+            <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">본문
+              <input type="range" id="fontSizeBody-${id}" min="24" max="48" value="${prefill?.fontSizeBody || 34}" oninput="updateCard(${id})">
+            </label>
+            <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">부제·서브라벨
+              <input type="range" id="fontSizeMeta-${id}" min="20" max="40" value="${prefill?.fontSizeMeta || 28}" oninput="updateCard(${id})">
+            </label>
+          </div>
+        </div>
         <textarea id="head-${id}" placeholder="헤드라인 예: **1트럼프** 오늘 **2연설** · **1b3개 주**" oninput="debouncedUpdateCard(${id})"></textarea>
         <div class="meta-row"><span id="textStats-${id}">글자 0 · 줄 0</span></div>
         <div id="readWarn-${id}" class="warn-box"></div>
@@ -1599,6 +1647,11 @@ function addCard(prefill = null) {
   document.getElementById(`fontColorHead-${id}`).value = prefill?.fontColorHead ?? '#FFFFFF';
   document.getElementById(`fontColorSub-${id}`).value = prefill?.fontColorSub ?? '#D8D5D0';
   document.getElementById(`fontColorBody-${id}`).value = prefill?.fontColorBody ?? '#C4C4CA';
+  // 글꼴 크기 복원
+  if (prefill?.fontSizeHead) document.getElementById(`fontSizeHead-${id}`).value = prefill.fontSizeHead;
+  if (prefill?.fontSizeSub) document.getElementById(`fontSizeSub-${id}`).value = prefill.fontSizeSub;
+  if (prefill?.fontSizeBody) document.getElementById(`fontSizeBody-${id}`).value = prefill.fontSizeBody;
+  if (prefill?.fontSizeMeta) document.getElementById(`fontSizeMeta-${id}`).value = prefill.fontSizeMeta;
   document.getElementById(`head-${id}`).value = prefill?.head ?? '';
   document.getElementById(`subtitle-${id}`).value = prefill?.subtitle ?? '';
   document.getElementById(`sublabel-${id}`).value = prefill?.sublabel ?? '';
@@ -1795,7 +1848,6 @@ function applyBulkPaste(mode) {
   saveData();
 }
 
-/* ===== 시각 효과 ===== */
 function getGrainCanvas(cw, ch, amount) {
   const key = `${cw}x${ch}_${amount}`;
   if (grainCache && grainCacheKey === key) return grainCache;
@@ -2066,7 +2118,8 @@ async function renderStandard(ctx, canvas, img, d, skipGuide) {
   const topPad = img ? 56 : 130;
   const topH = img ? Math.min(img.height * (W / img.width), 500) : 0;
 
-  const runsHead = parseMarkup(d.head), runsSub = parseQuoteMarkup(d.subhead), runsBody = parseMarkup(d.body);
+  // 인용구도 헤드라인/본문과 동일한 마크업 파서 사용
+  const runsHead = parseMarkup(d.head), runsSub = parseMarkup(d.subhead), runsBody = parseMarkup(d.body);
   const {timestampText} = getDates();
   const hlHead = d.highlightStyleHead || 'both';
   const hlSub = d.highlightStyleSub || 'both';
@@ -2080,19 +2133,25 @@ async function renderStandard(ctx, canvas, img, d, skipGuide) {
   const hasSubtitle = !!(d.subtitle && d.subtitle.trim());
   const hasSublabel = !!(d.sublabel && d.sublabel.trim());
 
+  // 사용자 지정 기본 크기 (자동 축소 k의 기준)
+  const baseHead = d.fontSizeHead || 50;
+  const baseSub = d.fontSizeSub || 42;
+  const baseBody = d.fontSizeBody || 34;
+  const baseMeta = d.fontSizeMeta || 28;
+
   const availH = STANDARD_H - topH - topPad - BOTTOM_RESERVE;
 
   function measureContentHeight(k) {
     let cy = 104 * k;
-    cy = drawRichText(testCtx, runsHead, 0, cy, W - margin * 2, 50 * k, fcHead, d.theme, 18 * k, hlHead, textAlign, colorMap);
+    cy = drawRichText(testCtx, runsHead, 0, cy, W - margin * 2, baseHead * k, fcHead, d.theme, 18 * k, hlHead, textAlign, colorMap);
     if (hasSubtitle) cy += 36 * k;
     if (hasSublabel) cy += 52 * k;
     if (hasQuote) {
       cy += 72 * k;
-      cy = drawRichText(testCtx, runsSub, 0, cy, W - margin * 2 - 36, 42 * k, fcSub, d.theme, 16 * k, hlSub, textAlign, colorMap);
+      cy = drawRichText(testCtx, runsSub, 0, cy, W - margin * 2 - 36, baseSub * k, fcSub, d.theme, 16 * k, hlSub, textAlign, colorMap);
       cy += 44 * k;
     } else cy += 36 * k;
-    cy = drawRichText(testCtx, runsBody, 0, cy, W - margin * 2, 34 * k, fcBody, d.theme, 16 * k, hlBody, textAlign, colorMap);
+    cy = drawRichText(testCtx, runsBody, 0, cy, W - margin * 2, baseBody * k, fcBody, d.theme, 16 * k, hlBody, textAlign, colorMap);
     cy += 72 * k;
     return cy;
   }
@@ -2135,11 +2194,11 @@ async function renderStandard(ctx, canvas, img, d, skipGuide) {
   ctx.textBaseline = 'alphabetic';
 
   dy += 104 * k;
-  dy = drawRichText(ctx, runsHead, margin, dy, W - margin * 2, 50 * k, fcHead, d.theme, 18 * k, hlHead, textAlign, colorMap);
+  dy = drawRichText(ctx, runsHead, margin, dy, W - margin * 2, baseHead * k, fcHead, d.theme, 18 * k, hlHead, textAlign, colorMap);
 
   if (hasSubtitle) {
     dy += 28 * k;
-    const subSize = Math.max(22, 28 * k);
+    const subSize = Math.max(22, baseMeta * k);
     ctx.font = fontStack(subSize, '400');
     ctx.fillStyle = 'rgba(244,244,242,0.72)';
     ctx.fillText(d.subtitle.trim(), margin, dy);
@@ -2148,7 +2207,7 @@ async function renderStandard(ctx, canvas, img, d, skipGuide) {
 
   if (hasSublabel) {
     dy += 40 * k;
-    ctx.font = fontStack(22 * k, '500');
+    ctx.font = fontStack(baseMeta * k * 0.85, '500');
     ctx.fillStyle = '#8E8E96';
     ctx.fillText(d.sublabel, margin, dy);
   }
@@ -2157,8 +2216,9 @@ async function renderStandard(ctx, canvas, img, d, skipGuide) {
     dy += 64 * k;
     const quoteStartY = dy;
     const quoteX = margin + 28;
-    dy = drawRichText(ctx, runsSub, quoteX, dy, W - margin * 2 - 36, 42 * k, fcSub, d.theme, 16 * k, hlSub, textAlign, colorMap);
+    dy = drawRichText(ctx, runsSub, quoteX, dy, W - margin * 2 - 36, baseSub * k, fcSub, d.theme, 16 * k, hlSub, textAlign, colorMap);
     const quoteEndY = dy;
+    // 기존 세로 강조 바 유지
     ctx.fillStyle = d.theme;
     ctx.beginPath();
     ctx.roundRect(margin, quoteStartY - 4, 5, Math.max(24, quoteEndY - quoteStartY - 8), 3);
@@ -2180,7 +2240,7 @@ async function renderStandard(ctx, canvas, img, d, skipGuide) {
   ctx.stroke();
 
   dy += 40 * k;
-  dy = drawRichText(ctx, runsBody, margin, dy, W - margin * 2, 34 * k, fcBody, d.theme, 16 * k, hlBody, textAlign, colorMap);
+  dy = drawRichText(ctx, runsBody, margin, dy, W - margin * 2, baseBody * k, fcBody, d.theme, 16 * k, hlBody, textAlign, colorMap);
 
   ctx.font = fontStack(18, '400');
   ctx.fillStyle = '#5A5A62';
@@ -2200,7 +2260,8 @@ async function renderFull(ctx, canvas, img, d, skipGuide) {
   const FOOTER_RESERVE = 140;
   const TOP_MIN = 100;
 
-  const runsHead = parseMarkup(d.head), runsSub = parseQuoteMarkup(d.subhead), runsBody = parseMarkup(d.body);
+  // 인용구도 동일한 마크업 파서 사용
+  const runsHead = parseMarkup(d.head), runsSub = parseMarkup(d.subhead), runsBody = parseMarkup(d.body);
   const hlHead = d.highlightStyleHead || 'both';
   const hlSub = d.highlightStyleSub || 'both';
   const hlBody = d.highlightStyleBody || 'both';
@@ -2213,15 +2274,20 @@ async function renderFull(ctx, canvas, img, d, skipGuide) {
   const hasSubtitle = !!(d.subtitle && d.subtitle.trim());
   const hasSublabel = !!(d.sublabel && d.sublabel.trim());
 
+  const baseHead = d.fontSizeHead || 50;
+  const baseSub = d.fontSizeSub || 42;
+  const baseBody = d.fontSizeBody || 34;
+  const baseMeta = d.fontSizeMeta || 28;
+
   function measureHeight(k) {
     let ty = 0;
     ty += 40 * k;
-    ty = drawRichText(testCtx, runsHead, 0, ty, maxW, 52 * k, fcHead, d.theme, 16 * k, hlHead, textAlign, colorMap);
+    ty = drawRichText(testCtx, runsHead, 0, ty, maxW, baseHead * k, fcHead, d.theme, 16 * k, hlHead, textAlign, colorMap);
     if (hasSubtitle) ty += 34 * k;
     if (hasSublabel) ty += 32 * k;
-    if (hasQuote) { ty += 18 * k; ty = drawRichText(testCtx, runsSub, 0, ty, maxW - 30, 34 * k, fcSub, d.theme, 14 * k, hlSub, textAlign, colorMap); }
+    if (hasQuote) { ty += 18 * k; ty = drawRichText(testCtx, runsSub, 0, ty, maxW - 30, baseSub * k, fcSub, d.theme, 14 * k, hlSub, textAlign, colorMap); }
     ty += 36 * k;
-    ty = drawRichText(testCtx, runsBody, 0, ty, maxW, 36 * k, fcBody, d.theme, 16 * k, hlBody, textAlign, colorMap);
+    ty = drawRichText(testCtx, runsBody, 0, ty, maxW, baseBody * k, fcBody, d.theme, 16 * k, hlBody, textAlign, colorMap);
     return ty;
   }
 
@@ -2316,11 +2382,11 @@ async function renderFull(ctx, canvas, img, d, skipGuide) {
   ctx.fillText(metaText, margin + catTw + bPad * 2 + 14 * k, cy + 6 * k);
 
   cy += 42 * k;
-  cy = drawRichText(ctx, runsHead, margin, cy, maxW, 50 * k, fcHead, d.theme, 15 * k, hlHead, textAlign, colorMap);
+  cy = drawRichText(ctx, runsHead, margin, cy, maxW, baseHead * k, fcHead, d.theme, 15 * k, hlHead, textAlign, colorMap);
 
   if (hasSubtitle) {
     cy += 14 * k;
-    const subSize = Math.max(18, 22 * k);
+    const subSize = Math.max(18, baseMeta * k);
     ctx.font = fontStack(subSize, '400');
     ctx.fillStyle = 'rgba(244,244,242,0.75)';
     ctx.fillText(d.subtitle.trim(), margin, cy);
@@ -2328,7 +2394,7 @@ async function renderFull(ctx, canvas, img, d, skipGuide) {
   }
   if (hasSublabel) {
     cy += 12 * k;
-    ctx.font = fontStack(18 * k, '500');
+    ctx.font = fontStack(baseMeta * k * 0.85, '500');
     ctx.fillStyle = '#9A9AA2';
     ctx.fillText(d.sublabel, margin, cy);
     cy += 30 * k;
@@ -2336,7 +2402,8 @@ async function renderFull(ctx, canvas, img, d, skipGuide) {
   if (hasQuote) {
     cy += 16 * k;
     const qStart = cy;
-    cy = drawRichText(ctx, runsSub, margin + 22, cy, maxW - 28, 32 * k, fcSub, d.theme, 13 * k, hlSub, textAlign, colorMap);
+    cy = drawRichText(ctx, runsSub, margin + 22, cy, maxW - 28, baseSub * k, fcSub, d.theme, 13 * k, hlSub, textAlign, colorMap);
+    // 기존 세로 강조 바 유지
     ctx.fillStyle = d.theme;
     ctx.beginPath();
     ctx.roundRect(margin, qStart, 4, Math.max(20, cy - qStart - 6), 2);
@@ -2346,7 +2413,7 @@ async function renderFull(ctx, canvas, img, d, skipGuide) {
   ctx.fillStyle = d.theme;
   ctx.fillRect(margin, cy, 48 * k, 3 * k);
   cy += 28 * k;
-  drawRichText(ctx, runsBody, margin, cy, maxW, 36 * k, fcBody, d.theme, 16 * k, hlBody, textAlign, colorMap);
+  drawRichText(ctx, runsBody, margin, cy, maxW, baseBody * k, fcBody, d.theme, 16 * k, hlBody, textAlign, colorMap);
 
   ctx.textBaseline = 'alphabetic';
   drawPill(ctx, W - margin - 180, FULL_H - 110, d.pill, d.theme);
@@ -2361,6 +2428,10 @@ async function renderVideoList(ctx, canvas, img, d, guide) {
   const margin = 80;
   const {timestampText} = getDates();
   const colorMap = getColorMap(d);
+
+  const baseHead = d.fontSizeHead || 50;
+  const baseBody = d.fontSizeBody || 34;
+  const baseMeta = d.fontSizeMeta || 28;
 
   ctx.fillStyle='#000'; ctx.fillRect(0, vH, W, 1080 - vH);
   const grad = ctx.createLinearGradient(0, vH - 100, 0, vH);
@@ -2384,10 +2455,10 @@ async function renderVideoList(ctx, canvas, img, d, guide) {
   ctx.font = fontStack(22, '700'); ctx.fillStyle = d.theme;
   ctx.fillText(d.cat + " | " + timestampText + " | " + d.src, margin, cy);
   cy += 70;
-  cy = drawRichText(ctx, parseMarkup(d.head), margin, cy, W - margin*2, 42, '#FFF', d.theme, 10, 'both', 'left', colorMap) + 20;
+  cy = drawRichText(ctx, parseMarkup(d.head), margin, cy, W - margin*2, baseHead * 0.84, '#FFF', d.theme, 10, 'both', 'left', colorMap) + 20;
 
   if (d.subtitle && d.subtitle.trim()) {
-    ctx.font = fontStack(24, '400');
+    ctx.font = fontStack(baseMeta, '400');
     ctx.fillStyle = 'rgba(244,244,242,0.75)';
     ctx.fillText(d.subtitle.trim(), margin, cy);
     cy += 36;
@@ -2398,7 +2469,7 @@ async function renderVideoList(ctx, canvas, img, d, guide) {
     ctx.fillStyle = d.theme; ctx.beginPath(); ctx.arc(margin + 15, cy + 12, 18, 0, Math.PI*2); ctx.fill();
     ctx.fillStyle = '#000'; ctx.font = fontStack(20,'800'); ctx.textAlign='center'; ctx.fillText(i+1, margin + 15, cy + 20);
     ctx.textAlign='left';
-    cy = drawRichText(ctx, parseMarkup(it), margin + 50, cy, W - margin*2 - 50, 30, '#DDD', d.theme, 12, 'both', 'left', colorMap) + 15;
+    cy = drawRichText(ctx, parseMarkup(it), margin + 50, cy, W - margin*2 - 50, baseBody * 0.88, '#DDD', d.theme, 12, 'both', 'left', colorMap) + 15;
   });
 
   drawPill(ctx, W-margin-140, 1080-margin-40, d.pill, d.theme);
@@ -2439,10 +2510,9 @@ function parseMarkup(t) {
     });
   });
 }
+// 인용구도 헤드라인/본문과 완전히 동일한 마크업 시스템 사용
 function parseQuoteMarkup(t) {
-  return (t || '').split('\\n').join('\n').split('\n').map(l => [{
-    text: l, highlight: true, style: null, colorKey: null
-  }]);
+  return parseMarkup(t);
 }
 function resolveHlColor(colorKey, colorMap, fallback) {
   if (!colorKey || !colorMap) return fallback;
@@ -2584,7 +2654,6 @@ function saveCanvasImage(canvas, filename) {
   }, 'image/png');
 }
 
-/* ===== 체크리스트 ===== */
 function requestDownload(type, id) {
   pendingDownload = { type, id };
   ['ck1','ck2','ck3','ck4'].forEach(cid => { document.getElementById(cid).checked = false; });
