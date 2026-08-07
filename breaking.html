@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>브레이킹 카드뉴스 생성기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200;600;900&family=Noto+Sans+KR:wght@300;400;600;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --crimson: #8D1F24;
+    --crimson-bright: #c23f45;
+    --ui-bg: #0c0c0c;
+    --ui-panel: #1A1A1A;
+    --ui-panel-deep: #141414;
+    --ui-border: rgba(255,255,255,0.08);
+    --ui-border-strong: #2f2f2f;
+    --ui-text: #F4F4F2;
+    --ui-muted: #8a8a86;
+    --ui-muted2: #6b6b68;
+    --ui-label: #c8c8c5;
+    --ui-input-bg: #141414;
+    --ui-btn-bg: #1f1f1f;
+    --ui-btn-text: #9a9a96;
+    --ui-file-border: #3a3a3a;
+    --ui-file-text: #a5a5a1;
+    --ui-save-bg: #F4F4F2;
+    --ui-save-text: #111;
+    --ui-warn-bg: #2a1a1a;
+    --ui-warn-border: #5a2a2a;
+    --ui-warn-text: #e8a0a0;
+    --ui-modal-bg: rgba(0,0,0,0.55);
+    --shadow: 0 8px 32px rgba(0,0,0,0.4);
+    --shadow-sm: 0 2px 12px rgba(0,0,0,0.28);
+    --radius: 16px;
+    --radius-sm: 12px;
+    --radius-xs: 10px;
+    --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --accent-soft: rgba(141, 31, 36, 0.18);
+  }
+  body.light {
+    --ui-bg: #F5F5F7;
+    --ui-panel: #FFFFFF;
+    --ui-panel-deep: #F2F2F7;
+    --ui-border: rgba(0,0,0,0.06);
+    --ui-border-strong: #d4d4ce;
+    --ui-text: #1D1D1F;
+    --ui-muted: #6E6E73;
+    --ui-muted2: #8a8a86;
+    --ui-label: #3a3a38;
+    --ui-input-bg: #F2F2F7;
+    --ui-btn-bg: #EFEFE9;
+    --ui-btn-text: #5a5a56;
+    --ui-file-border: #c0c0b8;
+    --ui-file-text: #5a5a56;
+    --ui-save-bg: #1A1A1A;
+    --ui-save-text: #F4F4F2;
+    --ui-warn-bg: #fceeee;
+    --ui-warn-border: #e0b0b0;
+    --ui-warn-text: #8D1F24;
+    --ui-modal-bg: rgba(0,0,0,0.35);
+    --shadow: 0 8px 32px rgba(0,0,0,0.08);
+    --shadow-sm: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--ui-bg);
+    color: var(--ui-text);
+    min-height: 100vh;
+    transition: background 0.25s var(--ease), color 0.25s var(--ease);
+    letter-spacing: -0.015em;
+    line-height: 1.47;
+  }
+  input, textarea, select, button { font-family: inherit; font-size: 16px !important; }
+  button { cursor: pointer; border: none; color: inherit; }
+
+  .app {
+    display: grid;
+    grid-template-columns: minmax(300px, 400px) 1fr;
+    min-height: 100vh;
+  }
+  @media (max-width: 960px) {
+    .app { grid-template-columns: 1fr; }
+    .side-panel {
+      position: static !important;
+      height: auto !important;
+      max-height: none !important;
+      border-right: none;
+      border-bottom: 1px solid var(--ui-border);
+    }
+  }
+
+  /* Side panel */
+  .side-panel {
+    background: var(--ui-panel);
+    border-right: 1px solid var(--ui-border);
+    padding: 28px 20px 48px;
+    overflow-y: auto;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    max-height: 100vh;
+  }
+  .side-header { margin-bottom: 22px; }
+  .side-header h1 {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.25;
+  }
+  .side-header .sub {
+    font-size: 13px;
+    color: var(--ui-muted);
+    margin-top: 6px;
+  }
+  .side-tools {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .icon-btn {
+    height: 42px;
+    border-radius: 11px;
+    background: var(--ui-input-bg);
+    border: 1px solid var(--ui-border);
+    color: var(--ui-text);
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s var(--ease);
+  }
+  .icon-btn:hover { border-color: var(--crimson); }
+
+  /* Sections */
+  .sec {
+    background: var(--ui-input-bg);
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .sec-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 16px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--crimson-bright);
+  }
+  .sec-head .chev { font-size: 11px; opacity: 0.55; transition: transform 0.2s; color: var(--ui-muted); }
+  .sec.collapsed .sec-body { display: none; }
+  .sec.collapsed .chev { transform: rotate(-90deg); }
+  .sec-body {
+    padding: 4px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .sec-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .sec-grid .full { grid-column: 1 / -1; }
+
+  label.field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ui-muted);
+  }
+  label.field input[type="text"],
+  label.field textarea,
+  label.field select {
+    background: var(--ui-panel);
+    border: 1px solid var(--ui-border);
+    color: var(--ui-text);
+    border-radius: var(--radius-xs);
+    padding: 11px 13px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  label.field input:focus,
+  label.field textarea:focus,
+  label.field select:focus {
+    border-color: var(--crimson);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  label.field input[type="color"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 42px;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-xs);
+    background: var(--ui-panel);
+    padding: 4px;
+    cursor: pointer;
+  }
+  label.field input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+  label.field input[type="color"]::-webkit-color-swatch { border: none; border-radius: 6px; }
+  label.field input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: var(--ui-panel);
+    border-radius: 2px;
+    border: none;
+    width: 100%;
+    margin-top: 4px;
+  }
+  label.field input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--crimson);
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+
+  .btn-group, .btn-group-3 {
+    display: grid;
+    gap: 6px;
+    background: transparent;
+    border: none;
+  }
+  .btn-group { grid-template-columns: 1fr 1fr; }
+  .btn-group-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .mode-btn {
+    padding: 12px 10px;
+    border: 1px solid var(--ui-border);
+    border-radius: 10px;
+    background: var(--ui-panel);
+    color: var(--ui-btn-text);
+    font-weight: 600;
+    font-size: 13px !important;
+    letter-spacing: -0.01em;
+    transition: all 0.2s var(--ease);
+  }
+  .mode-btn.active {
+    background: var(--crimson);
+    color: #F4F4F2;
+    border-color: var(--crimson);
+  }
+
+  .file-row { display: flex; gap: 8px; }
+  .file-btn {
+    flex: 1;
+    background: var(--ui-panel);
+    border: 1.5px dashed var(--ui-file-border);
+    color: var(--ui-file-text);
+    border-radius: var(--radius-xs);
+    padding: 14px;
+    font-size: 13px !important;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: 0.2s var(--ease);
+  }
+  .file-btn:hover { border-color: var(--crimson); color: var(--ui-text); }
+  .file-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .clear-btn {
+    background: var(--ui-panel);
+    border: 1px solid var(--ui-border);
+    color: var(--ui-file-text);
+    border-radius: var(--radius-xs);
+    padding: 14px 16px;
+    font-size: 13px !important;
+    font-weight: 600;
+  }
+  .clear-btn:hover { border-color: var(--crimson); color: var(--ui-text); }
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ui-label);
+  }
+  .checkbox-row input {
+    width: 18px; height: 18px;
+    accent-color: var(--crimson);
+    cursor: pointer;
+  }
+
+  .color-hint {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--ui-muted2);
+    margin-top: -6px;
+    padding: 0 2px;
+  }
+
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--ui-muted2);
+    flex-wrap: wrap;
+  }
+  .warn-box {
+    display: none;
+    margin-top: 4px;
+    padding: 11px 13px;
+    border-radius: var(--radius-xs);
+    background: var(--ui-warn-bg);
+    border: 1px solid var(--ui-warn-border);
+    color: var(--ui-warn-text);
+    font-size: 12px;
+    line-height: 1.45;
+  }
+  .warn-box.show { display: block; }
+
+  .side-actions { margin-top: 16px; }
+  .save-btn {
+    width: 100%;
+    background: var(--ui-save-bg);
+    color: var(--ui-save-text);
+    border-radius: 12px;
+    padding: 16px;
+    font-weight: 800;
+    font-size: 15px !important;
+    letter-spacing: -0.01em;
+    transition: all 0.2s var(--ease);
+    box-shadow: var(--shadow-sm);
+  }
+  .save-btn:hover { background: var(--crimson-bright); color: #fff; }
+  .save-btn:active { transform: scale(0.98); }
+
+  /* Main preview */
+  .main-area {
+    padding: 36px 40px 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--ui-bg);
+  }
+  .preview-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ui-muted);
+    letter-spacing: 0.04em;
+    margin-bottom: 16px;
+    align-self: flex-start;
+  }
+  .canvas-wrap {
+    position: sticky;
+    top: 36px;
+    width: 100%;
+    max-width: 520px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--ui-border);
+  }
+  canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+    background: #000;
+  }
+
+  /* Modal */
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--ui-modal-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-backdrop.show { display: flex; }
+  .modal {
+    background: var(--ui-panel);
+    border: 1px solid var(--ui-border);
+    border-radius: 20px;
+    padding: 28px;
+    width: 100%;
+    max-width: 420px;
+    color: var(--ui-text);
+    box-shadow: var(--shadow);
+  }
+  .modal h3 { margin: 0 0 8px; font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+  .modal p { margin: 0 0 18px; font-size: 14px; color: var(--ui-muted); line-height: 1.5; }
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    font-size: 15px;
+    color: var(--ui-text);
+  }
+  .check-item input { width: 20px; height: 20px; accent-color: var(--crimson); }
+  .check-item label {
+    margin: 0 !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    font-size: 14px !important;
+    color: inherit !important;
+    font-weight: 500;
+  }
+  .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 22px; }
+  .modal-actions button {
+    padding: 14px;
+    border-radius: 980px;
+    font-weight: 700;
+    font-size: 14px !important;
+    border: 1px solid var(--ui-border);
+  }
+  .modal-cancel { background: var(--ui-input-bg); color: var(--ui-text); }
+  .modal-ok { background: var(--crimson); color: #fff; border-color: var(--crimson); }
+  .modal-ok:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  @media (max-width: 767px) {
+    .main-area { padding: 20px 16px max(80px, env(safe-area-inset-bottom) + 60px); }
+    .sec-grid { grid-template-columns: 1fr; }
+    .side-panel { padding: 20px 16px 32px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="lockScreen" style="display:none; position:fixed; inset:0; background:#0c0c0c; z-index:9999; align-items:center; justify-content:center; flex-direction:column; gap:16px;">
+  <div style="font-size:22px; font-weight:800; letter-spacing:-0.02em; color:#F4F4F2;">🔒 잠금 해제</div>
+  <input type="password" id="lockInput" placeholder="비밀번호 입력" style="width:260px; padding:14px 16px; border-radius:12px; border:1px solid #2f2f2f; background:#141414; color:#F4F4F2; font-size:16px; box-sizing:border-box;" onkeydown="if(event.key==='Enter') tryUnlock()">
+  <button class="save-btn" style="width:260px;" onclick="tryUnlock()">확인</button>
+  <div id="lockError" style="color:#c23f45; font-size:12px; height:14px;"></div>
+</div>
+
+<div id="checklistModal" class="modal-backdrop" onclick="if(event.target===this) closeChecklist()">
+  <div class="modal">
+    <h3>내보내기 전 체크리스트</h3>
+    <p>저장 전에 아래 항목을 확인하세요. 모두 확인 후 저장할 수 있습니다.</p>
+    <div class="check-item"><input type="checkbox" id="ckHead" onchange="updateChecklistBtn()"><label for="ckHead">헤드라인 문구 확인</label></div>
+    <div class="check-item"><input type="checkbox" id="ckSub" onchange="updateChecklistBtn()"><label for="ckSub">이브로우 / 부제 확인</label></div>
+    <div class="check-item"><input type="checkbox" id="ckBrand" onchange="updateChecklistBtn()"><label for="ckBrand">브랜드 태그 · 워터마크 확인</label></div>
+    <div class="check-item"><input type="checkbox" id="ckVisual" onchange="updateChecklistBtn()"><label for="ckVisual">이미지 · 프레임 · 효과 확인</label></div>
+    <div class="check-item"><input type="checkbox" id="ckSafe" onchange="updateChecklistBtn()"><label for="ckSafe">안전 영역(스토리 UI) 침범 없음</label></div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeChecklist()">취소</button>
+      <button class="modal-ok" id="checklistSaveBtn" disabled onclick="confirmDownload()">이미지 저장</button>
+    </div>
+  </div>
+</div>
+
+<div id="main-content" class="app">
+
+  <!-- LEFT PANEL -->
+  <aside class="side-panel">
+    <div class="side-header">
+      <h1>브레이킹 카드</h1>
+      <p class="sub">속보 · 헤드라인 · 인용 카드 생성기</p>
+      <div class="side-tools">
+        <button class="icon-btn" onclick="managePassword()">🔒 비밀번호</button>
+        <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">☀️ 라이트 UI</button>
+      </div>
+    </div>
+
+    <!-- 사이즈 · 색상 -->
+    <div class="sec">
+      <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span>사이즈 · 색상</span><span class="chev">▼</span>
+      </div>
+      <div class="sec-body">
+        <label class="field">사이즈
+          <select id="sizePreset" onchange="onSizePresetChange()">
+            <option value="1080x1080">정사각형 1:1 (1080×1080)</option>
+            <option value="1080x1920">스토리/릴스 9:16 (1080×1920)</option>
+            <option value="1080x1350">세로 4:5 (1080×1350)</option>
+            <option value="1080x1440">세로 3:4 (1080×1440)</option>
+            <option value="1920x1080">가로 16:9 (1920×1080)</option>
+            <option value="1440x1080">가로 4:3 (1440×1080)</option>
+            <option value="custom">직접 입력...</option>
+          </select>
+        </label>
+        <div id="customSizeFields" style="display:none;" class="sec-grid">
+          <label class="field">너비(px)
+            <input type="text" id="customW" value="1080" oninput="onCustomSizeInput()">
+          </label>
+          <label class="field">높이(px)
+            <input type="text" id="customH" value="1080" oninput="onCustomSizeInput()">
+          </label>
+        </div>
+        <div class="sec-grid">
+          <label class="field">배경 색상
+            <input type="color" id="bgColor" value="#1A1A1A" oninput="draw()">
+          </label>
+          <label class="field">포인트 색상
+            <input type="color" id="accentColor" value="#8D1F24" oninput="draw()">
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 이미지 -->
+    <div class="sec">
+      <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span>배경 이미지</span><span class="chev">▼</span>
+      </div>
+      <div class="sec-body">
+        <div class="file-row">
+          <div class="file-btn" id="fileBtnLabel">이미지 업로드
+            <input type="file" id="bgFile" accept="image/*" onchange="loadBgImage(event)">
+          </div>
+          <button class="clear-btn" onclick="clearBgImage()">제거</button>
+        </div>
+        <label class="field">이미지 확대/축소 <span id="zoomVal" style="color:var(--ui-text)">100%</span>
+          <input type="range" id="imgZoom" min="100" max="300" value="100" oninput="document.getElementById('zoomVal').textContent = this.value + '%'; draw();">
+        </label>
+        <label class="field">배경 흐림 정도 <span id="blurVal" style="color:var(--ui-text)">8px</span>
+          <input type="range" id="blurAmount" min="0" max="30" value="8" oninput="document.getElementById('blurVal').textContent = this.value + 'px'; draw();">
+        </label>
+        <label class="field">이미지 위치
+          <div class="btn-group" style="margin-top:4px;">
+            <button id="p1" class="mode-btn active" onclick="setPosMode('auto', this)">자동 (중앙)</button>
+            <button id="p2" class="mode-btn" onclick="setPosMode('manual', this)">수동</button>
+          </div>
+        </label>
+        <div id="manualPosField" style="display:none;">
+          <label class="field">가로 위치 <span id="posXVal" style="color:var(--ui-text)">50%</span>
+            <input type="range" id="posX" min="0" max="100" value="50" oninput="document.getElementById('posXVal').textContent = this.value + '%'; draw();">
+          </label>
+          <label class="field" style="margin-top:12px;">세로 위치 <span id="posYVal" style="color:var(--ui-text)">50%</span>
+            <input type="range" id="posY" min="0" max="100" value="50" oninput="document.getElementById('posYVal').textContent = this.value + '%'; draw();">
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 시각 효과 -->
+    <div class="sec">
+      <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span>시각 효과</span><span class="chev">▼</span>
+      </div>
+      <div class="sec-body">
+        <label class="checkbox-row">
+          <input type="checkbox" id="vignette" checked onchange="draw()"> 비네트 (모서리 어둡게)
+        </label>
+        <label class="checkbox-row">
+          <input type="checkbox" id="grain" onchange="draw()"> 그레인 (필름 노이즈)
+        </label>
+        <label class="field" id="grainField" style="display:none;">그레인 강도 <span id="grainVal" style="color:var(--ui-text)">25%</span>
+          <input type="range" id="grainAmount" min="5" max="60" value="25" oninput="document.getElementById('grainVal').textContent = this.value + '%'; draw();">
+        </label>
+        <label class="field">프레임 / 테두리
+          <select id="frameStyle" onchange="draw()">
+            <option value="none">없음</option>
+            <option value="thin">얇은 단선</option>
+            <option value="thick">두꺼운 단선</option>
+            <option value="double">이중 라인</option>
+            <option value="inset">안쪽 여백 프레임</option>
+          </select>
+        </label>
+        <label class="checkbox-row">
+          <input type="checkbox" id="safeGuide" onchange="draw()"> 안전 영역 가이드 (미리보기만)
+        </label>
+      </div>
+    </div>
+
+    <!-- 텍스트 -->
+    <div class="sec">
+      <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span>텍스트</span><span class="chev">▼</span>
+      </div>
+      <div class="sec-body">
+        <label class="field">이브로우 / 발행 정보
+          <input type="text" id="sub" value="BREAKING · 속보" oninput="draw()">
+        </label>
+        <label class="field">메인 헤드라인 (**강조**)
+          <textarea id="head" rows="3" oninput="onHeadInput()">전 세계 전격 발표, **트럼프 2.0 시대** 개막</textarea>
+        </label>
+        <div class="meta-row">
+          <span id="textStats">글자 0 · 줄 0</span>
+          <span id="sizeInfo">1080×1080</span>
+        </div>
+        <div id="readabilityWarn" class="warn-box"></div>
+        <label class="field">부제 (한 줄 · 비우면 숨김)
+          <input type="text" id="subhead" value="" placeholder="예: 워싱턴 발 · 현지시각 오늘 새벽" oninput="draw()">
+        </label>
+        <label class="field">인용구 (비우면 자동 숨김)
+          <textarea id="quote" rows="2" placeholder="인용할 문장을 입력하세요" oninput="draw()"></textarea>
+        </label>
+        <label class="field">인용 출처
+          <input type="text" id="quoteSource" value="" placeholder="예: — 도널드 트럼프" oninput="draw()">
+        </label>
+        <label class="field">강조 스타일
+          <select id="highlightStyle" onchange="draw()">
+            <option value="color">색상만</option>
+            <option value="underline">밑줄만</option>
+            <option value="both" selected>색상 + 밑줄</option>
+          </select>
+        </label>
+        <div class="sec-grid">
+          <label class="field">일반 글자
+            <input type="color" id="normalColor" value="#B8B8B5" oninput="draw()">
+          </label>
+          <label class="field">강조 글자
+            <input type="color" id="boldColor" value="#FFFFFF" oninput="draw()">
+          </label>
+          <label class="field full">밑줄 색상
+            <input type="color" id="underlineColor" value="#C23F45" oninput="draw()">
+          </label>
+        </div>
+        <label class="checkbox-row">
+          <input type="checkbox" id="textPanel" onchange="draw()"> 헤드라인 배경 패널
+        </label>
+        <label class="field">브랜드 태그
+          <input type="text" id="tag" value="INFO FLOW · NEWSROOM" oninput="draw()">
+        </label>
+        <label class="field">워터마크
+          <input type="text" id="watermark" value="@infoflow_kr" oninput="draw()">
+        </label>
+      </div>
+    </div>
+
+    <div class="side-actions">
+      <button class="save-btn" onclick="openChecklist()">이미지 저장</button>
+    </div>
+  </aside>
+
+  <!-- RIGHT PREVIEW -->
+  <main class="main-area">
+    <p class="preview-label">실시간 미리보기</p>
+    <div class="canvas-wrap">
+      <canvas id="cv" width="1080" height="1080"></canvas>
+    </div>
+  </main>
+</div>
+
+<script>
+let bgImage = null;
+let posMode = 'auto';
+let grainCanvasCache = null;
+let grainCacheKey = '';
+
+const PW_KEY = 'breaking_card_pw_hash';
+const THEME_KEY = 'breaking_card_theme';
+
+async function sha256(text) {
+    const enc = new TextEncoder().encode(text);
+    const buf = await crypto.subtle.digest('SHA-256', enc);
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function checkLock() {
+    const hash = localStorage.getItem(PW_KEY);
+    if(!hash) return;
+    document.getElementById('lockScreen').style.display = 'flex';
+    document.getElementById('main-content').style.display = 'none';
+    setTimeout(() => document.getElementById('lockInput')?.focus(), 50);
+}
+
+async function tryUnlock() {
+    const input = document.getElementById('lockInput').value;
+    const hash = localStorage.getItem(PW_KEY);
+    const inputHash = await sha256(input);
+    if(inputHash === hash) {
+        document.getElementById('lockScreen').style.display = 'none';
+        document.getElementById('main-content').style.display = '';
+        document.getElementById('main-content').classList.add('app');
+    } else {
+        document.getElementById('lockError').textContent = '비밀번호가 틀렸습니다.';
+        document.getElementById('lockInput').value = '';
+        document.getElementById('lockInput').focus();
+    }
+}
+
+async function managePassword() {
+    const hasPw = !!localStorage.getItem(PW_KEY);
+    if(hasPw) {
+        const wantsChange = confirm('비밀번호를 변경하려면 확인, 삭제하려면 취소를 눌러주세요.');
+        const cur = prompt('현재 비밀번호를 입력하세요:');
+        if(cur === null) return;
+        if(await sha256(cur) !== localStorage.getItem(PW_KEY)) { alert('현재 비밀번호가 일치하지 않습니다.'); return; }
+        if(wantsChange) {
+            const np = prompt('새 비밀번호를 입력하세요:');
+            if(!np) return;
+            localStorage.setItem(PW_KEY, await sha256(np));
+            alert('비밀번호가 변경되었습니다.');
+        } else {
+            localStorage.removeItem(PW_KEY);
+            alert('비밀번호 잠금이 해제되었습니다.');
+        }
+    } else {
+        const np = prompt('설정할 비밀번호를 입력하세요:');
+        if(!np) return;
+        const confirmPw = prompt('확인을 위해 한 번 더 입력해주세요:');
+        if(np !== confirmPw) { alert('비밀번호가 서로 다릅니다. 다시 시도해주세요.'); return; }
+        localStorage.setItem(PW_KEY, await sha256(np));
+        alert('비밀번호가 설정되었습니다. 다음 접속부터 잠금이 적용됩니다.\n(주의: 브라우저 개발자도구를 사용하면 우회될 수 있는 간단한 보호 기능입니다.)');
+    }
+}
+
+function applyTheme(mode) {
+    const isLight = mode === 'light';
+    document.body.classList.toggle('light', isLight);
+    document.getElementById('themeBtn').textContent = isLight ? '🌙 다크 UI' : '☀️ 라이트 UI';
+    localStorage.setItem(THEME_KEY, isLight ? 'light' : 'dark');
+}
+function toggleTheme() {
+    applyTheme(document.body.classList.contains('light') ? 'dark' : 'light');
+}
+function initTheme() {
+    applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+}
+
+checkLock();
+initTheme();
+
+document.getElementById('grain').addEventListener('change', () => {
+    document.getElementById('grainField').style.display = document.getElementById('grain').checked ? 'block' : 'none';
+    draw();
+});
+
+function setPosMode(p, el) {
+    posMode = p;
+    document.querySelectorAll('#p1,#p2').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('manualPosField').style.display = (p === 'manual') ? 'block' : 'none';
+    draw();
+}
+
+function applyCanvasSize(w, h) {
+    const canvas = document.getElementById('cv');
+    canvas.width = w;
+    canvas.height = h;
+    document.getElementById('sizeInfo').textContent = `${w}×${h}`;
+    grainCanvasCache = null;
+    draw();
+}
+
+function onSizePresetChange() {
+    const val = document.getElementById('sizePreset').value;
+    const customFields = document.getElementById('customSizeFields');
+    if (val === 'custom') {
+        customFields.style.display = 'grid';
+        onCustomSizeInput();
+        return;
+    }
+    customFields.style.display = 'none';
+    const clean = val.replace(/[A-Za-z]+$/, '');
+    const [w, h] = clean.split('x').map(Number);
+    applyCanvasSize(w, h);
+}
+
+function onCustomSizeInput() {
+    const wRaw = parseInt(document.getElementById('customW').value, 10);
+    const hRaw = parseInt(document.getElementById('customH').value, 10);
+    const w = Math.max(200, Math.min(3000, isNaN(wRaw) ? 1080 : wRaw));
+    const h = Math.max(200, Math.min(3000, isNaN(hRaw) ? 1080 : hRaw));
+    applyCanvasSize(w, h);
+}
+
+function loadBgImage(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => { bgImage = img; draw(); };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function clearBgImage() {
+    bgImage = null;
+    document.getElementById('bgFile').value = '';
+    draw();
+}
+
+function parseMarkupChars(paragraph) {
+    const parts = paragraph.split('**');
+    const chars = [];
+    parts.forEach((p, i) => {
+        const bold = i % 2 !== 0;
+        for (const ch of p) chars.push({ ch, bold });
+    });
+    return chars;
+}
+
+function mergeRuns(lineChars) {
+    const runs = [];
+    lineChars.forEach(c => {
+        const last = runs[runs.length - 1];
+        if (last && last.bold === c.bold) last.text += c.ch;
+        else runs.push({ text: c.ch, bold: c.bold });
+    });
+    return runs;
+}
+
+function wrapMarkup(ctx, text, maxWidth, fontSize) {
+    const paragraphs = text.split('\n');
+    const allLines = [];
+    paragraphs.forEach(p => {
+        if (p.trim() === '') { allLines.push([]); return; }
+        const chars = parseMarkupChars(p);
+        let current = [];
+        let currentWidth = 0;
+        chars.forEach(c => {
+            ctx.font = `${c.bold ? '900' : '200'} ${fontSize}px "Noto Serif KR"`;
+            const w = ctx.measureText(c.ch).width;
+            if (currentWidth + w > maxWidth && current.length > 0 && c.ch !== ' ') {
+                allLines.push(mergeRuns(current));
+                current = [];
+                currentWidth = 0;
+            }
+            current.push(c);
+            currentWidth += w;
+        });
+        if (current.length) allLines.push(mergeRuns(current));
+    });
+    return allLines;
+}
+
+function wrapPlain(ctx, text, maxWidth, fontSpec) {
+    ctx.font = fontSpec;
+    const words = text.split('');
+    const lines = [];
+    let cur = '';
+    for (const ch of words) {
+        const test = cur + ch;
+        if (ctx.measureText(test).width > maxWidth && cur) {
+            lines.push(cur);
+            cur = ch;
+        } else {
+            cur = test;
+        }
+    }
+    if (cur) lines.push(cur);
+    return lines;
+}
+
+function drawCoverImage(ctx, img, CW, CH, posXPct, posYPct, zoomPct) {
+    const imgRatio = img.width / img.height;
+    const canvasRatio = CW / CH;
+    let dw, dh;
+    if (imgRatio > canvasRatio) { dh = CH; dw = CH * imgRatio; }
+    else { dw = CW; dh = CW / imgRatio; }
+    const zoom = (zoomPct || 100) / 100;
+    dw *= zoom; dh *= zoom;
+    const px = (posXPct !== undefined) ? posXPct / 100 : 0.5;
+    const py = (posYPct !== undefined) ? posYPct / 100 : 0.5;
+    const dx = (CW - dw) * px;
+    const dy = (CH - dh) * py;
+    ctx.drawImage(img, dx, dy, dw, dh);
+}
+
+function hexToRgb(hex) {
+    const h = hex.replace('#', '');
+    const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
+    const n = parseInt(full, 16);
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+}
+function relLuminance({ r, g, b }) {
+    const srgb = [r, g, b].map(v => {
+        const c = v / 255;
+        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * srgb[0] + 0.7152 * srgb[1] + 0.0722 * srgb[2];
+}
+function contrastRatio(hex1, hex2) {
+    const L1 = relLuminance(hexToRgb(hex1));
+    const L2 = relLuminance(hexToRgb(hex2));
+    const lighter = Math.max(L1, L2);
+    const darker = Math.min(L1, L2);
+    return (lighter + 0.05) / (darker + 0.05);
+}
+
+function updateReadabilityWarning() {
+    const box = document.getElementById('readabilityWarn');
+    const bg = document.getElementById('bgColor').value;
+    const normal = document.getElementById('normalColor').value;
+    const bold = document.getElementById('boldColor').value;
+    const msgs = [];
+    if (bgImage) {
+        msgs.push('배경 이미지가 있어 일부 구간에서 글자 대비가 낮을 수 있습니다. 패널·비네트를 활용해 보세요.');
+    } else {
+        const cN = contrastRatio(normal, bg);
+        const cB = contrastRatio(bold, bg);
+        if (cN < 3) msgs.push(`일반 글자 대비가 낮습니다 (${cN.toFixed(1)}:1).`);
+        if (cB < 3) msgs.push(`강조 글자 대비가 낮습니다 (${cB.toFixed(1)}:1).`);
+        if (cN >= 3 && cB >= 3 && cN < 4.5) msgs.push(`가독성은 보통 수준입니다 (일반 ${cN.toFixed(1)}:1).`);
+    }
+    if (msgs.length) {
+        box.textContent = '⚠ ' + msgs.join(' ');
+        box.classList.add('show');
+    } else {
+        box.classList.remove('show');
+        box.textContent = '';
+    }
+}
+
+function updateTextStats(lines, rawText) {
+    const plain = rawText.replace(/\*\*/g, '');
+    const chars = [...plain].filter(ch => ch !== '\n').length;
+    const lineCount = lines.length;
+    let tip = '';
+    if (lineCount > 6) tip = ' · 줄이 많아 글자가 작아질 수 있음';
+    else if (lineCount >= 4) tip = ' · 권장 범위';
+    document.getElementById('textStats').textContent = `글자 ${chars} · 줄 ${lineCount}${tip}`;
+}
+
+function onHeadInput() { draw(); }
+
+function getGrainPattern(ctx, CW, CH, amount) {
+    const key = `${CW}x${CH}_${amount}`;
+    if (grainCanvasCache && grainCacheKey === key) return grainCanvasCache;
+    const g = document.createElement('canvas');
+    const gw = Math.max(160, Math.floor(CW / 4));
+    const gh = Math.max(160, Math.floor(CH / 4));
+    g.width = gw; g.height = gh;
+    const gctx = g.getContext('2d');
+    const imgData = gctx.createImageData(gw, gh);
+    const data = imgData.data;
+    const strength = amount / 100;
+    for (let i = 0; i < data.length; i += 4) {
+        const v = Math.random() * 255;
+        data[i] = data[i + 1] = data[i + 2] = v;
+        data[i + 3] = Math.floor(40 + strength * 120);
+    }
+    gctx.putImageData(imgData, 0, 0);
+    grainCanvasCache = g;
+    grainCacheKey = key;
+    return g;
+}
+
+function drawFrame(ctx, CW, CH, style, accent) {
+    if (style === 'none') return;
+    const inset = Math.max(12, Math.round(Math.min(CW, CH) * 0.018));
+    ctx.save();
+    if (style === 'thin') {
+        ctx.strokeStyle = 'rgba(244,244,242,0.55)';
+        ctx.lineWidth = Math.max(2, Math.round(Math.min(CW, CH) * 0.003));
+        ctx.strokeRect(inset * 0.5, inset * 0.5, CW - inset, CH - inset);
+    } else if (style === 'thick') {
+        ctx.strokeStyle = 'rgba(244,244,242,0.7)';
+        ctx.lineWidth = Math.max(6, Math.round(Math.min(CW, CH) * 0.01));
+        ctx.strokeRect(inset, inset, CW - inset * 2, CH - inset * 2);
+    } else if (style === 'double') {
+        ctx.strokeStyle = 'rgba(244,244,242,0.65)';
+        ctx.lineWidth = Math.max(2, Math.round(Math.min(CW, CH) * 0.003));
+        ctx.strokeRect(inset * 0.6, inset * 0.6, CW - inset * 1.2, CH - inset * 1.2);
+        ctx.strokeRect(inset * 1.4, inset * 1.4, CW - inset * 2.8, CH - inset * 2.8);
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = Math.max(2, Math.round(Math.min(CW, CH) * 0.0025));
+        ctx.strokeRect(inset, inset, CW - inset * 2, CH - inset * 2);
+    }
+    ctx.restore();
+
+    if (style === 'inset') {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(244,244,242,0.5)';
+        ctx.lineWidth = Math.max(2, Math.round(Math.min(CW, CH) * 0.003));
+        const m = inset * 1.8;
+        ctx.strokeRect(m, m, CW - m * 2, CH - m * 2);
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = Math.max(3, Math.round(Math.min(CW, CH) * 0.004));
+        ctx.beginPath();
+        ctx.moveTo(m, m + 28);
+        ctx.lineTo(m, m);
+        ctx.lineTo(m + 28, m);
+        ctx.moveTo(CW - m - 28, m);
+        ctx.lineTo(CW - m, m);
+        ctx.lineTo(CW - m, m + 28);
+        ctx.moveTo(CW - m, CH - m - 28);
+        ctx.lineTo(CW - m, CH - m);
+        ctx.lineTo(CW - m - 28, CH - m);
+        ctx.moveTo(m + 28, CH - m);
+        ctx.lineTo(m, CH - m);
+        ctx.lineTo(m, CH - m - 28);
+        ctx.stroke();
+        ctx.restore();
+    }
+}
+
+function drawSafeGuide(ctx, CW, CH) {
+    const topH = CH * 0.12;
+    const bottomH = CH * 0.14;
+    ctx.save();
+    ctx.fillStyle = 'rgba(194, 63, 69, 0.18)';
+    ctx.fillRect(0, 0, CW, topH);
+    ctx.fillRect(0, CH - bottomH, CW, bottomH);
+    ctx.setLineDash([10, 8]);
+    ctx.strokeStyle = 'rgba(194, 63, 69, 0.85)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, topH); ctx.lineTo(CW, topH);
+    ctx.moveTo(0, CH - bottomH); ctx.lineTo(CW, CH - bottomH);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.font = '600 22px "Noto Sans KR"';
+    ctx.fillStyle = 'rgba(255, 180, 180, 0.95)';
+    ctx.textAlign = 'center';
+    ctx.fillText('SAFE · 상단 UI 영역', CW / 2, topH * 0.55);
+    ctx.fillText('SAFE · 하단 UI 영역', CW / 2, CH - bottomH * 0.4);
+    ctx.restore();
+}
+
+function draw(options = {}) {
+    const skipGuide = !!options.skipGuide;
+    const canvas = document.getElementById('cv');
+    const ctx = canvas.getContext('2d');
+    const CW = canvas.width;
+    const CH = canvas.height;
+    const isWide = CW / CH >= 0.85;
+    const marginX = CW * 0.065;
+    const marginTop = CH * (isWide ? 0.06 : 0.045);
+    const marginBottom = CH * (isWide ? 0.06 : 0.045);
+
+    const bg = document.getElementById('bgColor').value;
+    const accent = document.getElementById('accentColor').value;
+    const normalColor = document.getElementById('normalColor').value;
+    const boldColor = document.getElementById('boldColor').value;
+    const underlineColor = document.getElementById('underlineColor').value;
+    const highlightStyle = document.getElementById('highlightStyle').value;
+    const useColorHL = highlightStyle === 'color' || highlightStyle === 'both';
+    const useUnderlineHL = highlightStyle === 'underline' || highlightStyle === 'both';
+
+    if (bgImage) {
+        const blurAmount = parseInt(document.getElementById('blurAmount').value, 10);
+        const zoomPct = parseInt(document.getElementById('imgZoom').value, 10);
+        const posX = posMode === 'manual' ? parseInt(document.getElementById('posX').value, 10) : 50;
+        const posY = posMode === 'manual' ? parseInt(document.getElementById('posY').value, 10) : 50;
+        if (blurAmount > 0) {
+            ctx.save();
+            ctx.filter = `blur(${blurAmount}px)`;
+            const scale = 1 + blurAmount / 100;
+            ctx.translate(CW / 2, CH / 2);
+            ctx.scale(scale, scale);
+            ctx.translate(-CW / 2, -CH / 2);
+            drawCoverImage(ctx, bgImage, CW, CH, posX, posY, zoomPct);
+            ctx.restore();
+        } else {
+            drawCoverImage(ctx, bgImage, CW, CH, posX, posY, zoomPct);
+        }
+        const grad = ctx.createLinearGradient(0, 0, 0, CH);
+        grad.addColorStop(0, 'rgba(10,10,10,0.35)');
+        grad.addColorStop(0.55, 'rgba(10,10,10,0.72)');
+        grad.addColorStop(1, 'rgba(10,10,10,0.9)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, CW, CH);
+
+        if (document.getElementById('vignette').checked) {
+            const cx = CW / 2, cy = CH / 2;
+            const outerR = Math.sqrt(cx * cx + cy * cy);
+            const vignette = ctx.createRadialGradient(cx, cy, outerR * 0.45, cx, cy, outerR);
+            vignette.addColorStop(0, 'rgba(0,0,0,0)');
+            vignette.addColorStop(1, 'rgba(0,0,0,0.65)');
+            ctx.fillStyle = vignette;
+            ctx.fillRect(0, 0, CW, CH);
+        }
+    } else {
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, CW, CH);
+        if (document.getElementById('vignette').checked) {
+            const cx = CW / 2, cy = CH / 2;
+            const outerR = Math.sqrt(cx * cx + cy * cy);
+            const vignette = ctx.createRadialGradient(cx, cy, outerR * 0.5, cx, cy, outerR);
+            vignette.addColorStop(0, 'rgba(0,0,0,0)');
+            vignette.addColorStop(1, 'rgba(0,0,0,0.35)');
+            ctx.fillStyle = vignette;
+            ctx.fillRect(0, 0, CW, CH);
+        }
+    }
+
+    if (document.getElementById('grain').checked) {
+        const amount = parseInt(document.getElementById('grainAmount').value, 10);
+        const noise = getGrainPattern(ctx, CW, CH, amount);
+        ctx.save();
+        ctx.globalAlpha = 0.22 + (amount / 100) * 0.35;
+        ctx.drawImage(noise, 0, 0, CW, CH);
+        ctx.restore();
+    }
+
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(marginX, marginTop);
+    ctx.lineTo(marginX + 56, marginTop);
+    ctx.stroke();
+
+    const sub = document.getElementById('sub').value;
+    ctx.font = '600 22px "Noto Sans KR"';
+    ctx.fillStyle = accent;
+    ctx.textAlign = 'left';
+    ctx.letterSpacing = "3px";
+    ctx.fillText(sub.toUpperCase(), marginX, marginTop + 44);
+
+    const watermark = document.getElementById('watermark').value;
+    if (watermark.trim()) {
+        ctx.font = '400 20px "Noto Sans KR"';
+        ctx.fillStyle = 'rgba(244,244,242,0.55)';
+        ctx.textAlign = 'right';
+        ctx.letterSpacing = "0.5px";
+        ctx.fillText(watermark, CW - marginX, marginTop + 44);
+    }
+    ctx.letterSpacing = "0px";
+
+    ctx.strokeStyle = 'rgba(244,244,242,0.14)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(marginX, marginTop + 68);
+    ctx.lineTo(CW - marginX, marginTop + 68);
+    ctx.stroke();
+
+    const bottomLineY = CH - marginBottom - 40;
+    const headlineTop = marginTop + 68 + 40;
+    const headlineBottom = bottomLineY - 40;
+    const availableHeight = headlineBottom - headlineTop;
+    const maxTextWidth = CW - marginX * 2;
+
+    const text = document.getElementById('head').value;
+    const subhead = document.getElementById('subhead').value.trim();
+    const quote = document.getElementById('quote').value.trim();
+    const quoteSource = document.getElementById('quoteSource').value.trim();
+
+    const subheadSpace = subhead ? Math.max(36, CH * 0.035) : 0;
+    const quoteSpace = quote ? Math.max(90, CH * 0.12) : 0;
+    const contentAvailable = Math.max(80, availableHeight - subheadSpace - quoteSpace);
+
+    let fontSize = isWide ? 84 : 76;
+    let lineHeight, lines;
+    while (true) {
+        lineHeight = fontSize * 1.28;
+        lines = wrapMarkup(ctx, text, maxTextWidth, fontSize);
+        const totalH = lines.length * lineHeight;
+        if (totalH <= contentAvailable || fontSize <= 36) break;
+        fontSize -= 4;
+    }
+
+    updateTextStats(lines, text);
+    updateReadabilityWarning();
+
+    const totalH = lines.length * lineHeight;
+    const blockH = totalH + subheadSpace + quoteSpace;
+    let currentY = headlineTop + (availableHeight - blockH) / 2 + fontSize * 0.78;
+
+    if (document.getElementById('textPanel').checked) {
+        const panelPadY = fontSize * 0.35;
+        const panelTop = headlineTop + (availableHeight - blockH) / 2 - panelPadY;
+        const panelHeight = blockH + panelPadY * 2;
+        ctx.fillStyle = 'rgba(8,8,8,0.6)';
+        ctx.fillRect(marginX - 24, panelTop, maxTextWidth + 48, panelHeight);
+        ctx.fillStyle = accent;
+        ctx.fillRect(marginX - 24, panelTop, 4, panelHeight);
+    }
+
+    lines.forEach((line) => {
+        let startX = marginX;
+        line.forEach(p => {
+            ctx.font = `${p.bold ? '900' : '200'} ${fontSize}px "Noto Serif KR"`;
+            ctx.fillStyle = (p.bold && useColorHL) ? boldColor : normalColor;
+            ctx.textAlign = 'left';
+            ctx.fillText(p.text, startX, currentY);
+            const w = ctx.measureText(p.text).width;
+            if (p.bold && useUnderlineHL) {
+                ctx.strokeStyle = underlineColor;
+                ctx.lineWidth = Math.max(2, fontSize * 0.035);
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(startX, currentY + fontSize * 0.18);
+                ctx.lineTo(startX + w, currentY + fontSize * 0.18);
+                ctx.stroke();
+            }
+            startX += w;
+        });
+        currentY += lineHeight;
+    });
+
+    if (subhead) {
+        currentY += fontSize * 0.15;
+        const subSize = Math.max(22, Math.round(fontSize * 0.38));
+        ctx.font = `400 ${subSize}px "Noto Sans KR"`;
+        ctx.fillStyle = 'rgba(244,244,242,0.72)';
+        ctx.textAlign = 'left';
+        const shLines = wrapPlain(ctx, subhead, maxTextWidth, ctx.font);
+        shLines.slice(0, 2).forEach((ln, i) => {
+            ctx.fillText(ln, marginX, currentY + i * (subSize * 1.35));
+        });
+        currentY += Math.min(shLines.length, 2) * (subSize * 1.35) + subSize * 0.4;
+    }
+
+    if (quote) {
+        currentY += Math.max(10, fontSize * 0.12);
+        const qSize = Math.max(24, Math.round(fontSize * 0.42));
+        ctx.fillStyle = accent;
+        ctx.font = `900 ${Math.round(qSize * 1.6)}px "Noto Serif KR"`;
+        ctx.textAlign = 'left';
+        ctx.fillText('“', marginX, currentY);
+
+        ctx.font = `300 ${qSize}px "Noto Serif KR"`;
+        ctx.fillStyle = 'rgba(244,244,242,0.9)';
+        const qLines = wrapPlain(ctx, quote, maxTextWidth - 20, ctx.font);
+        let qY = currentY + qSize * 0.9;
+        qLines.slice(0, 4).forEach((ln) => {
+            ctx.fillText(ln, marginX + 8, qY);
+            qY += qSize * 1.35;
+        });
+
+        if (quoteSource) {
+            ctx.font = `400 ${Math.max(18, Math.round(qSize * 0.7))}px "Noto Sans KR"`;
+            ctx.fillStyle = 'rgba(244,244,242,0.55)';
+            ctx.fillText(quoteSource, marginX + 8, qY + 8);
+        }
+    }
+
+    ctx.strokeStyle = 'rgba(244,244,242,0.14)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(marginX, bottomLineY);
+    ctx.lineTo(CW - marginX, bottomLineY);
+    ctx.stroke();
+
+    const tag = document.getElementById('tag').value;
+    ctx.font = '600 20px "Noto Sans KR"';
+    ctx.fillStyle = 'rgba(244,244,242,0.85)';
+    ctx.textAlign = 'left';
+    ctx.letterSpacing = "1.5px";
+    ctx.fillText(tag, marginX, bottomLineY + 34);
+    ctx.letterSpacing = "0px";
+
+    ctx.font = '400 18px "Noto Sans KR"';
+    ctx.fillStyle = 'rgba(244,244,242,0.4)';
+    ctx.textAlign = 'right';
+    const today = new Date();
+    const dateStr = `${today.getFullYear()}.${String(today.getMonth()+1).padStart(2,'0')}.${String(today.getDate()).padStart(2,'0')}`;
+    ctx.fillText(dateStr, CW - marginX, bottomLineY + 34);
+
+    const frameStyle = document.getElementById('frameStyle').value;
+    drawFrame(ctx, CW, CH, frameStyle, accent);
+
+    if (!skipGuide && document.getElementById('safeGuide').checked) {
+        drawSafeGuide(ctx, CW, CH);
+    }
+}
+
+function openChecklist() {
+    ['ckHead','ckSub','ckBrand','ckVisual','ckSafe'].forEach(id => {
+        document.getElementById(id).checked = false;
+    });
+    updateChecklistBtn();
+    document.getElementById('checklistModal').classList.add('show');
+}
+function closeChecklist() {
+    document.getElementById('checklistModal').classList.remove('show');
+}
+function updateChecklistBtn() {
+    const ids = ['ckHead','ckSub','ckBrand','ckVisual','ckSafe'];
+    const all = ids.every(id => document.getElementById(id).checked);
+    document.getElementById('checklistSaveBtn').disabled = !all;
+}
+function confirmDownload() {
+    closeChecklist();
+    download();
+}
+function download() {
+    draw({ skipGuide: true });
+    const canvas = document.getElementById('cv');
+    const dataUrl = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.download = `cardnews_${Date.now()}.png`;
+    link.href = dataUrl;
+    link.click();
+    draw();
+}
+
+document.fonts.ready.then(draw);
+</script>
+</body>
+</html>

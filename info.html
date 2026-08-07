@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>개인용 인포그래픽 카드 생성기 (최종 완성판)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --accent: #007AFF;
+    --bg: #f2f2f7;
+    --card-bg: rgba(255,255,255,0.72);
+    --card-border: rgba(255,255,255,0.45);
+    --text: #1d1d1f;
+    --text-secondary: #6e6e73;
+    --radius: 28px;
+    --shadow: 0 12px 40px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+    --glass-blur: 24px;
+    --box-bg: rgba(255,255,255,0.5);
+    --box-border: rgba(0,0,0,0.08);
+  }
+
+  body.dark {
+    --bg: #000000;
+    --card-bg: rgba(28,28,30,0.78);
+    --card-border: rgba(255,255,255,0.14);
+    --text: #f5f5f7;
+    --text-secondary: #98989d;
+    --shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 20px 50px rgba(0,0,0,0.55);
+    --box-bg: rgba(255,255,255,0.06);
+    --box-border: rgba(255,255,255,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 20px;
+    transition: background 0.3s;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 28px;
+  }
+
+  h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.6px; margin-bottom: 4px; }
+  .subtitle { color: var(--text-secondary); font-size: 14px; margin-bottom: 22px; }
+
+  .panel {
+    background: var(--card-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    padding: 22px;
+    box-shadow: var(--shadow);
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+  }
+
+  .section { margin-bottom: 20px; }
+  .section-title {
+    font-size: 12px; font-weight: 600; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 9px;
+  }
+
+  .btn-group { display: flex; flex-wrap: wrap; gap: 7px; }
+
+  button {
+    background: rgba(120,120,128,0.12);
+    border: none; border-radius: 11px;
+    padding: 9px 12px; font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s; color: var(--text);
+    font-family: inherit;
+  }
+  button:hover { background: rgba(120,120,128,0.22); }
+  button.active { background: var(--accent); color: white; }
+
+  input[type="text"], input[type="number"], textarea, select {
+    width: 100%; padding: 11px 13px; border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.08);
+    background: rgba(120,120,128,0.08);
+    color: var(--text); font-size: 14px; margin-bottom: 8px;
+    font-family: inherit;
+  }
+  body.dark input, body.dark textarea, body.dark select { border-color: rgba(255,255,255,0.1); }
+  textarea { min-height: 80px; resize: vertical; }
+
+  .color-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  input[type="color"] {
+    width: 42px; height: 42px; border: none; border-radius: 11px;
+    cursor: pointer; padding: 0; background: none; flex-shrink: 0;
+  }
+
+  input[type="range"] { width: 100%; accent-color: var(--accent); }
+
+  .preview-area { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  #pages-container { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; }
+
+  .card-wrapper { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+
+  .card-preview {
+    background: var(--card-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden; position: relative;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  .style-apple { --radius: 32px; }
+  .style-modern { --radius: 36px; }
+  .style-bold { --radius: 20px; }
+  .style-warm { --radius: 24px; }
+  body:not(.dark) .style-warm { --card-bg: rgba(255,248,240,0.78); }
+
+  .style-editorial { --radius: 2px; --card-border: rgba(28,27,25,0.14); }
+  body:not(.dark) .style-editorial { --card-bg: #F1EDE4; --text: #1C1B19; --text-secondary: #8a8377; --box-bg: rgba(28,27,25,0.04); --box-border: rgba(28,27,25,0.12); }
+  body.dark .style-editorial { --card-bg: #17160f; --text: #F1EDE4; --text-secondary: #9a9284; --card-border: rgba(241,237,228,0.14); --box-bg: rgba(241,237,228,0.06); --box-border: rgba(241,237,228,0.12); }
+
+  .style-apple::before {
+    content:""; position: absolute; inset:0; pointer-events: none; z-index: 0;
+    background: radial-gradient(ellipse 62% 50% at 10% 6%, var(--accent), transparent 62%), radial-gradient(ellipse 55% 45% at 94% 92%, var(--accent), transparent 66%);
+    filter: blur(46px); opacity: 0.20;
+  }
+  body.dark .style-apple::before { opacity: 0.30; }
+
+  .texture-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 1; mix-blend-mode: overlay; opacity: 0.35; }
+  .texture-noise { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
+  .texture-grid { background-size: 24px 24px; background-image: linear-gradient(to right, rgba(120,120,128,0.2) 1px, transparent 1px), linear-gradient(to bottom, rgba(120,120,128,0.2) 1px, transparent 1px); }
+  .texture-paper { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paperNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='5' result='noise'/%3E%3CfeDiffuseLighting in='noise' lighting-color='%23fff' surfaceScale='2'%3E%3CfeDistantLight azimuth='45' elevation='60'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paperNoise)'/%3E%3C/svg%3E"); opacity: 0.25; }
+
+  .bg-photo-overlay { position: absolute; inset: 0; background-size: cover; background-position: center; z-index: 0; }
+  .bg-photo-overlay.effect-vignette::after,
+  .img-wrapper.effect-vignette::after {
+    content: ""; position: absolute; inset: 0; box-shadow: inset 0 0 160px rgba(0,0,0,0.8); pointer-events: none;
+  }
+  .bg-photo-overlay.effect-film,
+  .img-wrapper.effect-film img.card-image {
+    filter: contrast(1.15) saturate(0.8) sepia(0.25) brightness(0.9);
+  }
+  .bg-dark-overlay {
+    position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.45) 100%);
+  }
+  body:not(.dark) .bg-dark-overlay {
+    background: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.25) 40%, rgba(0,0,0,0.35) 100%);
+  }
+  .card-preview:has(.bg-photo-overlay) .title,
+  .card-preview:has(.bg-photo-overlay) .subtitle-text,
+  .card-preview:has(.bg-photo-overlay) .box-title,
+  .card-preview:has(.bg-photo-overlay) .box-body,
+  .card-preview:has(.bg-photo-overlay) .body-text,
+  .card-preview:has(.bg-photo-overlay) .meta {
+    text-shadow: 0 1px 3px rgba(0,0,0,0.7), 0 0 12px rgba(0,0,0,0.4);
+  }
+  .card-preview:has(.bg-photo-overlay) .content-box {
+    background: rgba(0,0,0,0.35);
+    border-color: rgba(255,255,255,0.2);
+    backdrop-filter: blur(8px);
+  }
+  body:not(.dark) .card-preview:has(.bg-photo-overlay) .content-box {
+    background: rgba(255,255,255,0.55);
+    border-color: rgba(0,0,0,0.1);
+  }
+
+  .card-inner { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; z-index: 2; overflow: hidden; padding: 44px 40px; -webkit-transform: translateZ(0); }
+  .card-header { margin-bottom: 18px; }
+
+  .title { font-family: var(--font-title, 'Pretendard Variable', sans-serif); font-weight: 700; line-height: 1.22; letter-spacing: -0.9px; margin-bottom: 6px; word-break: keep-all; }
+  .subtitle-text { font-family: var(--font-title, 'Pretendard Variable', sans-serif); font-weight: 500; color: var(--text-secondary); line-height: 1.4; word-break: keep-all; }
+  .body-text { font-family: var(--font-body, 'Pretendard Variable', sans-serif); line-height: 1.65; color: var(--text); flex: 1; word-break: keep-all; overflow: hidden; }
+
+  /* ===== iOS Safari 다단 클리핑 버그 우회: CSS Grid 기반 컬럼 ===== */
+  .card-columns-flex {
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 2), 1fr);
+    gap: 20px;
+    width: 100%;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    align-items: start;
+  }
+  .card-column {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .flow-connector {
+    display: flex; justify-content: center; align-items: center;
+    margin: 2px 0 10px 0; flex-shrink: 0; width: 100%;
+  }
+  .flow-connector .line-solid {
+    width: 3px; height: 24px; background: var(--accent); border-radius: 2px; opacity: 0.9;
+  }
+  .flow-connector .line-dashed {
+    width: 0; height: 24px; border-left: 3px dashed var(--accent); opacity: 0.9;
+  }
+  .flow-connector .line-arrow {
+    color: var(--accent); font-weight: 800; font-size: 20px; line-height: 1; opacity: 0.95;
+  }
+
+  .content-box {
+    display: block; width: 100%; break-inside: avoid; page-break-inside: avoid; -webkit-column-break-inside: avoid;
+    background: var(--box-bg); border: 1px solid var(--box-border); border-radius: 16px; padding: 18px 18px 18px 22px; margin-bottom: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.02); position: relative;
+    flex-shrink: 0;
+  }
+
+  /* 왼쪽 액센트 바 (모든 스타일 공통) */
+  .content-box::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 14px;
+    bottom: 14px;
+    width: 4px;
+    background: var(--accent);
+    border-radius: 0 3px 3px 0;
+  }
+
+  /* 2번: Apple / Modern 스타일에서만 소프트 글래스 효과 */
+  .style-apple .content-box,
+  .style-modern .content-box {
+    background: rgba(255,255,255,0.42);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    border: 1px solid rgba(255,255,255,0.55);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.6);
+  }
+  body.dark .style-apple .content-box,
+  body.dark .style-modern .content-box {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.14);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+  
+  .box-title { font-family: var(--font-title, 'Pretendard Variable', sans-serif); font-weight: 700; color: var(--accent); margin-bottom: 8px; line-height: 1.35; letter-spacing: -0.3px; word-break: keep-all; }
+  .box-body { font-family: var(--font-body, 'Pretendard Variable', sans-serif); line-height: 1.6; color: var(--text); word-break: keep-all; }
+
+  .box-inline-img { width: 100%; border-radius: 10px; margin: 8px 0; display: block; object-fit: cover; }
+
+  .meta { margin-top: auto; padding-top: 20px; font-size: 13px; color: var(--text-secondary); display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(0,0,0,0.06); flex-shrink: 0; }
+  body.dark .meta { border-top-color: rgba(255,255,255,0.08); }
+
+  .watermark-container { display: flex; align-items: center; gap: 8px; }
+  .watermark-logo { height: 24px; max-width: 80px; object-fit: contain; border-radius: 4px; }
+  .watermark-text { font-weight: 600; opacity: 0.85; font-size: 13px; }
+
+  .accent-bar { width: 36px; height: 3.5px; background: var(--accent); border-radius: 2px; margin-bottom: 16px; flex-shrink: 0; }
+
+  .img-wrapper { position: relative; width: 100%; margin-bottom: 18px; border-radius: 16px; overflow: hidden; flex-shrink: 0; }
+  .img-wrapper.pos-bottom { margin-top: auto; margin-bottom: 16px; }
+  .img-wrapper img.card-image { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  mark { background: transparent; color: inherit; padding: 0 3px; border-radius: 3px; }
+  .red-underline { text-decoration: underline; text-decoration-color: #FF3B30; text-decoration-thickness: 3px; text-underline-offset: 3px; }
+
+  .actions { display: flex; flex-direction: column; gap: 9px; margin-top: 16px; }
+  .btn-primary { background: var(--accent); color: white; border: none; padding: 13px 18px; border-radius: 14px; font-weight: 600; font-size: 15px; width: 100%; }
+  .btn-secondary { background: rgba(120,120,128,0.12); border: none; padding: 11px 18px; border-radius: 14px; font-weight: 500; width: 100%; }
+
+  .field-group { display: none; }
+  .field-group.active { display: block; }
+  .mode-toggle { display: flex; background: rgba(120,120,128,0.12); border-radius: 12px; padding: 3px; margin-bottom: 12px; }
+  .mode-toggle button { flex: 1; border: none; background: transparent; padding: 8px; }
+  .mode-toggle button.active { background: var(--card-bg); box-shadow: 0 2px 8px rgba(0,0,0,0.06); color: var(--text); }
+
+  .box-field-card {
+    background: rgba(120,120,128,0.06); border: 1px solid rgba(120,120,128,0.18); border-radius: 14px; padding: 12px; margin-bottom: 12px; cursor: grab;
+  }
+  .box-field-card.dragging { opacity: 0.5; border: 2px dashed var(--accent); }
+  .box-field-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .box-field-title { font-size: 12px; font-weight: 700; color: var(--accent); cursor: grab; }
+  .box-btn-controls { display: flex; gap: 4px; }
+  .box-btn-controls button { padding: 3px 8px; font-size: 11px; }
+
+  .box-field-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    margin-top: 2px;
+    letter-spacing: 0.3px;
+  }
+
+  .box-img-area { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; background: rgba(0,0,0,0.03); padding: 8px 10px; border-radius: 8px; }
+  .box-img-row { display: flex; align-items: center; gap: 8px; }
+
+  .slider-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+  .slider-row span { font-size: 13px; min-width: 75px; font-weight: 600; }
+
+  /* iPhone 저장용 오버레이 */
+  #save-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 9999;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  #save-overlay.active { display: flex; }
+  #save-overlay img {
+    max-width: 100%;
+    max-height: 70vh;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  #save-overlay .save-guide {
+    color: white;
+    text-align: center;
+    margin-top: 18px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  #save-overlay .save-guide strong { color: #5AC8FA; }
+  #save-overlay .close-btn {
+    margin-top: 16px;
+    background: rgba(255,255,255,0.15);
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  @media (max-width: 1100px) {
+    .container { grid-template-columns: 1fr; }
+    .panel { position: static; max-height: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="panel">
+      <h1>카드 생성기</h1>
+      <p class="subtitle">개인용 · 고퀄리티 인포그래픽 (최종 완성판)</p>
+
+      <div class="section">
+        <div class="section-title">사이즈</div>
+        <div class="btn-group" id="size-btns">
+          <button class="active" data-w="1080" data-h="1080">인스타 정사각</button>
+          <button data-w="1080" data-h="1350">인스타 세로</button>
+          <button data-w="1080" data-h="1920">스토리/릴스</button>
+          <button data-w="1600" data-h="900">X 와이드</button>
+          <button data-w="custom">커스텀</button>
+        </div>
+        <div id="custom-size" style="display:none; margin-top:10px;">
+          <input type="number" id="custom-w" placeholder="가로 px" value="1080">
+          <input type="number" id="custom-h" placeholder="세로 px" value="1080">
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">템플릿 유형</div>
+        <div class="btn-group" id="template-btns">
+          <button class="active" data-template="boxes">다단 쌓기 (소제목+본문)</button>
+          <button data-template="news">일반 텍스트형</button>
+        </div>
+      </div>
+
+      <div class="section" id="column-setting-section">
+        <div class="section-title">다단(섹션) 분할 개수</div>
+        <div class="btn-group" id="column-btns" style="margin-bottom: 10px;">
+          <button data-cols="1">1단</button>
+          <button class="active" data-cols="2">2단 (기본)</button>
+          <button data-cols="3">3단</button>
+        </div>
+        <div class="section-title">단락 간 연결선 (Flow Line)</div>
+        <div class="btn-group" id="flow-line-btns">
+          <button class="active" data-line="none">없음</button>
+          <button data-line="solid">실선</button>
+          <button data-line="dashed">점선</button>
+          <button data-line="arrow">화살표</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">글꼴 크기 조절</div>
+        <div class="btn-group" style="margin-bottom:8px;">
+          <button class="active" id="font-auto">자동 맞춤</button>
+          <button id="font-manual">수동 조절</button>
+        </div>
+        <div id="font-slider-wrap" style="display:none; background:rgba(120,120,128,0.06); padding:12px; border-radius:12px;">
+          <div class="slider-row">
+            <span>소제목 크기</span>
+            <input type="range" id="sub-font-size" min="12" max="50" value="20">
+            <span id="sub-font-size-label">20px</span>
+          </div>
+          <div class="slider-row">
+            <span>본문 크기</span>
+            <input type="range" id="body-font-size" min="12" max="50" value="16">
+            <span id="font-size-label">16px</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" id="box-builder-section">
+        <div class="section-title">카드 전체 제목 (선택)</div>
+        <input type="text" id="b-main-title" placeholder="전체 메인 제목">
+        <input type="text" id="b-main-subtitle" placeholder="전체 부제목" style="margin-bottom:12px;">
+
+        <div class="section-title">단락 추가 및 순서 조정 (드래그 또는 ▲▼)</div>
+        <div id="boxes-input-container"></div>
+        <button class="btn-secondary" style="width:100%; border: 1.5px dashed var(--accent); color:var(--accent); font-weight:600;" onclick="addNewBoxField()">+ 똑같은 [칸] 계속 추가하기</button>
+      </div>
+
+      <div class="section" id="standard-text-section" style="display:none;">
+        <div class="section-title">일반 텍스트 입력</div>
+        <div class="mode-toggle">
+          <button class="active" id="mode-bulk">단순 붙여넣기</button>
+          <button id="mode-fields">필드별 입력</button>
+        </div>
+
+        <div id="bulk-input" class="field-group active">
+          <textarea id="bulk-text" placeholder="제목&#10;부제목&#10;본문 내용...&#10;출처 | 2026.08.06"></textarea>
+          <button class="btn-primary" style="margin-top:6px;" onclick="parseBulk()">자동 채우기</button>
+        </div>
+
+        <div id="fields-input" class="field-group">
+          <input type="text" id="f-title" placeholder="제목">
+          <input type="text" id="f-subtitle" placeholder="부제목 / 설명">
+          <textarea id="f-body" placeholder="본문 또는 리스트 내용"></textarea>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">출처 및 날짜 (하단)</div>
+        <input type="text" id="f-source" placeholder="출처 (예: OO뉴스)">
+        <input type="text" id="f-date" placeholder="날짜 (예: 2026. 08. 06)">
+      </div>
+
+      <div class="section">
+        <div class="section-title">로고 / 워터마크</div>
+        <input type="file" id="logo-input" accept="image/*" style="margin-bottom:6px;">
+        <input type="text" id="f-watermark-text" placeholder="인스타 계정명 (예: @my_brand)">
+      </div>
+
+      <div class="section">
+        <div class="section-title">디자인 스타일 및 모서리 곡률</div>
+        <div class="btn-group" id="style-btns" style="margin-bottom:10px;">
+          <button class="active" data-style="apple">Apple</button>
+          <button data-style="modern">Modern</button>
+          <button data-style="bold">Bold</button>
+          <button data-style="warm">Warm</button>
+          <button data-style="editorial">Editorial</button>
+        </div>
+        <div class="slider-row" style="background:rgba(120,120,128,0.06); padding:10px 12px; border-radius:12px;">
+          <span>모서리 둥글기</span>
+          <input type="range" id="card-radius-slider" min="0" max="60" value="28">
+          <span id="card-radius-label">28px</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">배경 텍스처 (질감 효과)</div>
+        <div class="btn-group" id="texture-btns">
+          <button class="active" data-texture="none">없음 (기본)</button>
+          <button data-texture="noise">필름 노이즈</button>
+          <button data-texture="grid">모눈종이</button>
+          <button data-texture="paper">종이 질감</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">테마 및 포인트 컬러</div>
+        <div class="btn-group" style="margin-bottom:10px;">
+          <button id="theme-light" class="active">라이트</button>
+          <button id="theme-dark">다크</button>
+        </div>
+        <div class="color-row">
+          <input type="color" id="accent-color" value="#007AFF">
+          <span style="font-size:13px; font-weight:600;">컬러 변경</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">글꼴 (무료 17종)</div>
+        <div style="margin-bottom:6px; font-size:12px; color:var(--text-secondary);">제목 / 소제목</div>
+        <select id="font-title-select"></select>
+        <div style="margin-bottom:6px; font-size:12px; color:var(--text-secondary);">본문 / 내용</div>
+        <select id="font-body-select"></select>
+      </div>
+
+      <div class="section">
+        <div class="section-title">텍스트 강조 (드래그 후 클릭)</div>
+        <div class="color-row">
+          <input type="color" id="highlight-color" value="#FFF176">
+          <button onclick="insertHighlight()">🖍 형광펜</button>
+          <button onclick="insertUnderline()">빨간 밑줄</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">대표 사진 업로드 및 위치 선택</div>
+        <input type="file" id="image-input" accept="image/*">
+        
+        <div style="margin-top:8px; margin-bottom:6px; font-size:12px; color:var(--text-secondary);">대표 사진 배치 방식</div>
+        <div class="btn-group" id="photo-pos-btns" style="margin-bottom:10px;">
+          <button class="active" data-pos="top">상단 (기본)</button>
+          <button data-pos="background">전체 배경형</button>
+          <button data-pos="bottom">하단 배치형</button>
+        </div>
+
+        <div id="rep-photo-height-wrap" style="background:rgba(120,120,128,0.06); padding:10px 12px; border-radius:12px; margin-bottom:10px;">
+          <div class="slider-row" style="margin:0;">
+            <span style="min-width:70px;">사진 높이</span>
+            <input type="range" id="rep-photo-height" min="8" max="45" value="22">
+            <span id="rep-photo-height-label">22%</span>
+          </div>
+          <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">상단/하단 배치 시 카드 높이 대비 비율 (배경형은 무시)</div>
+        </div>
+
+        <div style="margin-bottom:6px; font-size:12px; color:var(--text-secondary);">사진 필터 효과</div>
+        <div class="btn-group" id="photo-effect-btns">
+          <button class="active" data-effect="none">원본</button>
+          <button data-effect="vignette">비네팅 효과</button>
+          <button data-effect="film">필름 효과</button>
+        </div>
+        <button class="btn-secondary" style="margin-top:10px;" onclick="removeImage()">대표 사진 제거</button>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" onclick="downloadAllPages()">고화질 PNG 저장하기</button>
+        <button class="btn-secondary" onclick="showSavePreview()">아이폰용 · 이미지 보기 (길게 눌러 저장)</button>
+      </div>
+    </div>
+
+    <div class="preview-area">
+      <div id="pages-container"></div>
+      <p style="color:var(--text-secondary); font-size:13px;" id="size-label">1080 × 1080</p>
+    </div>
+  </div>
+
+  <!-- iPhone 저장 오버레이 -->
+  <div id="save-overlay">
+    <img id="save-preview-img" alt="저장용 이미지">
+    <div class="save-guide">
+      <strong>이미지를 길게 눌러서 저장</strong>하세요<br>
+      (사진 앱에 저장됩니다)
+    </div>
+    <button class="close-btn" onclick="closeSaveOverlay()">닫기</button>
+  </div>
+
+<script>
+  let currentSize = { w: 1080, h: 1080 };
+  let currentTemplate = 'boxes';
+  let currentStyle = 'apple';
+  let currentTexture = 'none';
+  let columnCount = 2;
+  let flowLineStyle = 'none';
+  let currentPhotoEffect = 'none';
+  let currentPhotoPos = 'top';
+  let repPhotoHeightPct = 22;
+  let cardImage = null;
+  let logoImage = null;
+  let scale = 0.48;
+  
+  let fontMode = 'auto';
+  let manualBodySize = 16;
+  let manualSubSize = 20;
+
+  let boxList = [
+    { title: '첫 번째 단락 제목', body: '첫 번째 본문입니다. 드래그 앤 드롭으로 이 카드 박스의 순서를 자유롭게 바꿀 수 있습니다.', img: null, imgPos: 'middle', imgHeight: 180, imgFit: 'cover', connectNext: true },
+    { title: '두 번째 단락 제목', body: '단락 내 개별 사진의 위치(소제목 위, 중간, 본문 아래)와 수동 높이/짤림 방지 모드를 자유롭게 설정할 수 있습니다.', img: null, imgPos: 'middle', imgHeight: 180, imgFit: 'cover', connectNext: true }
+  ];
+
+  let lastFocusedInput = null;
+  let draggedIndex = null;
+
+  const FONT_OPTIONS = [
+    { value: "'Pretendard Variable', -apple-system, sans-serif", label: "Pretendard (기본, 모던 고딕)" },
+    { value: "'Noto Sans KR', sans-serif", label: "Noto Sans KR (표준 고딕)" },
+    { value: "'Noto Serif KR', serif", label: "Noto Serif KR (표준 명조)" },
+    { value: "'Nanum Myeongjo', serif", label: "나눔명조 (클래식 명조)" },
+    { value: "'Nanum Gothic', sans-serif", label: "나눔고딕 (친숙한 고딕)" },
+    { value: "'Gowun Batang', serif", label: "고운바탕 (부드러운 명조)" },
+    { value: "'Gowun Dodum', sans-serif", label: "고운돋움 (부드러운 고딕)" },
+    { value: "'Gothic A1', sans-serif", label: "고딕 A1 (기하학적 고딕)" },
+    { value: "'IBM Plex Sans KR', sans-serif", label: "IBM Plex Sans KR (테크/리포트)" },
+    { value: "'Black Han Sans', sans-serif", label: "Black Han Sans (굵고 강한 임팩트)" },
+    { value: "'Do Hyeon', sans-serif", label: "도현체 (굵은 스트릿 고딕)" },
+    { value: "'Jua', sans-serif", label: "주아체 (둥글고 귀여움)" },
+    { value: "'Song Myung', serif", label: "송명체 (붓글씨풍 명조)" },
+    { value: "'Stylish', sans-serif", label: "Stylish체 (심플 세리프)" },
+    { value: "'Gaegu', cursive", label: "개구체 (손글씨)" },
+    { value: "'Poor Story', cursive", label: "포스토리 (손글씨)" },
+    { value: "'East Sea Dokdo', cursive", label: "동해 독도체 (캘리그라피)" }
+  ];
+
+  function populateFonts() {
+    const titleSel = document.getElementById('font-title-select');
+    const bodySel = document.getElementById('font-body-select');
+    FONT_OPTIONS.forEach(f => {
+      titleSel.appendChild(new Option(f.label, f.value));
+      bodySel.appendChild(new Option(f.label, f.value));
+    });
+    titleSel.addEventListener('change', e => { document.documentElement.style.setProperty('--font-title', e.target.value); updatePreview(); });
+    bodySel.addEventListener('change', e => { document.documentElement.style.setProperty('--font-body', e.target.value); updatePreview(); });
+  }
+
+  function moveBox(index, direction) {
+    const newIndex = index + direction;
+    if (newIndex < 0 || newIndex >= boxList.length) return;
+    const temp = boxList[index];
+    boxList[index] = boxList[newIndex];
+    boxList[newIndex] = temp;
+    renderBoxInputs();
+    updatePreview();
+  }
+
+  function renderBoxInputs() {
+    const wrap = document.getElementById('boxes-input-container');
+    wrap.innerHTML = '';
+
+    boxList.forEach((box, i) => {
+      if (!box.imgHeight) box.imgHeight = 180;
+      if (!box.imgFit) box.imgFit = 'cover';
+      if (!box.imgPos) box.imgPos = 'middle';
+
+      const card = document.createElement('div');
+      card.className = 'box-field-card';
+      card.draggable = true;
+
+      card.addEventListener('dragstart', (e) => {
+        draggedIndex = i;
+        card.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      card.addEventListener('dragend', () => {
+        card.classList.remove('dragging');
+      });
+      card.addEventListener('dragover', (e) => {
+        e.preventDefault();
+      });
+      card.addEventListener('drop', (e) => {
+        e.preventDefault();
+        if (draggedIndex !== null && draggedIndex !== i) {
+          const movedItem = boxList.splice(draggedIndex, 1)[0];
+          boxList.splice(i, 0, movedItem);
+          renderBoxInputs();
+          updatePreview();
+        }
+      });
+
+      const header = document.createElement('div');
+      header.className = 'box-field-header';
+
+      const label = document.createElement('div');
+      label.className = 'box-field-title';
+      label.textContent = `☰ 📦 [${i + 1}번째 단락] (드래그 가능)`;
+      header.appendChild(label);
+
+      const btnGroup = document.createElement('div');
+      btnGroup.className = 'box-btn-controls';
+
+      const upBtn = document.createElement('button');
+      upBtn.textContent = '▲';
+      upBtn.onclick = () => moveBox(i, -1);
+      if (i === 0) upBtn.disabled = true;
+
+      const downBtn = document.createElement('button');
+      downBtn.textContent = '▼';
+      downBtn.onclick = () => moveBox(i, 1);
+      if (i === boxList.length - 1) downBtn.disabled = true;
+
+      btnGroup.appendChild(upBtn);
+      btnGroup.appendChild(downBtn);
+
+      if (boxList.length > 1) {
+        const delBtn = document.createElement('button');
+        delBtn.textContent = '삭제';
+        delBtn.style.color = '#FF3B30';
+        delBtn.onclick = () => {
+          boxList.splice(i, 1);
+          renderBoxInputs();
+          updatePreview();
+        };
+        btnGroup.appendChild(delBtn);
+      }
+      header.appendChild(btnGroup);
+      card.appendChild(header);
+
+      const titleLabel = document.createElement('div');
+      titleLabel.className = 'box-field-label';
+      titleLabel.textContent = '소제목';
+      card.appendChild(titleLabel);
+
+      const titleIn = document.createElement('input');
+      titleIn.type = 'text';
+      titleIn.placeholder = '단락의 소제목 입력';
+      titleIn.value = box.title;
+      titleIn.addEventListener('input', e => { box.title = e.target.value; updatePreview(); });
+      titleIn.addEventListener('focus', () => { lastFocusedInput = titleIn; });
+      card.appendChild(titleIn);
+
+      const bodyLabel = document.createElement('div');
+      bodyLabel.className = 'box-field-label';
+      bodyLabel.textContent = '본문';
+      card.appendChild(bodyLabel);
+
+      const bodyTa = document.createElement('textarea');
+      bodyTa.placeholder = '단락의 본문 입력';
+      bodyTa.value = box.body;
+      bodyTa.addEventListener('input', e => { box.body = e.target.value; updatePreview(); });
+      bodyTa.addEventListener('focus', () => { lastFocusedInput = bodyTa; });
+      card.appendChild(bodyTa);
+
+      const boxImgArea = document.createElement('div');
+      boxImgArea.className = 'box-img-area';
+      
+      const boxImgRow = document.createElement('div');
+      boxImgRow.className = 'box-img-row';
+
+      const boxImgInput = document.createElement('input');
+      boxImgInput.type = 'file';
+      boxImgInput.accept = 'image/*';
+      boxImgInput.style.display = 'none';
+      boxImgInput.id = `box-img-file-${i}`;
+      boxImgInput.addEventListener('change', e => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = ev => { box.img = ev.target.result; renderBoxInputs(); updatePreview(); };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      const boxImgBtn = document.createElement('button');
+      boxImgBtn.style.fontSize = '12px';
+      boxImgBtn.style.padding = '5px 8px';
+      boxImgBtn.textContent = box.img ? '📸 단락 사진 변경' : '📸 이 단락에 개별 사진 첨부';
+      boxImgBtn.onclick = () => boxImgInput.click();
+
+      boxImgRow.appendChild(boxImgInput);
+      boxImgRow.appendChild(boxImgBtn);
+
+      if (box.img) {
+        const delBoxImgBtn = document.createElement('button');
+        delBoxImgBtn.style.fontSize = '11px';
+        delBoxImgBtn.style.color = '#FF3B30';
+        delBoxImgBtn.textContent = '사진 제거';
+        delBoxImgBtn.onclick = () => { box.img = null; renderBoxInputs(); updatePreview(); };
+        boxImgRow.appendChild(delBoxImgBtn);
+
+        boxImgArea.appendChild(boxImgRow);
+
+        const posSelect = document.createElement('select');
+        posSelect.style.fontSize = '12px';
+        posSelect.style.padding = '4px 6px';
+        posSelect.style.marginTop = '6px';
+        posSelect.style.marginBottom = '6px';
+        posSelect.style.width = '100%';
+
+        const optTop = new Option('위치: 소제목 위', 'top');
+        const optMid = new Option('위치: 소제목/본문 사이', 'middle');
+        const optBot = new Option('위치: 본문 아래', 'bottom');
+
+        posSelect.appendChild(optTop);
+        posSelect.appendChild(optMid);
+        posSelect.appendChild(optBot);
+        posSelect.value = box.imgPos || 'middle';
+
+        posSelect.addEventListener('change', (e) => {
+          box.imgPos = e.target.value;
+          updatePreview();
+        });
+        boxImgArea.appendChild(posSelect);
+
+        const controlsWrap = document.createElement('div');
+        controlsWrap.style.display = 'flex';
+        controlsWrap.style.flexDirection = 'column';
+        controlsWrap.style.gap = '6px';
+
+        const sliderRow = document.createElement('div');
+        sliderRow.className = 'slider-row';
+        sliderRow.style.margin = '0';
+
+        const sliderLabel = document.createElement('span');
+        sliderLabel.textContent = '사진 높이';
+        sliderLabel.style.fontSize = '11px';
+        sliderLabel.style.minWidth = '55px';
+
+        const slider = document.createElement('input');
+        slider.type = 'range';
+        slider.min = '80';
+        slider.max = '500';
+        slider.value = box.imgHeight;
+        slider.addEventListener('input', e => {
+          box.imgHeight = +e.target.value;
+          valText.textContent = box.imgHeight + 'px';
+          updatePreview();
+        });
+
+        const valText = document.createElement('span');
+        valText.style.fontSize = '11px';
+        valText.style.minWidth = '40px';
+        valText.textContent = box.imgHeight + 'px';
+
+        sliderRow.appendChild(sliderLabel);
+        sliderRow.appendChild(slider);
+        sliderRow.appendChild(valText);
+        controlsWrap.appendChild(sliderRow);
+
+        const modeRow = document.createElement('div');
+        modeRow.className = 'btn-group';
+        modeRow.style.marginTop = '2px';
+
+        const btnCover = document.createElement('button');
+        btnCover.textContent = '영역 채우기(기본)';
+        btnCover.className = box.imgFit === 'cover' ? 'active' : '';
+        btnCover.style.fontSize = '11px';
+        btnCover.style.padding = '4px 8px';
+        btnCover.onclick = () => { box.imgFit = 'cover'; renderBoxInputs(); updatePreview(); };
+
+        const btnContain = document.createElement('button');
+        btnContain.textContent = '전체 보기(짤림없음)';
+        btnContain.className = box.imgFit === 'contain' ? 'active' : '';
+        btnContain.style.fontSize = '11px';
+        btnContain.style.padding = '4px 8px';
+        btnContain.onclick = () => { box.imgFit = 'contain'; renderBoxInputs(); updatePreview(); };
+
+        modeRow.appendChild(btnCover);
+        modeRow.appendChild(btnContain);
+        controlsWrap.appendChild(modeRow);
+
+        boxImgArea.appendChild(controlsWrap);
+      } else {
+        boxImgArea.appendChild(boxImgRow);
+      }
+
+      card.appendChild(boxImgArea);
+
+      if (i < boxList.length - 1) {
+        if (typeof box.connectNext === 'undefined') box.connectNext = true;
+        const connectRow = document.createElement('div');
+        connectRow.style.cssText = 'display:flex;align-items:center;gap:8px;margin-top:8px;padding:6px 8px;background:rgba(0,122,255,0.08);border-radius:8px;';
+        const connectChk = document.createElement('input');
+        connectChk.type = 'checkbox';
+        connectChk.checked = box.connectNext;
+        connectChk.id = `connect-next-${i}`;
+        connectChk.addEventListener('change', e => {
+          box.connectNext = e.target.checked;
+          updatePreview();
+        });
+        const connectLabel = document.createElement('label');
+        connectLabel.htmlFor = `connect-next-${i}`;
+        connectLabel.style.cssText = 'font-size:12px;font-weight:600;cursor:pointer;';
+        connectLabel.textContent = '다음 단락과 연결선 표시';
+        connectRow.appendChild(connectChk);
+        connectRow.appendChild(connectLabel);
+        card.appendChild(connectRow);
+      }
+
+      wrap.appendChild(card);
+    });
+  }
+
+  function addNewBoxField() {
+    boxList.push({ title: '', body: '', img: null, imgPos: 'middle', imgHeight: 180, imgFit: 'cover', connectNext: true });
+    renderBoxInputs();
+    updatePreview();
+  }
+
+  function parseBulk() {
+    const rawText = document.getElementById('bulk-text').value.trim();
+    if (!rawText) return alert('텍스트를 입력해주세요.');
+
+    const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    if (lines.length > 0) document.getElementById('f-title').value = lines[0];
+    if (lines.length > 1) document.getElementById('f-subtitle').value = lines[1];
+    
+    if (lines.length > 2) {
+      let bodyLines = lines.slice(2);
+      const lastLine = bodyLines[bodyLines.length - 1];
+      
+      if (lastLine.includes('|')) {
+        const parts = lastLine.split('|');
+        document.getElementById('f-source').value = parts[0].trim();
+        document.getElementById('f-date').value = parts[1].trim();
+        bodyLines.pop();
+      }
+      document.getElementById('f-body').value = bodyLines.join('\n');
+    }
+    updatePreview();
+  }
+
+  document.querySelectorAll('#size-btns button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#size-btns button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (btn.dataset.w === 'custom') {
+        document.getElementById('custom-size').style.display = 'block';
+        const cw = +document.getElementById('custom-w').value || 1080;
+        const ch = +document.getElementById('custom-h').value || 1080;
+        currentSize = { w: cw, h: ch };
+        updatePreviewSize();
+      } else {
+        document.getElementById('custom-size').style.display = 'none';
+        currentSize = { w: +btn.dataset.w, h: +btn.dataset.h };
+        updatePreviewSize();
+      }
+    });
+  });
+
+  ['custom-w', 'custom-h'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => {
+      const cw = +document.getElementById('custom-w').value || 1080;
+      const ch = +document.getElementById('custom-h').value || 1080;
+      currentSize = { w: cw, h: ch };
+      updatePreviewSize();
+    });
+  });
+
+  document.querySelectorAll('#template-btns button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#template-btns button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentTemplate = btn.dataset.template;
+
+      const isBoxes = currentTemplate === 'boxes';
+      document.getElementById('box-builder-section').style.display = isBoxes ? 'block' : 'none';
+      document.getElementById('column-setting-section').style.display = isBoxes ? 'block' : 'none';
+      document.getElementById('standard-text-section').style.display = isBoxes ? 'none' : 'block';
+
+      updatePreview();
+    });
+  });
+
+  document.querySelectorAll('#column-btns button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#column-btns button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      columnCount = +btn.dataset.cols;
+      updatePreview();
+    });
+  });
+
+  document.querySelectorAll('#flow-line-btns button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#flow-line-btns button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      flowLineStyle = btn.dataset.line;
+      updatePreview();
+    });
+  });
+
+  document.querySelectorAll('#style-btns button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#style-btns button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentStyle = btn.dataset.style;
+      updatePreview();
+    });
+  });
+
+  document.querySelectorAll('#texture-btns button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#texture-btns button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentTexture = btn.dataset.texture;
+      updatePreview();
+    });
+  });
+
+  document.getElementById('card-radius-slider').addEventListener('input', e => {
+    const val = e.target.value;
+    document.getElementById('card-radius-label').textContent = val + 'px';
+    document.documentElement.style.setProperty('--radius', val + 'px');
+  });
+
+  document.getElementById('logo-input').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = ev => { logoImage = ev.target.result; updatePreview(); };
+      reader.readAsDataURL(file);
+    }
+  });
+  document.getElementById('f-watermark-text').addEventListener('input', updatePreview);
+
+  document.getElementById('theme-light').addEventListener('click', () => { document.body.classList.remove('dark'); document.getElementById('theme-light').classList.add('active'); document.getElementById('theme-dark').classList.remove('active'); });
+  document.getElementById('theme-dark').addEventListener('click', () => { document.body.classList.add('dark'); document.getElementById('theme-dark').classList.add('active'); document.getElementById('theme-light').classList.remove('active'); });
+  document.getElementById('accent-color').addEventListener('input', e => { document.documentElement.style.setProperty('--accent', e.target.value); });
+
+  document.getElementById('font-auto').addEventListener('click', () => { 
+    fontMode = 'auto'; 
+    document.getElementById('font-auto').classList.add('active'); 
+    document.getElementById('font-manual').classList.remove('active'); 
+    document.getElementById('font-slider-wrap').style.display = 'none'; 
+    updatePreview(); 
+  });
+  document.getElementById('font-manual').addEventListener('click', () => { 
+    fontMode = 'manual'; 
+    document.getElementById('font-manual').classList.add('active'); 
+    document.getElementById('font-auto').classList.remove('active'); 
+    document.getElementById('font-slider-wrap').style.display = 'block'; 
+    updatePreview(); 
+  });
+  document.getElementById('body-font-size').addEventListener('input', e => { 
+    manualBodySize = +e.target.value; 
+    document.getElementById('font-size-label').textContent = manualBodySize + 'px'; 
+    updatePreview(); 
+  });
+  document.getElementById('sub-font-size').addEventListener('input', e => { 
+    manualSubSize = +e.target.value; 
+    document.getElementById('sub-font-size-label').textContent = manualSubSize + 'px'; 
+    updatePreview(); 
+  });
+
+  document.getElementById('mode-bulk').addEventListener('click', () => { document.getElementById('mode-bulk').classList.add('active'); document.getElementById('mode-fields').classList.remove('active'); document.getElementById('bulk-input').classList.add('active'); document.getElementById('fields-input').classList.remove('active'); });
+  document.getElementById('mode-fields').addEventListener('click', () => { document.getElementById('mode-fields').classList.add('active'); document.getElementById('mode-bulk').classList.remove('active'); document.getElementById('fields-input').classList.add('active'); document.getElementById('bulk-input').classList.remove('active'); });
+
+  function insertHighlight() {
+    if (!lastFocusedInput) return alert('강조할 입력창을 먼저 클릭 후 글자를 드래그하세요.');
+    const s = lastFocusedInput.selectionStart, e = lastFocusedInput.selectionEnd;
+    if (s === e) return alert('강조할 글자를 드래그하세요.');
+    const val = lastFocusedInput.value;
+    const color = document.getElementById('highlight-color').value;
+    lastFocusedInput.value = val.substring(0, s) + `==${color}|` + val.substring(s, e) + `==` + val.substring(e);
+    lastFocusedInput.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  function insertUnderline() {
+    if (!lastFocusedInput) return alert('강조할 입력창을 먼저 클릭 후 글자를 드래그하세요.');
+    const s = lastFocusedInput.selectionStart, e = lastFocusedInput.selectionEnd;
+    if (s === e) return alert('강조할 글자를 드래그하세요.');
+    const val = lastFocusedInput.value;
+    lastFocusedInput.value = val.substring(0, s) + `[[` + val.substring(s, e) + `]]` + val.substring(e);
+    lastFocusedInput.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+  function formatText(rawText) {
+    if(!rawText) return '';
+    let escaped = escapeHtml(rawText);
+    escaped = escaped.replace(/==(#[0-9A-Fa-f]{6})\|([\s\S]+?)==/g, '<mark style="background-color:$1;">$2</mark>');
+    escaped = escaped.replace(/\[\[([\s\S]+?)\]\]/g, '<span class="red-underline">$1</span>');
+    return escaped;
+  }
+
+  document.getElementById('image-input').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = ev => { cardImage = ev.target.result; updatePreview(); };
+      reader.readAsDataURL(file);
+    }
+  });
+  function removeImage() { cardImage = null; document.getElementById('image-input').value = ''; updatePreview(); }
+
+  document.querySelectorAll('#photo-pos-btns button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#photo-pos-btns button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentPhotoPos = btn.dataset.pos;
+      updatePreview();
+    });
+  });
+
+  document.getElementById('rep-photo-height').addEventListener('input', e => {
+    repPhotoHeightPct = +e.target.value;
+    document.getElementById('rep-photo-height-label').textContent = repPhotoHeightPct + '%';
+    updatePreview();
+  });
+
+  document.querySelectorAll('#photo-effect-btns button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#photo-effect-btns button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentPhotoEffect = btn.dataset.effect;
+      updatePreview();
+    });
+  });
+
+  function updatePreviewSize() {
+    // 모바일(아이폰)에서도 카드 전체가 화면에 들어오도록 동적 계산
+    const availableWidth = Math.min(window.innerWidth - 32, 520);
+    const availableHeight = Math.min(window.innerHeight * 0.55, 520);
+    scale = Math.min(
+      availableWidth / currentSize.w,
+      availableHeight / currentSize.h,
+      0.5
+    );
+    // 너무 작아지지 않도록 최소 스케일 보장
+    scale = Math.max(scale, 0.28);
+    document.getElementById('size-label').textContent = `${currentSize.w} × ${currentSize.h}`;
+    updatePreview();
+  }
+
+  // 화면 회전 / 리사이즈 대응
+  window.addEventListener('resize', () => {
+    clearTimeout(window.__resizeTimer);
+    window.__resizeTimer = setTimeout(updatePreviewSize, 150);
+  });
+  window.addEventListener('orientationchange', () => {
+    setTimeout(updatePreviewSize, 200);
+  });
+
+  function calcFontSizes(titleLength, bodyLength) {
+    const area = currentSize.w * currentSize.h;
+    const base = Math.sqrt(area) / 28;
+
+    let titleSize = Math.round(base * 1.5);
+    let subtitleSize = Math.round(base * 0.92);
+    let bodySize = fontMode === 'manual' ? manualBodySize : Math.round(base * 0.75);
+    let subSizeFinal = fontMode === 'manual' ? manualSubSize : Math.round(base * 0.98); 
+    let metaSize = Math.round(base * 0.62);
+
+    if (titleLength > 30) titleSize = Math.round(titleSize * 0.9);
+    
+    if (fontMode === 'auto') {
+      if (bodyLength > 150) bodySize = Math.round(bodySize * 0.9);
+      if (bodyLength > 280) bodySize = Math.round(bodySize * 0.85);
+    }
+
+    return { 
+      titleSize: Math.max(20, Math.min(titleSize, 60)), 
+      subtitleSize: Math.max(14, Math.min(subtitleSize, 36)), 
+      bodySize: Math.max(12, Math.min(bodySize, 50)), 
+      subBoxSize: Math.max(12, Math.min(subSizeFinal, 50)),
+      metaSize 
+    };
+  }
+
+  function estimateBoxHeight(box, fonts, colW) {
+    const pad = 36 + 16;
+    let h = pad;
+    if (box.title) h += fonts.subBoxSize * 1.4 + 8;
+    if (box.body) {
+      const charsPerLine = Math.max(12, Math.floor(colW / (fonts.bodySize * 0.55)));
+      const lines = Math.max(1, Math.ceil(box.body.length / charsPerLine) + (box.body.match(/\n/g) || []).length);
+      h += lines * fonts.bodySize * 1.65;
+    }
+    if (box.img) h += (box.imgHeight || 180) + 16;
+    return h;
+  }
+
+  // ===== iOS Safari 다단(column-count) 클리핑 버그 우회 =====
+  // CSS column-count 대신, 박스들을 JS로 미리 N개 컬럼 배열로 나눠서
+  // 각 컬럼을 별도 <div class="card-column">으로 렌더링한다.
+  // (iOS Safari는 column-count + overflow:hidden 조합에서 2번째 컬럼부터
+  //  내용을 그리지 않는 알려진 렌더링 버그가 있음)
+  function distributeBoxesToColumns(pageBoxes, fonts, colW, cols) {
+    const columns = Array.from({ length: cols }, () => []);
+    if (cols <= 1) {
+      columns[0] = pageBoxes.map((box, i) => ({ box, pageIdx: i }));
+      return columns;
+    }
+
+    // 전체 예상 높이를 구해서 컬럼당 목표 높이를 계산 (가능한 균등 분배)
+    let totalH = 0;
+    const heights = pageBoxes.map((box, i) => {
+      const bh = estimateBoxHeight(box, fonts, colW);
+      const extra = (box.connectNext && i < pageBoxes.length - 1 && flowLineStyle !== 'none') ? 30 : 0;
+      const h = bh + extra;
+      totalH += h;
+      return h;
+    });
+    const target = totalH / cols;
+
+    let colIdx = 0;
+    let colHeight = 0;
+    pageBoxes.forEach((box, i) => {
+      const h = heights[i];
+      // 현재 컬럼에 이미 내용이 있고, 목표 높이를 넘으면 다음 컬럼으로 이동
+      if (colIdx < cols - 1 && columns[colIdx].length > 0 && colHeight + h > target) {
+        colIdx++;
+        colHeight = 0;
+      }
+      columns[colIdx].push({ box, pageIdx: i });
+      colHeight += h;
+    });
+
+    return columns;
+  }
+
+  // 실제 렌더링(distributeBoxesToColumns)과 동일한 방식으로 컬럼을 나눈 뒤
+  // 각 컬럼의 실제 예상 높이 배열을 반환한다. 페이지 자동 분할 판단에 사용.
+  function columnHeightsFor(list, fonts, colW, cols) {
+    if (!list.length) return [0];
+    const columns = distributeBoxesToColumns(list, fonts, colW, cols);
+    return columns.map(colItems => {
+      let h = 0;
+      colItems.forEach((item, localIdx) => {
+        const box = item.box;
+        h += estimateBoxHeight(box, fonts, colW);
+        const isLast = localIdx === colItems.length - 1;
+        if (box.connectNext && flowLineStyle !== 'none' && !isLast) h += 30;
+      });
+      return h;
+    });
+  }
+
+  function renderColumnBoxesHtml(columnItems) {
+    let html = '';
+    columnItems.forEach((item, localIdx) => {
+      const box = item.box;
+      const imgStyle = `width:100%; height:${box.imgHeight || 180}px; object-fit:${box.imgFit || 'cover'}; border-radius:10px; margin:8px 0; display:block;`;
+      const imgTag = box.img ? `<img src="${box.img}" class="box-inline-img" style="${imgStyle}" alt="">` : '';
+      const titleTag = box.title ? `<div class="box-title" style="font-size:${window.__fontsForRender.subBoxSize}px">${formatText(box.title)}</div>` : '';
+      const bodyTag = `<div class="box-body" style="font-size:${window.__fontsForRender.bodySize}px">${formatText(box.body || '').replace(/\n/g, '<br>')}</div>`;
+
+      const pos = box.imgPos || 'middle';
+
+      html += `<div class="content-box">`;
+      if (pos === 'top') html += `${imgTag}${titleTag}${bodyTag}`;
+      else if (pos === 'bottom') html += `${titleTag}${bodyTag}${imgTag}`;
+      else html += `${titleTag}${imgTag}${bodyTag}`;
+      html += `</div>`;
+
+      const isLastInColumn = localIdx === columnItems.length - 1;
+      if (box.connectNext && flowLineStyle !== 'none' && !isLastInColumn) {
+        let lineInner = '';
+        if (flowLineStyle === 'solid') lineInner = '<div class="line-solid"></div>';
+        else if (flowLineStyle === 'dashed') lineInner = '<div class="line-dashed"></div>';
+        else if (flowLineStyle === 'arrow') lineInner = '<div class="line-arrow">↓</div>';
+        html += `<div class="flow-connector">${lineInner}</div>`;
+      }
+    });
+    return html;
+  }
+
+  function updatePreview() {
+    const container = document.getElementById('pages-container');
+    container.innerHTML = '';
+
+    const sourceTxt = document.getElementById('f-source').value || '';
+    const dateTxt = document.getElementById('f-date').value || '';
+    const watermarkTxt = document.getElementById('f-watermark-text').value || '';
+
+    let repImgHeight = Math.round(currentSize.h * (repPhotoHeightPct / 100));
+    if (currentSize.h / currentSize.w > 1.5) repImgHeight = Math.round(currentSize.h * Math.min(repPhotoHeightPct / 100, 0.18));
+
+    let imgHtml = '';
+    if (cardImage && (currentPhotoPos === 'top' || currentPhotoPos === 'bottom')) {
+      imgHtml = `
+        <div class="img-wrapper ${currentPhotoPos === 'bottom' ? 'pos-bottom' : ''} effect-${currentPhotoEffect}" style="height:${repImgHeight}px">
+          <img src="${cardImage}" class="card-image" alt="">
+        </div>`;
+    }
+
+    let pageGroups = [boxList];
+    const mainTitle = document.getElementById('b-main-title').value || '';
+    const mainSub = document.getElementById('b-main-subtitle').value || '';
+
+    if (currentTemplate === 'boxes' && boxList.length > 0) {
+      const totalBodyLen = boxList.reduce((acc, b) => acc + (b.body || '').length, 0);
+      const fonts = calcFontSizes(mainTitle.length, totalBodyLen);
+      const paddingV = 44 * 2;
+      const headerH = (mainTitle || mainSub) ? (fonts.titleSize * 1.3 + fonts.subtitleSize * 1.4 + 30) : 20;
+      const metaH = (sourceTxt || dateTxt || logoImage || watermarkTxt) ? 50 : 0;
+      const photoH = (cardImage && (currentPhotoPos === 'top' || currentPhotoPos === 'bottom')) ? repImgHeight + 18 : 0;
+      const accentH = 20;
+      const availableH = currentSize.h - paddingV - headerH - metaH - photoH - accentH - 20;
+
+      const colW = (currentSize.w - 80 - (columnCount - 1) * 20) / columnCount;
+
+      // 컬럼 개수(1/2/3단)를 반영해 "실제로 렌더링될 컬럼 중 가장 높은 컬럼"이
+      // 카드 높이를 넘는 시점에 새 페이지를 만든다. (기존에는 누적높이를
+      // 단순히 컬럼 수로 나누기만 해서 2~3단일 때 새 페이지가 거의 안 생기던 버그)
+      const groups = [];
+      let currentGroup = [];
+
+      boxList.forEach((box) => {
+        const candidate = currentGroup.concat([box]);
+        const heights = columnHeightsFor(candidate, fonts, colW, columnCount);
+        const maxH = Math.max(...heights);
+
+        if (currentGroup.length > 0 && maxH > availableH * 0.98) {
+          groups.push(currentGroup);
+          currentGroup = [box];
+        } else {
+          currentGroup.push(box);
+        }
+      });
+      if (currentGroup.length) groups.push(currentGroup);
+      pageGroups = groups.length ? groups : [boxList];
+    }
+
+    pageGroups.forEach((pageBoxes, pageIdx) => {
+      const isFirst = pageIdx === 0;
+      const pageNum = pageIdx + 1;
+      const totalPages = pageGroups.length;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'card-wrapper';
+
+      const preview = document.createElement('div');
+      preview.className = `card-preview style-${currentStyle}`;
+      preview.style.width = (currentSize.w * scale) + 'px';
+      preview.style.height = (currentSize.h * scale) + 'px';
+      preview.dataset.page = pageNum;
+
+      if (cardImage && currentPhotoPos === 'background') {
+        const bgImg = document.createElement('div');
+        bgImg.className = `bg-photo-overlay effect-${currentPhotoEffect}`;
+        bgImg.style.backgroundImage = `url('${cardImage}')`;
+        preview.appendChild(bgImg);
+        const darkOverlay = document.createElement('div');
+        darkOverlay.className = 'bg-dark-overlay';
+        preview.appendChild(darkOverlay);
+      }
+
+      if (currentTexture !== 'none') {
+        const tex = document.createElement('div');
+        tex.className = `texture-overlay texture-${currentTexture}`;
+        preview.appendChild(tex);
+      }
+
+      const content = document.createElement('div');
+      content.className = 'card-inner';
+      content.style.width = currentSize.w + 'px';
+      content.style.height = currentSize.h + 'px';
+      content.style.transform = `scale(${scale})`;
+      content.style.transformOrigin = 'top left';
+
+      let html = '';
+      
+      if (currentPhotoPos === 'top') html += imgHtml;
+
+      html += `<div class="accent-bar"></div>`;
+
+      if (currentTemplate === 'boxes') {
+        const totalBodyLen = pageBoxes.reduce((acc, b) => acc + (b.body || '').length, 0);
+        const fonts = calcFontSizes(mainTitle.length, totalBodyLen);
+        window.__fontsForRender = fonts;
+
+        if (isFirst && (mainTitle || mainSub)) {
+          html += `<div class="card-header">`;
+          if (mainTitle) html += `<div class="title" style="font-size:${fonts.titleSize}px">${formatText(mainTitle)}</div>`;
+          if (mainSub) html += `<div class="subtitle-text" style="font-size:${fonts.subtitleSize}px">${formatText(mainSub)}</div>`;
+          html += `</div>`;
+        } else if (!isFirst) {
+          html += `<div class="card-header" style="margin-bottom:12px;"><div class="subtitle-text" style="font-size:${fonts.subtitleSize * 0.9}px; opacity:0.7;">(이어서) ${pageNum}/${totalPages}</div></div>`;
+        }
+
+        const colW = (currentSize.w - 80 - (columnCount - 1) * 20) / columnCount;
+        const columns = distributeBoxesToColumns(pageBoxes, fonts, colW, columnCount);
+
+        html += `<div class="card-columns-flex" style="--cols: ${columnCount}">`;
+        columns.forEach(columnItems => {
+          html += `<div class="card-column">`;
+          html += renderColumnBoxesHtml(columnItems);
+          html += `</div>`;
+        });
+        html += `</div>`;
+
+      } else {
+        const t = document.getElementById('f-title').value || '제목을 입력하세요';
+        const sub = document.getElementById('f-subtitle').value || '';
+        const body = document.getElementById('f-body').value || '';
+        const fonts = calcFontSizes(t.length, body.length);
+
+        html += `
+          <div class="card-header">
+            <div class="title" style="font-size:${fonts.titleSize}px">${formatText(t)}</div>
+            ${sub ? `<div class="subtitle-text" style="font-size:${fonts.subtitleSize}px">${formatText(sub)}</div>` : ''}
+          </div>
+          <div class="body-text" style="font-size:${fonts.bodySize}px">${formatText(body).replace(/\n/g, '<br>')}</div>
+        `;
+      }
+
+      if (currentPhotoPos === 'bottom') html += imgHtml;
+
+      if (sourceTxt || dateTxt || logoImage || watermarkTxt || totalPages > 1) {
+        const fonts = calcFontSizes(10, 10);
+        html += `<div class="meta" style="font-size:${fonts.metaSize}px">`;
+        let leftMeta = `<span>${escapeHtml(sourceTxt)}</span>`;
+        if (dateTxt) leftMeta += ` | <span>${escapeHtml(dateTxt)}</span>`;
+        if (totalPages > 1) leftMeta += ` · ${pageNum}/${totalPages}`;
+        html += `<div>${leftMeta}</div>`;
+        if (logoImage || watermarkTxt) {
+          html += `<div class="watermark-container">`;
+          if (logoImage) html += `<img src="${logoImage}" class="watermark-logo" alt="logo">`;
+          if (watermarkTxt) html += `<span class="watermark-text">${escapeHtml(watermarkTxt)}</span>`;
+          html += `</div>`;
+        }
+        html += `</div>`;
+      }
+
+      content.innerHTML = html;
+      preview.appendChild(content);
+      wrapper.appendChild(preview);
+
+      if (totalPages > 1) {
+        const pageLabel = document.createElement('div');
+        pageLabel.style.cssText = 'font-size:12px;color:var(--text-secondary);margin-top:4px;';
+        pageLabel.textContent = `페이지 ${pageNum} / ${totalPages}`;
+        wrapper.appendChild(pageLabel);
+      }
+
+      container.appendChild(wrapper);
+    });
+  }
+
+  // 공통 캔버스 생성 함수
+  async function generateCanvas(previewEl) {
+    const content = previewEl.querySelector('.card-inner');
+    if (!content) return null;
+
+    const originalTransform = content.style.transform;
+    const originalW = previewEl.style.width;
+    const originalH = previewEl.style.height;
+
+    content.style.transform = 'scale(1)';
+    previewEl.style.width = currentSize.w + 'px';
+    previewEl.style.height = currentSize.h + 'px';
+    content.style.width = currentSize.w + 'px';
+    content.style.height = currentSize.h + 'px';
+
+    await new Promise(r => setTimeout(r, 160));
+
+    try {
+      const canvas = await html2canvas(previewEl, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: null,
+        width: currentSize.w,
+        height: currentSize.h,
+        logging: false,
+        allowTaint: true
+      });
+      return canvas;
+    } finally {
+      content.style.transform = originalTransform;
+      previewEl.style.width = originalW;
+      previewEl.style.height = originalH;
+    }
+  }
+
+  // 일반 다운로드 (Blob)
+  async function downloadAllPages() {
+    const previews = document.querySelectorAll('.card-preview');
+    if (!previews.length) return;
+
+    for (let i = 0; i < previews.length; i++) {
+      try {
+        const canvas = await generateCanvas(previews[i]);
+        if (!canvas) continue;
+
+        const pageSuffix = previews.length > 1 ? `_p${i + 1}` : '';
+        const filename = `Infographic_Card_${currentSize.w}x${currentSize.h}${pageSuffix}.png`;
+
+        canvas.toBlob(function(blob) {
+          if (!blob) {
+            const dataUrl = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = dataUrl;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            return;
+          }
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = filename;
+          link.style.display = 'none';
+          document.body.appendChild(link);
+          link.click();
+          setTimeout(() => {
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+          }, 300);
+        }, 'image/png', 1.0);
+
+        if (i < previews.length - 1) await new Promise(r => setTimeout(r, 700));
+      } catch (err) {
+        console.error(err);
+        alert('이미지 생성 중 오류가 발생했습니다.');
+      }
+    }
+  }
+
+  // 아이폰용: 이미지 크게 보여주기 (길게 눌러 저장)
+  async function showSavePreview() {
+    const previews = document.querySelectorAll('.card-preview');
+    if (!previews.length) return;
+
+    // 첫 페이지만 우선 표시 (여러 페이지면 순서대로)
+    const canvas = await generateCanvas(previews[0]);
+    if (!canvas) return;
+
+    const dataUrl = canvas.toDataURL('image/png');
+    const img = document.getElementById('save-preview-img');
+    img.src = dataUrl;
+
+    const overlay = document.getElementById('save-overlay');
+    overlay.classList.add('active');
+
+    // 여러 페이지가 있으면 안내
+    if (previews.length > 1) {
+      const guide = overlay.querySelector('.save-guide');
+      guide.innerHTML = `<strong>이미지를 길게 눌러서 저장</strong>하세요<br>(현재 1/${previews.length} 페이지 · 사진 앱에 저장됩니다)`;
+    }
+  }
+
+  function closeSaveOverlay() {
+    document.getElementById('save-overlay').classList.remove('active');
+  }
+
+  // 오버레이 배경 클릭 시 닫기
+  document.getElementById('save-overlay').addEventListener('click', (e) => {
+    if (e.target.id === 'save-overlay') closeSaveOverlay();
+  });
+
+  populateFonts();
+  renderBoxInputs();
+  updatePreviewSize();
+
+  ['b-main-title', 'b-main-subtitle', 'f-title', 'f-subtitle', 'f-body', 'f-source', 'f-date'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) {
+      el.addEventListener('input', updatePreview);
+      el.addEventListener('focus', () => { lastFocusedInput = el; });
+    }
+  });
+</script>
+</body>
+</html>
