@@ -408,7 +408,12 @@
       padding: 16px 14px 100px;
     }
     .panel { position: static; max-height: none; }
-    .preview-area { order: -1; margin-bottom: 8px; }
+    .preview-area {
+      order: -1; margin: 0 -14px 8px; padding: 12px 14px 10px;
+      position: sticky; top: var(--topbar-h, 56px); z-index: 50;
+      background: var(--bg);
+      box-shadow: 0 8px 16px -8px rgba(0,0,0,0.18);
+    }
     .topbar { padding: 12px 14px; }
     .topbar-brand h1 { font-size: 15px; }
     .topbar-actions .icon-btn { height: 34px; padding: 0 10px; font-size: 12px; }
@@ -1146,6 +1151,15 @@
     window.__listResizeTimer = setTimeout(updatePreviewSize, 120);
   });
 
+  function syncTopbarHeight() {
+    const topbar = document.querySelector('.topbar');
+    if (topbar) {
+      document.documentElement.style.setProperty('--topbar-h', topbar.offsetHeight + 'px');
+    }
+  }
+  window.addEventListener('resize', syncTopbarHeight);
+  syncTopbarHeight();
+
   function updatePreview() {
     const wrap = document.getElementById('preview-wrap');
     const inner = document.getElementById('card-inner');
@@ -1506,12 +1520,20 @@
       }
     } catch (e) { /* File/share 미지원 */ }
 
-    const url = URL.createObjectURL(blob);
     if (isIOSDevice()) {
-      showOverlayFromDataUrl(url);
-      setTimeout(() => URL.revokeObjectURL(url), 120000);
+      // iOS Safari는 <img src="blob:...">에 대해 롱프레스 "사진에 저장"이
+      // 동작하지 않거나 실패하는 경우가 많아, 반드시 data: URL로 변환해서 보여준다.
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+      showOverlayFromDataUrl(dataUrl);
       return true;
     }
+
+    const url = URL.createObjectURL(blob);
     try {
       const a = document.createElement('a');
       a.href = url;
