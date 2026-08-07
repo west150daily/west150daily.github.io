@@ -32,34 +32,91 @@
     font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
     background: var(--bg);
     color: var(--text);
-    padding: 20px;
+    padding: 0;
     min-height: 100vh;
   }
-  .container {
-    max-width: 1500px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 400px 1fr;
-    gap: 28px;
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px 20px;
+    background: color-mix(in srgb, var(--card-bg) 92%, transparent);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(120,120,128,0.15);
   }
-  h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 4px; }
-  .subtitle { color: var(--text-secondary); font-size: 13px; margin-bottom: 20px; }
+  .topbar-brand h1 { font-size: 17px; font-weight: 800; letter-spacing: -0.4px; margin: 0; }
+  .topbar-brand .subtitle { color: var(--text-secondary); font-size: 12px; margin: 2px 0 0; }
+  .topbar-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end; }
+  .topbar-actions .icon-btn {
+    height: 36px; padding: 0 12px; border-radius: 10px;
+    background: rgba(120,120,128,0.12); font-size: 13px; font-weight: 600;
+  }
+  .topbar-actions .icon-btn.primary { background: var(--accent); color: #fff; }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 18px 100px;
+    display: grid;
+    grid-template-columns: minmax(300px, 400px) 1fr;
+    gap: 24px;
+  }
+  .workspace-hero {
+    grid-column: 1 / -1; text-align: center; margin-bottom: 4px;
+  }
+  .workspace-hero h2 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+  .workspace-hero p { color: var(--text-secondary); font-size: 14px; margin-top: 6px; }
 
   .panel {
     background: var(--card-bg);
     border-radius: 20px;
-    padding: 22px;
+    padding: 18px;
     box-shadow: var(--shadow-soft);
     height: fit-content;
-    position: sticky;
-    top: 20px;
-    max-height: calc(100vh - 40px);
-    overflow-y: auto;
   }
-  .section { margin-bottom: 18px; }
+  .section { margin-bottom: 16px; }
   .section-title {
     font-size: 11px; font-weight: 600; color: var(--text-secondary);
     text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
+  }
+  .sec {
+    background: rgba(120,120,128,0.06);
+    border: 1px solid rgba(120,120,128,0.12);
+    border-radius: 14px; margin-bottom: 12px; overflow: hidden;
+  }
+  .sec-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 14px; cursor: pointer; user-select: none;
+    font-size: 12px; font-weight: 700; color: var(--accent);
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .sec-head .chev { font-size: 10px; opacity: 0.55; transition: transform 0.2s; color: var(--text-secondary); }
+  .sec.collapsed .sec-body { display: none; }
+  .sec.collapsed .chev { transform: rotate(-90deg); }
+  .sec-body { padding: 4px 14px 14px; }
+
+  .drawer-backdrop {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(8px); z-index: 200;
+  }
+  .drawer-backdrop.show { display: block; }
+  .drawer {
+    position: fixed; top: 0; right: 0; width: min(400px, 92vw); height: 100%;
+    background: var(--bg); border-left: 1px solid rgba(120,120,128,0.15);
+    padding: 20px 18px 80px; overflow-y: auto; z-index: 210;
+    transform: translateX(105%); transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    box-shadow: -12px 0 40px rgba(0,0,0,0.2);
+  }
+  .drawer.open { transform: translateX(0); }
+  .drawer-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .drawer-head h2 { font-size: 18px; font-weight: 800; }
+  .scroll-fab {
+    position: fixed; right: 16px; bottom: 20px; z-index: 90;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .scroll-fab button {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--card-bg); border: 1px solid rgba(120,120,128,0.2);
+    box-shadow: var(--shadow-soft); font-weight: 700; font-size: 16px;
   }
   .btn-group { display: flex; flex-wrap: wrap; gap: 6px; }
   button {
@@ -103,13 +160,17 @@
     padding: 11px; border-radius: 12px; font-weight: 500; width: 100%;
   }
 
-  .preview-area { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .preview-area {
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+    width: 100%; min-width: 0; overflow: hidden;
+  }
   #preview-wrap {
     background: var(--card-bg);
     border-radius: var(--radius);
     box-shadow: var(--shadow-deep);
     overflow: hidden;
     position: relative;
+    max-width: 100%;
   }
   #card-inner {
     width: 1080px; height: 1080px;
@@ -117,6 +178,8 @@
     display: flex; flex-direction: column;
     position: relative;
     background: var(--card-bg);
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
   .card-title {
     font-size: 42px; font-weight: 800; letter-spacing: -1.2px;
@@ -340,8 +403,24 @@
   }
 
   @media (max-width: 1100px) {
-    .container { grid-template-columns: 1fr; }
+    .container {
+      grid-template-columns: 1fr;
+      padding: 16px 14px 100px;
+    }
     .panel { position: static; max-height: none; }
+    .preview-area {
+      order: -1; margin: 0 -14px 8px; padding: 12px 14px 10px;
+      position: sticky; top: var(--topbar-h, 56px); z-index: 50;
+      background: var(--bg);
+      box-shadow: 0 8px 16px -8px rgba(0,0,0,0.18);
+      transition: padding 0.25s ease;
+    }
+    .preview-area.is-compact { padding: 6px 14px; }
+    .preview-area.is-compact #preview-wrap { border-radius: 12px; box-shadow: var(--shadow-soft); }
+    .preview-area #preview-wrap { transition: width 0.25s ease, height 0.25s ease, border-radius 0.25s ease; }
+    .topbar { padding: 12px 14px; }
+    .topbar-brand h1 { font-size: 15px; }
+    .topbar-actions .icon-btn { height: 34px; padding: 0 10px; font-size: 12px; }
   }
 
   /* ===== 추가 디자인 기능 ===== */
@@ -513,11 +592,115 @@
 
 </head>
 <body>
-  <div class="container">
-    <div class="panel">
-      <h1>Sequence · List · Compare</h1>
-      <p class="subtitle">입체적이면서 깔끔한 고퀄리티 생성기</p>
+  <div class="scroll-fab">
+    <button type="button" title="맨 위" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+    <button type="button" title="맨 아래" onclick="window.scrollTo({top:document.documentElement.scrollHeight,behavior:'smooth'})">↓</button>
+  </div>
 
+  <header class="topbar">
+    <div class="topbar-brand">
+      <h1>Sequence · List · Compare</h1>
+      <p class="subtitle">미리보기 중심 스튜디오</p>
+    </div>
+    <div class="topbar-actions">
+      <button type="button" class="icon-btn active" id="theme-light">라이트</button>
+      <button type="button" class="icon-btn" id="theme-dark">다크</button>
+      <input type="color" id="accent-color" value="#007AFF" title="포인트 컬러" style="width:36px;height:36px;border:none;border-radius:10px;padding:0;background:none;">
+      <button type="button" class="icon-btn" onclick="openDrawer()">설정</button>
+      <button type="button" class="icon-btn primary" onclick="downloadPNG()">저장</button>
+    </div>
+  </header>
+
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
+  <aside class="drawer" id="settingsDrawer">
+    <div class="drawer-head">
+      <h2>디자인 설정</h2>
+      <button type="button" class="icon-btn" onclick="closeDrawer()" style="padding:8px 12px;border-radius:10px;">닫기</button>
+    </div>
+    <div class="section">
+      <div class="section-title">배경 스타일</div>
+      <div class="btn-group" id="bgpreset-btns">
+        <button class="active" data-bgpreset="none">기본</button>
+        <button data-bgpreset="sunset">Sunset</button>
+        <button data-bgpreset="ocean">Ocean</button>
+        <button data-bgpreset="forest">Forest</button>
+        <button data-bgpreset="mono">Mono</button>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">텍스처 · 텍스트 · 장식</div>
+      <div class="btn-group">
+        <button id="texture-toggle" data-active="false">질감 오버레이</button>
+        <button id="textgrad-toggle" data-active="false">제목 그라디언트</button>
+        <button id="frame-toggle" data-active="false">프레임</button>
+      </div>
+      <div class="color-row" style="margin-top:8px;">
+        <input type="color" id="accent2-color" value="#FF6A88">
+        <span style="font-size:13px;">그라디언트 2색</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">격자 / 도트 패턴</div>
+      <div class="btn-group" id="pattern-btns">
+        <button class="active" data-pattern="none">없음</button>
+        <button data-pattern="grid">격자</button>
+        <button data-pattern="dot">도트</button>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">모서리 · 그림자 · 패딩</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <span style="font-size:12px;min-width:70px;">모서리</span>
+        <input type="range" id="radius-size" min="0" max="64" value="24" style="flex:1;">
+        <span id="radius-label">24px</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <span style="font-size:12px;min-width:70px;">그림자</span>
+        <input type="range" id="shadow-intensity" min="0" max="100" value="40" style="flex:1;">
+        <span id="shadow-label">40</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:12px;min-width:70px;">패딩</span>
+        <input type="range" id="card-padding" min="24" max="100" value="52" style="flex:1;">
+        <span id="padding-label">52px</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">폰트</div>
+      <select id="font-select">
+        <option value="'Pretendard Variable', Pretendard, sans-serif">Pretendard</option>
+        <option value="'Noto Sans KR', sans-serif">Noto Sans KR</option>
+        <option value="'Noto Serif KR', serif">Noto Serif KR</option>
+        <option value="'Nanum Myeongjo', serif">나눔명조</option>
+        <option value="'Gowun Batang', serif">고운바탕</option>
+        <option value="'IBM Plex Sans KR', sans-serif">IBM Plex Sans KR</option>
+      </select>
+    </div>
+    <div class="section">
+      <div class="section-title">배경 이미지</div>
+      <input type="file" id="bg-image-input" accept="image/*">
+      <button class="btn-secondary" style="margin-top:6px;" onclick="removeBgImage()">배경 이미지 제거</button>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:8px;">
+        <span style="font-size:12px;min-width:70px;">투명도</span>
+        <input type="range" id="bg-image-opacity" min="0" max="100" value="30" style="flex:1;">
+        <span id="bg-opacity-label">30%</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">로고 · 워터마크</div>
+      <input type="file" id="logo-input" accept="image/*">
+      <button class="btn-secondary" style="margin-top:6px;" onclick="removeLogo()">로고 제거</button>
+      <input type="text" id="watermark" placeholder="@계정명 또는 브랜드명" style="margin-top:8px;">
+    </div>
+  </aside>
+
+  <div class="container">
+    <div class="workspace-hero">
+      <h2>카드 스튜디오</h2>
+      <p>콘텐츠는 왼쪽, 미리보기는 오른쪽. 디자인 옵션은 「설정」에서 엽니다.</p>
+    </div>
+
+    <div class="panel">
       <div class="section">
         <div class="section-title">유형 선택</div>
         <div class="btn-group" id="type-btns">
@@ -604,116 +787,18 @@
         </div>
       </div>
 
-      <div class="section">
-        <div class="section-title">테마 & 컬러</div>
-        <div class="btn-group" style="margin-bottom:10px;">
-          <button id="theme-light" class="active">라이트</button>
-          <button id="theme-dark">다크</button>
+      <div class="sec collapsed" id="progress-section">
+        <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span>진행률 강조 (Sequence)</span><span class="chev">▼</span>
         </div>
-        <div class="color-row">
-          <input type="color" id="accent-color" value="#007AFF">
-          <span style="font-size:13px; font-weight:600;">포인트 컬러</span>
+        <div class="sec-body">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:13px; font-weight:600; min-width:80px;">강조 단계</span>
+            <input type="range" id="progress-step" min="0" max="10" value="0" style="flex:1;">
+            <span id="progress-label">없음</span>
+          </div>
+          <p style="font-size:12px; color:var(--text-secondary); margin-top:4px;">0 = 없음 / 숫자 = 해당 단계까지 강조</p>
         </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">배경 스타일</div>
-        <div class="btn-group" id="bgpreset-btns">
-          <button class="active" data-bgpreset="none">기본</button>
-          <button data-bgpreset="sunset">선셋</button>
-          <button data-bgpreset="ocean">오션</button>
-          <button data-bgpreset="forest">포레스트</button>
-          <button data-bgpreset="mono">모노</button>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">텍스처 · 텍스트 · 장식</div>
-        <div class="btn-group" style="margin-bottom:10px;">
-          <button id="texture-toggle" data-active="false">질감 오버레이</button>
-          <button id="textgrad-toggle" data-active="false">제목 그라디언트</button>
-          <button id="frame-toggle" data-active="false">프레임</button>
-        </div>
-        <div class="color-row">
-          <input type="color" id="accent2-color" value="#FF6A88">
-          <span style="font-size:13px; font-weight:600;">그라디언트 보조색</span>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">격자 / 도트 패턴 오버레이</div>
-        <div class="btn-group" id="pattern-btns">
-          <button class="active" data-pattern="none">없음</button>
-          <button data-pattern="grid">격자</button>
-          <button data-pattern="dot">도트</button>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">모서리 둥글기</div>
-        <div class="slider-row" style="display:flex; align-items:center; gap:10px;">
-          <span style="font-size:13px; font-weight:600; min-width:80px;">둥글기</span>
-          <input type="range" id="radius-size" min="0" max="64" value="24" style="flex:1;">
-          <span id="radius-label">24px</span>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">그림자 강도</div>
-        <div class="slider-row" style="display:flex; align-items:center; gap:10px;">
-          <span style="font-size:13px; font-weight:600; min-width:80px;">그림자</span>
-          <input type="range" id="shadow-intensity" min="0" max="100" value="40" style="flex:1;">
-          <span id="shadow-label">40</span>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">카드 좌우 여백 (패딩)</div>
-        <div class="slider-row" style="display:flex; align-items:center; gap:10px;">
-          <span style="font-size:13px; font-weight:600; min-width:80px;">패딩</span>
-          <input type="range" id="card-padding" min="24" max="100" value="52" style="flex:1;">
-          <span id="padding-label">52px</span>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">폰트 선택</div>
-        <select id="font-select">
-          <option value="'Pretendard Variable', Pretendard, -apple-system, sans-serif">Pretendard (기본)</option>
-          <option value="'Noto Sans KR', sans-serif">Noto Sans KR</option>
-          <option value="'Noto Serif KR', serif">Noto Serif KR</option>
-          <option value="'Nanum Myeongjo', serif">나눔명조</option>
-          <option value="'Gowun Batang', serif">고운바탕</option>
-          <option value="'IBM Plex Sans KR', sans-serif">IBM Plex Sans KR</option>
-        </select>
-      </div>
-
-      <div class="section">
-        <div class="section-title">배경 이미지</div>
-        <input type="file" id="bg-image-input" accept="image/*">
-        <button class="btn-secondary" style="margin-top:6px;" onclick="removeBgImage()">배경 이미지 제거</button>
-        <div class="slider-row" style="display:flex; align-items:center; gap:10px; margin-top:8px;">
-          <span style="font-size:13px; font-weight:600; min-width:80px;">투명도</span>
-          <input type="range" id="bg-image-opacity" min="0" max="100" value="30" style="flex:1;">
-          <span id="bg-opacity-label">30%</span>
-        </div>
-      </div>
-
-      <div class="section" id="progress-section">
-        <div class="section-title">진행률 강조 (Sequence)</div>
-        <div class="slider-row" style="display:flex; align-items:center; gap:10px;">
-          <span style="font-size:13px; font-weight:600; min-width:80px;">강조 단계</span>
-          <input type="range" id="progress-step" min="0" max="10" value="0" style="flex:1;">
-          <span id="progress-label">없음</span>
-        </div>
-        <p style="font-size:12px; color:var(--text-secondary); margin-top:4px;">0 = 없음 / 숫자 = 해당 단계까지 강조</p>
-      </div>
-
-      <div class="section">
-        <div class="section-title">로고 · 워터마크</div>
-        <input type="file" id="logo-input" accept="image/*">
-        <button class="btn-secondary" style="margin-top:6px;" onclick="removeLogo()">로고 제거</button>
-        <input type="text" id="watermark" placeholder="@계정명 또는 브랜드명" style="margin-top:8px;">
       </div>
 
       <div class="section">
@@ -724,7 +809,7 @@
 
       <div class="actions">
         <button class="btn-primary" onclick="downloadPNG()">고화질 PNG 저장</button>
-        <button class="btn-secondary" onclick="showSavePreview()">아이폰용 · 길게 눌러 저장</button>
+        <button class="btn-secondary" onclick="showSavePreview()">이미지 크게 보기</button>
       </div>
     </div>
 
@@ -1057,11 +1142,54 @@
   });
 
   function updatePreviewSize() {
-    const max = 480;
-    scale = Math.min(max / currentSize.w, max / currentSize.h, 0.45);
+    const area = document.querySelector('.preview-area');
+    const compact = area?.classList.contains('is-compact');
+    const availW = Math.max(200, Math.min((area?.clientWidth || window.innerWidth) - 16, window.innerWidth - 32, 560));
+    const availH = compact ? Math.min(window.innerHeight * 0.16, 130) : Math.min(window.innerHeight * 0.58, 620);
+    scale = Math.min(availW / currentSize.w, availH / currentSize.h, 0.5);
+    scale = Math.max(scale, 0.12);
     document.getElementById('size-label').textContent = `${currentSize.w} × ${currentSize.h}`;
     updatePreview();
   }
+
+  // 모바일에서 스크롤을 내리면 미리보기를 작게 줄여 부담을 줄인다.
+  const mobileMedia = window.matchMedia('(max-width: 1100px)');
+  function checkPreviewCompact() {
+    const area = document.querySelector('.preview-area');
+    if (!area) return;
+    const shouldCompact = mobileMedia.matches && window.scrollY > 40;
+    const isCompact = area.classList.contains('is-compact');
+    if (shouldCompact !== isCompact) {
+      area.classList.toggle('is-compact', shouldCompact);
+      updatePreviewSize();
+    }
+  }
+  window.addEventListener('scroll', () => {
+    clearTimeout(window.__previewCompactTimer);
+    window.__previewCompactTimer = setTimeout(checkPreviewCompact, 60);
+  }, { passive: true });
+  mobileMedia.addEventListener ? mobileMedia.addEventListener('change', checkPreviewCompact) : mobileMedia.addListener(checkPreviewCompact);
+
+  window.addEventListener('resize', () => {
+    clearTimeout(window.__listResizeTimer);
+    window.__listResizeTimer = setTimeout(updatePreviewSize, 120);
+  });
+
+  function syncTopbarHeight() {
+    const topbar = document.querySelector('.topbar');
+    if (topbar) {
+      document.documentElement.style.setProperty('--topbar-h', topbar.offsetHeight + 'px');
+    }
+  }
+  window.addEventListener('resize', syncTopbarHeight);
+  syncTopbarHeight();
+  checkPreviewCompact();
+  document.querySelector('.preview-area')?.addEventListener('click', () => {
+    const area = document.querySelector('.preview-area');
+    if (area?.classList.contains('is-compact')) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
 
   function updatePreview() {
     const wrap = document.getElementById('preview-wrap');
@@ -1260,71 +1388,261 @@
     return d.innerHTML;
   }
 
+  function resolveCaptureBg() {
+    const isDark = document.body.classList.contains('dark');
+    if (currentBgPreset === 'sunset') return '#ff6a88';
+    if (currentBgPreset === 'ocean') return '#2b5876';
+    if (currentBgPreset === 'forest') return '#134e5e';
+    if (currentBgPreset === 'mono') return '#232526';
+    return isDark ? '#1C1C1E' : '#FFFFFF';
+  }
+
+  function simplifyNodeForCapture(root, solidBg) {
+    root.querySelectorAll('*').forEach(el => {
+      el.style.filter = 'none';
+      el.style.backdropFilter = 'none';
+      el.style.webkitBackdropFilter = 'none';
+      if (el.classList && el.classList.contains('text-grad')) {
+        el.style.background = 'none';
+        el.style.webkitBackgroundClip = 'unset';
+        el.style.backgroundClip = 'unset';
+        const acc = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#007AFF';
+        el.style.color = acc;
+        el.style.webkitTextFillColor = acc;
+      }
+    });
+    if (typeof currentBgPreset === 'undefined' || currentBgPreset === 'none') {
+      root.style.background = solidBg;
+    }
+  }
+
   async function generateCanvas() {
-    const wrap = document.getElementById('preview-wrap');
     const inner = document.getElementById('card-inner');
-    const ot = inner.style.transform;
-    const ow = wrap.style.width;
-    const oh = wrap.style.height;
+    if (!inner) return null;
 
-    inner.style.transform = 'scale(1)';
-    wrap.style.width = currentSize.w + 'px';
-    wrap.style.height = currentSize.h + 'px';
-    inner.style.width = currentSize.w + 'px';
-    inner.style.height = currentSize.h + 'px';
+    const solidBg = resolveCaptureBg();
+    const w = currentSize.w;
+    const h = currentSize.h;
+    const heavy = (currentType === 'compare' && typeof compareCols !== 'undefined' && compareCols === 3)
+      || (currentType === 'sequence' && seqStyle === 'timeline-h')
+      || (currentType === 'list' && listStyle === 'grid3')
+      || (w * h > 1080 * 1400);
+    const preferredScale = heavy ? 1.5 : 2;
 
-    // 강제 리플로우 후 렌더링 안정화까지 대기 (아이폰에서 크기 변경이
-    // 늦게 반영되어 캡처가 잘리는 문제 방지)
-    wrap.offsetHeight;
+    const host = document.createElement('div');
+    host.setAttribute('data-capture-host', '1');
+    host.style.cssText = 'position:fixed;left:0;top:0;width:' + w + 'px;height:' + h + 'px;overflow:hidden;z-index:99999;pointer-events:none;opacity:0.03;background:' + solidBg + ';';
+
+    const fixStyle = document.createElement('style');
+    fixStyle.textContent = [
+      '#card-inner-capture, #card-inner-capture * { filter:none !important; backdrop-filter:none !important; -webkit-backdrop-filter:none !important; }',
+      '#card-inner-capture .seq-step-num, #card-inner-capture .tl-h-dot, #card-inner-capture .tl-v-dot, #card-inner-capture .list-horizontal .list-num {',
+      '  background: var(--accent) !important; box-shadow: none !important; }',
+      '#card-inner-capture .tl-vertical::before { background: var(--accent) !important; }',
+      '#card-inner-capture .tl-h-line { background: var(--accent) !important; }',
+      '#card-inner-capture .deco-frame { border-color: var(--accent) !important; opacity: 0.35 !important; }',
+      '#card-inner-capture .pattern-grid::after {',
+      '  background-image: linear-gradient(var(--text) 1px, transparent 1px), linear-gradient(90deg, var(--text) 1px, transparent 1px) !important; }',
+      '#card-inner-capture .pattern-dot::after {',
+      '  background-image: radial-gradient(var(--text) 1.6px, transparent 1.6px) !important; }',
+      '#card-inner-capture .text-grad { -webkit-text-fill-color: var(--accent) !important; color: var(--accent) !important; background: none !important; }'
+    ].join('\n');
+    host.appendChild(fixStyle);
+
+    const clone = inner.cloneNode(true);
+    clone.id = 'card-inner-capture';
+    clone.style.transform = 'none';
+    clone.style.webkitTransform = 'none';
+    clone.style.width = w + 'px';
+    clone.style.height = h + 'px';
+    clone.style.padding = inner.style.padding || ('56px ' + (typeof cardPadding !== 'undefined' ? cardPadding : 52) + 'px');
+    clone.style.fontFamily = inner.style.fontFamily || (typeof currentFont !== 'undefined' ? currentFont : 'inherit');
+    clone.style.display = 'flex';
+    clone.style.flexDirection = 'column';
+    clone.style.position = 'relative';
+    clone.style.boxSizing = 'border-box';
+    clone.style.margin = '0';
+    clone.className = inner.className;
+    simplifyNodeForCapture(clone, solidBg);
+
+    host.appendChild(clone);
+    document.body.appendChild(host);
+    host.offsetHeight;
     await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-    await new Promise(r => setTimeout(r, 250));
+    await new Promise(r => setTimeout(r, 180));
+
+    const baseOpts = {
+      useCORS: true,
+      backgroundColor: solidBg,
+      width: w,
+      height: h,
+      logging: false,
+      allowTaint: true,
+      foreignObjectRendering: false,
+      imageTimeout: 10000
+    };
 
     try {
-      const canvas = await html2canvas(wrap, {
-        scale: 2, useCORS: true, backgroundColor: null,
-        width: currentSize.w, height: currentSize.h,
-        windowWidth: currentSize.w, windowHeight: currentSize.h,
-        x: 0, y: 0, scrollX: 0, scrollY: 0,
-        logging: false, allowTaint: true
-      });
-      return canvas;
+      const scales = [preferredScale, 1.25, 1];
+      for (let i = 0; i < scales.length; i++) {
+        try {
+          const canvas = await html2canvas(clone, Object.assign({}, baseOpts, { scale: scales[i] }));
+          if (canvas && canvas.width > 0 && canvas.height > 0) return canvas;
+        } catch (e) {
+          console.warn('capture scale', scales[i], e);
+        }
+      }
+    } catch (err) {
+      console.error('generateCanvas clone', err);
+    } finally {
+      if (host.parentNode) host.parentNode.removeChild(host);
+    }
+
+    const wrap = document.getElementById('preview-wrap');
+    const ot = inner.style.transform;
+    const ow = wrap ? wrap.style.width : '';
+    const oh = wrap ? wrap.style.height : '';
+    const prevBg = inner.style.background;
+    const fallbackFix = document.createElement('style');
+    fallbackFix.textContent = fixStyle.textContent.replace(/#card-inner-capture/g, '#card-inner');
+    document.head.appendChild(fallbackFix);
+    try {
+      inner.style.transform = 'none';
+      inner.style.webkitTransform = 'none';
+      if (wrap) { wrap.style.width = w + 'px'; wrap.style.height = h + 'px'; }
+      inner.style.width = w + 'px';
+      inner.style.height = h + 'px';
+      if (typeof currentBgPreset === 'undefined' || currentBgPreset === 'none') inner.style.background = solidBg;
+      await new Promise(r => setTimeout(r, 120));
+      return await html2canvas(inner, Object.assign({}, baseOpts, { scale: 1 }));
+    } catch (err2) {
+      console.error('generateCanvas in-place failed', err2);
+      return null;
     } finally {
       inner.style.transform = ot;
-      wrap.style.width = ow;
-      wrap.style.height = oh;
+      inner.style.webkitTransform = ot;
+      inner.style.background = prevBg;
+      if (wrap) { wrap.style.width = ow; wrap.style.height = oh; }
+      if (fallbackFix.parentNode) fallbackFix.parentNode.removeChild(fallbackFix);
     }
   }
 
   function isIOSDevice() {
-    // 아이폰/아이패드(사파리)는 a.download 강제 다운로드를 지원하지 않음
     return /iP(hone|od|ad)/.test(navigator.userAgent) ||
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   }
 
-  async function downloadPNG() {
+  function openDrawer() {
+    document.getElementById('settingsDrawer')?.classList.add('open');
+    document.getElementById('drawerBackdrop')?.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDrawer() {
+    document.getElementById('settingsDrawer')?.classList.remove('open');
+    document.getElementById('drawerBackdrop')?.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  function showOverlayFromDataUrl(dataUrl) {
+    document.getElementById('save-preview-img').src = dataUrl;
+    document.getElementById('save-overlay').classList.add('active');
+  }
+
+  async function saveBlobSmart(blob, filename) {
+    if (!blob) return false;
+    try {
+      const file = new File([blob], filename, { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: filename });
+          return true;
+        } catch (err) {
+          if (err && err.name === 'AbortError') return true;
+        }
+      }
+    } catch (e) { /* File/share 미지원 */ }
+
     if (isIOSDevice()) {
-      // 아이폰에서는 자동 다운로드가 동작하지 않으므로 길게 눌러 저장하는 방식으로 전환
-      await showSavePreview();
-      return;
+      // iOS Safari는 <img src="blob:...">에 대해 롱프레스 "사진에 저장"이
+      // 동작하지 않거나 실패하는 경우가 많아, 반드시 data: URL로 변환해서 보여준다.
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+      showOverlayFromDataUrl(dataUrl);
+      return true;
     }
-    const canvas = await generateCanvas();
-    if (!canvas) return;
-    canvas.toBlob(blob => {
-      const url = URL.createObjectURL(blob);
+
+    const url = URL.createObjectURL(blob);
+    try {
       const a = document.createElement('a');
       a.href = url;
-      a.download = `SLC_${currentType}_${currentSize.w}x${currentSize.h}.png`;
+      a.download = filename;
+      a.style.display = 'none';
       document.body.appendChild(a);
       a.click();
-      setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 200);
-    }, 'image/png', 1);
+      setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 400);
+      return true;
+    } catch (e) {
+      showOverlayFromDataUrl(url);
+      return true;
+    }
+  }
+
+  async function downloadPNG() {
+    try {
+      const canvas = await generateCanvas();
+      if (!canvas) {
+        alert('이미지 생성에 실패했습니다. 브라우저를 새로고침 후 다시 시도해 주세요.');
+        return;
+      }
+      const filename = `SLC_${currentType}_${currentSize.w}x${currentSize.h}.png`;
+      let blob = null;
+      try {
+        blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 0.95));
+      } catch (e) { blob = null; }
+
+      if (blob) {
+        const ok = await saveBlobSmart(blob, filename);
+        if (!ok) showOverlayFromDataUrl(canvas.toDataURL('image/png'));
+      } else {
+        // toBlob 미지원 시 dataURL
+        showOverlayFromDataUrl(canvas.toDataURL('image/png'));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('저장 중 오류: ' + (err && err.message ? err.message : '알 수 없음'));
+    }
   }
 
   async function showSavePreview() {
-    const canvas = await generateCanvas();
-    if (!canvas) return;
-    document.getElementById('save-preview-img').src = canvas.toDataURL('image/png');
-    document.getElementById('save-overlay').classList.add('active');
+    try {
+      const canvas = await generateCanvas();
+      if (!canvas) return;
+      const blob = await new Promise(resolve => {
+        try { canvas.toBlob(resolve, 'image/png', 1); }
+        catch (e) { resolve(null); }
+      });
+      if (blob) {
+        try {
+          const file = new File([blob], 'SLC_card.png', { type: 'image/png' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+              await navigator.share({ files: [file], title: 'SLC 카드' });
+              return;
+            } catch (err) {
+              if (err && err.name === 'AbortError') return;
+            }
+          }
+        } catch (e) { /* ignore */ }
+      }
+      showOverlayFromDataUrl(canvas.toDataURL('image/png'));
+    } catch (err) {
+      console.error(err);
+      alert('미리보기 생성에 실패했습니다.');
+    }
   }
   function closeSaveOverlay() {
     document.getElementById('save-overlay').classList.remove('active');
@@ -1332,13 +1650,15 @@
   document.getElementById('save-overlay').addEventListener('click', e => {
     if (e.target.id === 'save-overlay') closeSaveOverlay();
   });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeDrawer();
+  });
 
   renderItems();
   updatePreviewSize();
-  // 초기 진행률 max 설정
   const progEl = document.getElementById('progress-step');
   if (progEl) progEl.max = items.length;
-  document.getElementById('progress-section').style.display = currentType === 'sequence' ? 'block' : 'none';
+  document.getElementById('progress-section').style.display = currentType === 'sequence' ? '' : 'none';
 </script>
 </body>
 </html>
