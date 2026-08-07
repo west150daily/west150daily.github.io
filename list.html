@@ -1353,65 +1353,97 @@
   }
 
   async function generateCanvas() {
-    const wrap = document.getElementById('preview-wrap');
     const inner = document.getElementById('card-inner');
-    if (!wrap || !inner) return null;
+    if (!inner) return null;
 
-    const ot = inner.style.transform;
-    const ow = wrap.style.width;
-    const oh = wrap.style.height;
-    const oPos = wrap.style.position;
-    const oLeft = wrap.style.left;
-    const oTop = wrap.style.top;
-    const oZ = wrap.style.zIndex;
     const solidBg = resolveCaptureBg();
-    const prevWrapBg = wrap.style.background;
-    const prevInnerBg = inner.style.background;
+    const w = currentSize.w;
+    const h = currentSize.h;
 
-    // 화면 밖으로 옮겨 레이아웃이 깨지지 않게 캡처
-    wrap.style.position = 'fixed';
-    wrap.style.left = '-9999px';
-    wrap.style.top = '0';
-    wrap.style.zIndex = '-1';
-    inner.style.transform = 'scale(1)';
-    wrap.style.width = currentSize.w + 'px';
-    wrap.style.height = currentSize.h + 'px';
-    inner.style.width = currentSize.w + 'px';
-    inner.style.height = currentSize.h + 'px';
+    // 원본은 건드리지 않고, 화면 안 클론으로 캡처
+    const host = document.createElement('div');
+    host.setAttribute('data-capture-host', '1');
+    host.style.cssText = 'position:fixed;left:0;top:0;width:' + w + 'px;height:' + h + 'px;overflow:hidden;z-index:99999;pointer-events:none;opacity:0.02;background:' + solidBg + ';';
+
+    const clone = inner.cloneNode(true);
+    clone.id = 'card-inner-capture';
+    clone.style.transform = 'none';
+    clone.style.webkitTransform = 'none';
+    clone.style.width = w + 'px';
+    clone.style.height = h + 'px';
+    clone.style.padding = inner.style.padding || ('56px ' + (typeof cardPadding !== 'undefined' ? cardPadding : 52) + 'px');
+    clone.style.fontFamily = inner.style.fontFamily || (typeof currentFont !== 'undefined' ? currentFont : 'inherit');
+    clone.style.display = 'flex';
+    clone.style.flexDirection = 'column';
+    clone.style.position = 'relative';
+    clone.style.boxSizing = 'border-box';
+    clone.style.margin = '0';
     if (currentBgPreset === 'none') {
-      wrap.style.background = solidBg;
-      inner.style.background = solidBg;
+      clone.style.background = solidBg;
     }
+    clone.className = inner.className;
 
-    wrap.offsetHeight;
+    host.appendChild(clone);
+    document.body.appendChild(host);
+
+    host.offsetHeight;
     await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-    await new Promise(r => setTimeout(r, 200));
+    await new Promise(r => setTimeout(r, 150));
 
     try {
-      const canvas = await html2canvas(inner, {
-        scale: 2,
+      const opts = {
         useCORS: true,
         backgroundColor: solidBg,
-        width: currentSize.w,
-        height: currentSize.h,
+        width: w,
+        height: h,
         logging: false,
-        allowTaint: true
-      });
-      return canvas;
+        allowTaint: true,
+        foreignObjectRendering: false,
+        imageTimeout: 8000
+      };
+      try {
+        return await html2canvas(clone, Object.assign({}, opts, { scale: 2 }));
+      } catch (e1) {
+        console.warn('html2canvas x2 fail, retry x1', e1);
+        return await html2canvas(clone, Object.assign({}, opts, { scale: 1 }));
+      }
     } catch (err) {
-      console.error('generateCanvas', err);
-      alert('이미지 생성에 실패했습니다. 다시 시도해 주세요.');
-      return null;
+      console.error('generateCanvas clone failed, fallback in-place', err);
+      // 최후 폴백: 원본을 잠깐 1배율로 만들어 캡처
+      const wrap = document.getElementById('preview-wrap');
+      const ot = inner.style.transform;
+      const ow = wrap ? wrap.style.width : '';
+      const oh = wrap ? wrap.style.height : '';
+      try {
+        inner.style.transform = 'none';
+        if (wrap) {
+          wrap.style.width = w + 'px';
+          wrap.style.height = h + 'px';
+        }
+        inner.style.width = w + 'px';
+        inner.style.height = h + 'px';
+        await new Promise(r => setTimeout(r, 100));
+        return await html2canvas(inner, {
+          scale: 1,
+          useCORS: true,
+          backgroundColor: solidBg,
+          width: w,
+          height: h,
+          logging: false,
+          allowTaint: true
+        });
+      } catch (err2) {
+        console.error('generateCanvas fallback failed', err2);
+        return null;
+      } finally {
+        inner.style.transform = ot;
+        if (wrap) {
+          wrap.style.width = ow;
+          wrap.style.height = oh;
+        }
+      }
     } finally {
-      inner.style.transform = ot;
-      wrap.style.width = ow;
-      wrap.style.height = oh;
-      wrap.style.position = oPos;
-      wrap.style.left = oLeft;
-      wrap.style.top = oTop;
-      wrap.style.zIndex = oZ;
-      wrap.style.background = prevWrapBg;
-      inner.style.background = prevInnerBg;
+      if (host.parentNode) host.parentNode.removeChild(host);
     }
   }
 
@@ -1474,20 +1506,26 @@
   async function downloadPNG() {
     try {
       const canvas = await generateCanvas();
-      if (!canvas) return;
+      if (!canvas) {
+        alert('이미지 생성에 실패했습니다. 브라우저를 새로고침 후 다시 시도해 주세요.');
+        return;
+      }
       const filename = `SLC_${currentType}_${currentSize.w}x${currentSize.h}.png`;
-      const blob = await new Promise(resolve => {
-        try { canvas.toBlob(resolve, 'image/png', 1); }
-        catch (e) { resolve(null); }
-      });
+      let blob = null;
+      try {
+        blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 0.95));
+      } catch (e) { blob = null; }
+
       if (blob) {
-        await saveBlobSmart(blob, filename);
+        const ok = await saveBlobSmart(blob, filename);
+        if (!ok) showOverlayFromDataUrl(canvas.toDataURL('image/png'));
       } else {
+        // toBlob 미지원 시 dataURL
         showOverlayFromDataUrl(canvas.toDataURL('image/png'));
       }
     } catch (err) {
       console.error(err);
-      alert('저장 중 오류가 발생했습니다.');
+      alert('저장 중 오류: ' + (err && err.message ? err.message : '알 수 없음'));
     }
   }
 
