@@ -171,7 +171,12 @@
 
   input[type="range"] { width: 100%; accent-color: var(--accent); }
 
-  .preview-area { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .preview-area {
+    display: flex; flex-direction: column; align-items: center; gap: 20px;
+    position: sticky;
+    top: 84px;
+    align-self: start;
+  }
   #pages-container { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; }
 
   .card-wrapper { display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -417,10 +422,33 @@
     font-size: 15px;
     font-weight: 600;
   }
+  #save-overlay-nav {
+    display: none;
+    gap: 16px;
+    align-items: center;
+    margin-top: 14px;
+  }
+  #save-overlay-nav button {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  #save-overlay-nav span {
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    min-width: 50px;
+    text-align: center;
+  }
 
   @media (max-width: 1100px) {
     .container { grid-template-columns: 1fr; padding: 16px 14px 100px; }
     .panel { position: static; max-height: none; }
+    .preview-area { position: static; top: auto; align-self: auto; }
   }
 </style>
 </head>
@@ -566,6 +594,27 @@
         <div class="section-title">카드 제목</div>
         <input type="text" id="b-main-title" placeholder="전체 메인 제목">
         <input type="text" id="b-main-subtitle" placeholder="전체 부제목" style="margin-bottom:12px;">
+
+        <div class="sec collapsed" id="bulk-boxes-section">
+          <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')">
+            <span>붙여넣기로 한번에 채우기</span><span class="chev">▼</span>
+          </div>
+          <div class="sec-body">
+            <div style="font-size:12px; color:var(--text-secondary); margin-bottom:8px; line-height:1.5;">
+              빈 줄로 단락을 구분하고, 각 블록의 첫 줄은 소제목, 나머지는 본문으로 채워집니다.
+            </div>
+            <textarea id="bulk-boxes-text" placeholder="소제목1
+본문1 내용...
+
+소제목2
+본문2 내용...
+
+소제목3
+본문3 내용..."></textarea>
+            <button class="btn-primary" style="margin-top:6px;" onclick="parseBulkBoxes()">일괄 채우기 (기존 단락 교체)</button>
+          </div>
+        </div>
+
         <div class="section-title">단락 (드래그 · ▲▼)</div>
         <div id="boxes-input-container"></div>
         <button class="btn-secondary" style="width:100%; border: 1.5px dashed var(--accent); color:var(--accent); font-weight:600;" onclick="addNewBoxField()">+ 단락 추가</button>
@@ -647,6 +696,11 @@
   <!-- iPhone 저장 오버레이 -->
   <div id="save-overlay">
     <img id="save-preview-img" alt="저장용 이미지">
+    <div id="save-overlay-nav">
+      <button type="button" onclick="iosSavePrev()">‹ 이전</button>
+      <span id="save-page-label"></span>
+      <button type="button" onclick="iosSaveNext()">다음 ›</button>
+    </div>
     <div class="save-guide">
       <strong>이미지를 길게 눌러서 저장</strong>하세요<br>
       (사진 앱에 저장됩니다)
@@ -671,6 +725,9 @@
   let fontMode = 'auto';
   let manualBodySize = 16;
   let manualSubSize = 20;
+
+  let iosImages = [];
+  let iosImageIndex = 0;
 
   let boxList = [
     { title: '첫 번째 단락 제목', body: '첫 번째 본문입니다. 드래그 앤 드롭으로 이 카드 박스의 순서를 자유롭게 바꿀 수 있습니다.', img: null, imgPos: 'middle', imgHeight: 180, imgFit: 'cover', connectNext: true },
@@ -974,6 +1031,26 @@
     updatePreview();
   }
 
+  function parseBulkBoxes() {
+    const raw = document.getElementById('bulk-boxes-text').value.trim();
+    if (!raw) return alert('내용을 입력해주세요.');
+    if (!confirm('기존 단락을 모두 지우고 붙여넣은 내용으로 새로 채웁니다. 계속할까요?')) return;
+
+    const blocks = raw.split(/\n\s*\n/).map(b => b.trim()).filter(b => b.length > 0);
+    if (!blocks.length) return;
+
+    const newBoxes = blocks.map(block => {
+      const lines = block.split('\n');
+      const title = (lines[0] || '').trim();
+      const body = lines.slice(1).join('\n').trim();
+      return { title, body, img: null, imgPos: 'middle', imgHeight: 180, imgFit: 'cover', connectNext: true };
+    });
+
+    boxList = newBoxes;
+    renderBoxInputs();
+    updatePreview();
+  }
+
   function parseBulk() {
     const rawText = document.getElementById('bulk-text').value.trim();
     if (!rawText) return alert('텍스트를 입력해주세요.');
@@ -1252,6 +1329,38 @@
     return h;
   }
 
+  // ===== 일반 텍스트(news) 템플릿용 페이지 분할 =====
+  // 사용자가 입력한 문단(줄바꿈) 단위를 쪼개지지 않는 최소 단위로 보고,
+  // 각 문단의 예상 높이를 누적하다가 남은 공간을 넘기면 다음 페이지로 넘긴다.
+  function estimateParagraphHeight(paragraph, fonts, colW) {
+    if (paragraph.length === 0) return fonts.bodySize * 1.65;
+    const charsPerLine = Math.max(12, Math.floor(colW / (fonts.bodySize * 0.55)));
+    const lines = Math.max(1, Math.ceil(paragraph.length / charsPerLine));
+    return lines * fonts.bodySize * 1.65;
+  }
+
+  function paginateNewsBody(fullText, fonts, colW, availableH) {
+    if (!fullText) return [''];
+    const paragraphs = fullText.split('\n');
+    const pages = [];
+    let currentLines = [];
+    let currentH = 0;
+
+    paragraphs.forEach(para => {
+      const h = estimateParagraphHeight(para, fonts, colW);
+      if (currentLines.length > 0 && currentH + h > availableH) {
+        pages.push(currentLines.join('\n'));
+        currentLines = [para];
+        currentH = h;
+      } else {
+        currentLines.push(para);
+        currentH += h;
+      }
+    });
+    if (currentLines.length) pages.push(currentLines.join('\n'));
+    return pages.length ? pages : [''];
+  }
+
   // ===== iOS Safari 다단(column-count) 클리핑 버그 우회 =====
   // CSS column-count 대신, 박스들을 JS로 미리 N개 컬럼 배열로 나눠서
   // 각 컬럼을 별도 <div class="card-column">으로 렌더링한다.
@@ -1357,6 +1466,7 @@
     }
 
     let pageGroups = [boxList];
+    let newsPages = [document.getElementById('f-body').value || ''];
     const mainTitle = document.getElementById('b-main-title').value || '';
     const mainSub = document.getElementById('b-main-subtitle').value || '';
 
@@ -1392,12 +1502,28 @@
       });
       if (currentGroup.length) groups.push(currentGroup);
       pageGroups = groups.length ? groups : [boxList];
+    } else if (currentTemplate !== 'boxes') {
+      const t = document.getElementById('f-title').value || '제목을 입력하세요';
+      const sub = document.getElementById('f-subtitle').value || '';
+      const body = document.getElementById('f-body').value || '';
+      const fonts = calcFontSizes(t.length, body.length);
+
+      const paddingV = 44 * 2;
+      const headerH = (t || sub) ? (fonts.titleSize * 1.3 + fonts.subtitleSize * 1.4 + 30) : 20;
+      const metaH = (sourceTxt || dateTxt || logoImage || watermarkTxt) ? 50 : 0;
+      const photoH = (cardImage && (currentPhotoPos === 'top' || currentPhotoPos === 'bottom')) ? repImgHeight + 18 : 0;
+      const accentH = 20;
+      const availableH = currentSize.h - paddingV - headerH - metaH - photoH - accentH - 20;
+      const colW = currentSize.w - 80;
+
+      newsPages = paginateNewsBody(body, fonts, colW, availableH);
     }
 
-    pageGroups.forEach((pageBoxes, pageIdx) => {
+    const totalPages = currentTemplate === 'boxes' ? pageGroups.length : newsPages.length;
+
+    for (let pageIdx = 0; pageIdx < totalPages; pageIdx++) {
       const isFirst = pageIdx === 0;
       const pageNum = pageIdx + 1;
-      const totalPages = pageGroups.length;
 
       const wrapper = document.createElement('div');
       wrapper.className = 'card-wrapper';
@@ -1438,6 +1564,7 @@
       html += `<div class="accent-bar"></div>`;
 
       if (currentTemplate === 'boxes') {
+        const pageBoxes = pageGroups[pageIdx];
         const totalBodyLen = pageBoxes.reduce((acc, b) => acc + (b.body || '').length, 0);
         const fonts = calcFontSizes(mainTitle.length, totalBodyLen);
         window.__fontsForRender = fonts;
@@ -1465,16 +1592,20 @@
       } else {
         const t = document.getElementById('f-title').value || '제목을 입력하세요';
         const sub = document.getElementById('f-subtitle').value || '';
-        const body = document.getElementById('f-body').value || '';
-        const fonts = calcFontSizes(t.length, body.length);
+        const pageBody = newsPages[pageIdx] || '';
+        const fonts = calcFontSizes(t.length, pageBody.length);
 
-        html += `
-          <div class="card-header">
-            <div class="title" style="font-size:${fonts.titleSize}px">${formatText(t)}</div>
-            ${sub ? `<div class="subtitle-text" style="font-size:${fonts.subtitleSize}px">${formatText(sub)}</div>` : ''}
-          </div>
-          <div class="body-text" style="font-size:${fonts.bodySize}px">${formatText(body).replace(/\n/g, '<br>')}</div>
-        `;
+        if (isFirst) {
+          html += `
+            <div class="card-header">
+              <div class="title" style="font-size:${fonts.titleSize}px">${formatText(t)}</div>
+              ${sub ? `<div class="subtitle-text" style="font-size:${fonts.subtitleSize}px">${formatText(sub)}</div>` : ''}
+            </div>
+          `;
+        } else {
+          html += `<div class="card-header" style="margin-bottom:12px;"><div class="subtitle-text" style="font-size:${fonts.subtitleSize * 0.9}px; opacity:0.7;">(이어서) ${pageNum}/${totalPages}</div></div>`;
+        }
+        html += `<div class="body-text" style="font-size:${fonts.bodySize}px">${formatText(pageBody).replace(/\n/g, '<br>')}</div>`;
       }
 
       if (currentPhotoPos === 'bottom') html += imgHtml;
@@ -1507,7 +1638,7 @@
       }
 
       container.appendChild(wrapper);
-    });
+    }
   }
 
   // 스타일·테마에 맞는 불투명 배경 (html2canvas는 반투명/backdrop-filter를 제대로 못 그림)
@@ -1649,43 +1780,66 @@
     }
   }
 
+  // ===== iOS 전용: 저장 오류를 없애기 위해 공유(navigator.share)나
+  // window.open에 의존하지 않고, 모든 페이지를 이미지로 미리 만든 뒤
+  // "길게 눌러 저장" 오버레이에서 페이지를 넘기며 저장하도록 함.
+  // (navigator.share/window.open은 html2canvas 처리 시간 때문에 iOS의
+  //  user-activation이 만료되어 가끔 실패하는 문제가 있었음)
+  async function generateAllPageImages() {
+    const previews = document.querySelectorAll('.card-preview');
+    const images = [];
+    for (let i = 0; i < previews.length; i++) {
+      try {
+        const canvas = await generateCanvas(previews[i]);
+        if (canvas) images.push(canvas.toDataURL('image/png', 1.0));
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    return images;
+  }
+
+  function openIosSaveOverlay(images) {
+    iosImages = images;
+    iosImageIndex = 0;
+    renderIosSaveOverlay();
+    document.getElementById('save-overlay').classList.add('active');
+  }
+
+  function renderIosSaveOverlay() {
+    if (!iosImages.length) return;
+    const img = document.getElementById('save-preview-img');
+    img.src = iosImages[iosImageIndex];
+    const nav = document.getElementById('save-overlay-nav');
+    if (iosImages.length > 1) {
+      nav.style.display = 'flex';
+      document.getElementById('save-page-label').textContent = `${iosImageIndex + 1} / ${iosImages.length}`;
+    } else {
+      nav.style.display = 'none';
+    }
+  }
+
+  function iosSavePrev() {
+    if (iosImageIndex > 0) { iosImageIndex--; renderIosSaveOverlay(); }
+  }
+  function iosSaveNext() {
+    if (iosImageIndex < iosImages.length - 1) { iosImageIndex++; renderIosSaveOverlay(); }
+  }
+
   async function smartSave() {
-    if (isIOS() || (navigator.canShare && true)) {
-      await downloadAllPages();
+    if (isIOS()) {
+      const images = await generateAllPageImages();
+      if (!images.length) { alert('이미지 생성에 실패했습니다. 다시 시도해주세요.'); return; }
+      openIosSaveOverlay(images);
       return;
     }
     await downloadAllPages();
   }
 
   async function showSavePreview() {
-    const previews = document.querySelectorAll('.card-preview');
-    if (!previews.length) return;
-    const canvas = await generateCanvas(previews[0]);
-    if (!canvas) return;
-
-    // 가능하면 공유 시트 먼저
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 1.0));
-    if (blob) {
-      const file = new File([blob], `Infographic_Card.png`, { type: 'image/png' });
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        try {
-          await navigator.share({ files: [file], title: '인포그래픽 카드' });
-          return;
-        } catch (err) {
-          if (err && err.name === 'AbortError') return;
-        }
-      }
-    }
-
-    const dataUrl = canvas.toDataURL('image/png');
-    const img = document.getElementById('save-preview-img');
-    img.src = dataUrl;
-    const overlay = document.getElementById('save-overlay');
-    overlay.classList.add('active');
-    if (previews.length > 1) {
-      const guide = overlay.querySelector('.save-guide');
-      guide.innerHTML = `<strong>이미지를 길게 눌러서 저장</strong>하세요<br>(현재 1/${previews.length} 페이지 · 사진 앱에 저장됩니다)`;
-    }
+    const images = await generateAllPageImages();
+    if (!images.length) { alert('이미지 생성에 실패했습니다. 다시 시도해주세요.'); return; }
+    openIosSaveOverlay(images);
   }
 
   function closeSaveOverlay() {
