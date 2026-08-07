@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>WEST150 Work</title>
+  <meta name="description" content="WEST150 Work · 생성기 모음">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --card: #ffffff;
+      --text: #1d1d1f;
+      --text-secondary: #6e6e73;
+      --border: rgba(0, 0, 0, 0.06);
+      --accent: #0071e3;
+      --accent-hover: #0077ed;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.1);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --header-h: 52px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #000000;
+      --card: #1c1c1e;
+      --text: #f5f5f7;
+      --text-secondary: #98989d;
+      --border: rgba(255, 255, 255, 0.08);
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.55);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      transition: background 0.35s ease, color 0.35s ease;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: var(--header-h);
+      background: rgba(245, 245, 247, 0.72);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.35s ease;
+    }
+
+    [data-theme="dark"] header {
+      background: rgba(0, 0, 0, 0.72);
+    }
+
+    .header-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 28px;
+      height: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .logo:hover { opacity: 0.7; }
+
+    .nav {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .nav a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 980px;
+      transition: all 0.2s ease;
+    }
+
+    .nav a:hover {
+      color: var(--text);
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    [data-theme="dark"] .nav a:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 8px;
+    }
+
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      border: none;
+      background: transparent;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: var(--text-secondary);
+      transition: all 0.2s ease;
+    }
+
+    .icon-btn:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--text);
+    }
+
+    [data-theme="dark"] .icon-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .color-picker-wrap {
+      position: relative;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .color-picker-wrap input[type="color"] {
+      position: absolute;
+      opacity: 0;
+      width: 34px;
+      height: 34px;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+    }
+
+    .color-swatch {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid rgba(255,255,255,0.85);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.12);
+      pointer-events: none;
+    }
+
+    main {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 56px 28px 100px;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 48px 0 72px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 4.5vw, 2.75rem);
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      margin-bottom: 12px;
+      line-height: 1.15;
+      color: var(--text);
+    }
+
+    .hero p {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+
+    section { margin-bottom: 80px; }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 24px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-size: 1.35rem;
+      font-weight: 650;
+      letter-spacing: -0.025em;
+    }
+
+    .section-desc {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .generators-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .generator-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 26px 24px 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
+                  box-shadow 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .generator-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .generator-card .icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      margin-bottom: 16px;
+      color: white;
+      transition: background 0.25s ease;
+    }
+
+    .generator-card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
+
+    .generator-card p {
+      font-size: 0.84rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      letter-spacing: -0.01em;
+    }
+
+    .generator-card .arrow {
+      position: absolute;
+      top: 22px;
+      right: 22px;
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: all 0.25s ease;
+      color: var(--accent);
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    .generator-card:hover .arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    footer {
+      text-align: center;
+      padding: 36px 24px 48px;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      letter-spacing: -0.01em;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .header-inner { padding: 0 24px; }
+      main { padding: 48px 24px 80px; }
+      .hero { padding: 40px 0 56px; }
+      section { margin-bottom: 64px; }
+      .generators-grid { gap: 14px; }
+    }
+
+    @media (max-width: 640px) {
+      :root { --header-h: 48px; }
+      .header-inner { padding: 0 16px; }
+      .logo { font-size: 0.95rem; }
+      .nav a { display: none; }
+      main { padding: 32px 16px 72px; }
+      .hero { padding: 28px 0 40px; }
+      .hero h1 { font-size: 1.75rem; }
+      .hero p { font-size: 0.95rem; }
+      section { margin-bottom: 52px; }
+      .section-header { margin-bottom: 18px; }
+      .section-title { font-size: 1.2rem; }
+      .generators-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .generator-card { padding: 22px 20px; }
+    }
+
+    @media (max-width: 380px) {
+      .hero h1 { font-size: 1.55rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <a href="archive.html" class="logo">WEST150 Work</a>
+      <nav class="nav">
+        <a href="#generators">생성기</a>
+        <div class="header-actions">
+          <div class="color-picker-wrap" title="포인트 컬러">
+            <input type="color" id="accentPicker" value="#0071e3" aria-label="포인트 컬러 선택">
+            <div class="color-swatch" id="colorSwatch"></div>
+          </div>
+          <button class="icon-btn" id="themeToggle" aria-label="테마 전환">🌙</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>WEST150 Work</h1>
+      <p>생성기를 한곳에 모아두었습니다.</p>
+    </section>
+
+    <section id="generators">
+      <div class="section-header">
+        <h2 class="section-title">생성기</h2>
+        <span class="section-desc">클릭하면 바로 사용할 수 있습니다</span>
+      </div>
+
+      <div class="generators-grid">
+        <a href="card.html" class="generator-card">
+          <div class="icon">📰</div>
+          <h3>카드뉴스 생성기</h3>
+          <p>카드뉴스 형태를 빠르고 깔끔하게 만듭니다.</p>
+          <span class="arrow">→</span>
+        </a>
+
+        <a href="breaking.html" class="generator-card">
+          <div class="icon">🚨</div>
+          <h3>속보카드 생성기</h3>
+          <p>긴급 속보 스타일의 카드를 생성합니다.</p>
+          <span class="arrow">→</span>
+        </a>
+
+        <a href="factcheck.html" class="generator-card">
+          <div class="icon">✅</div>
+          <h3>팩트체크 카드 생성기</h3>
+          <p>팩트체크용 카드를 제작합니다.</p>
+          <span class="arrow">→</span>
+        </a>
+
+        <a href="sc.html" class="generator-card">
+          <div class="icon">✅</div>
+          <h3>세밀 문장 분해</h3>
+          <p>문장을 세밀하게 분해해서 카드뉴스에 활용하게 도와줍니다.</p>
+          <span class="arrow">→</span>
+        </a>
+
+        <a href="home.html" class="generator-card">
+          <div class="icon">✅</div>
+          <h3>공식 홈페이지입니다.</h3>
+          <p>그동안 만들어왔던 자료들을 포트폴리오로 모아둔 홈페이지</p>
+          <span class="arrow">→</span>
+        </a>
+
+        <a href="info.html" class="generator-card">
+          <div class="icon">📊</div>
+          <h3>인포그래픽 생성기</h3>
+          <p>정보를 시각적으로 정리한 인포그래픽을 만듭니다.</p>
+          <span class="arrow">→</span>
+        </a>
+
+        <a href="list.html" class="generator-card">
+          <div class="icon">📋</div>
+          <h3>리스트 · 타임라인 생성기</h3>
+          <p>단계, 목록, 타임라인 형태의 카드를 만듭니다.</p>
+          <span class="arrow">→</span>
+        </a>
+        
+        <a href="sou.html" class="generator-card">
+          <div class="icon">📋</div>
+          <h3>출처,링크 모음</h3>
+          <p>카드뉴스 팩트체크를 위한 출처 링크를 만듭니다.</p>
+          <span class="arrow">→</span>
+        </a>
+        
+        <a href="qnote.html" class="generator-card">
+          <div class="icon">💬</div>
+          <h3>인용카드 생성기</h3>
+          <p>명언·인용문을 세련된 카드로 만듭니다.</p>
+          <span class="arrow">→</span>
+        </a>
+
+        <a href="sns.html" class="generator-card">
+          <div class="icon">📱</div>
+          <h3>SNS 게시글 번역 생성기</h3>
+          <p>SNS 게시글을 번역·정리한 카드를 만듭니다.</p>
+          <span class="arrow">→</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 · WEST150 Work</p>
+  </footer>
+
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+
+    const savedTheme = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+    if (savedTheme === 'dark') {
+      html.setAttribute('data-theme', 'dark');
+      themeToggle.textContent = '☀️';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        html.removeAttribute('data-theme');
+        themeToggle.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.setAttribute('data-theme', 'dark');
+        themeToggle.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+      }
+    });
+
+    const accentPicker = document.getElementById('accentPicker');
+    const colorSwatch = document.getElementById('colorSwatch');
+
+    const savedAccent = localStorage.getItem('accent') || '#0071e3';
+    accentPicker.value = savedAccent;
+    document.documentElement.style.setProperty('--accent', savedAccent);
+    colorSwatch.style.background = savedAccent;
+
+    accentPicker.addEventListener('input', (e) => {
+      const color = e.target.value;
+      document.documentElement.style.setProperty('--accent', color);
+      colorSwatch.style.background = color;
+      localStorage.setItem('accent', color);
+    });
+  </script>
+</body>
+</html>

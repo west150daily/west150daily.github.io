@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>WEST150.DAILY 팩트체크 카드 생성기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<style>
+  :root {
+    --accent: #FF8228;
+    --bg: #0C0C0E;
+    --surface: #17171B;
+    --surface2: #1E1E23;
+    --border: #2B2B30;
+    --text: #FFFFFF;
+    --text-secondary: #96989E;
+    --danger: #ff8a8a;
+    --radius: 14px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.35);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.25);
+  }
+  [data-theme="light"] {
+    --bg: #F5F5F7;
+    --surface: #FFFFFF;
+    --surface2: #F0F0F2;
+    --border: #E5E5EA;
+    --text: #1D1D1F;
+    --text-secondary: #6E6E73;
+    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-text-size-adjust: 100%;
+    overflow-x: hidden;
+  }
+  input, select, textarea, button { font-family: inherit; font-size: 16px !important; }
+  button { min-height: 44px; cursor: pointer; border: none; }
+
+  /* Layout */
+  .app {
+    display: grid;
+    grid-template-columns: minmax(320px, 420px) 1fr;
+    gap: 0;
+    min-height: 100vh;
+  }
+  @media (max-width: 960px) {
+    .app { grid-template-columns: 1fr; }
+    .panel { position: static !important; max-height: none !important; border-right: none; border-bottom: 1px solid var(--border); }
+    .preview-area { padding: 20px 16px 100px; }
+  }
+
+  /* Left Panel */
+  .panel {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 28px 22px 40px;
+    overflow-y: auto;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    max-height: 100vh;
+  }
+  .panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .panel-header h1 {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.3;
+  }
+  .panel-header .sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+  }
+  .theme-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .icon-btn {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    transition: all 0.2s;
+  }
+  .icon-btn:hover { background: var(--border); }
+
+  /* Sections */
+  .section {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--text-secondary);
+  }
+  .section-head:hover { color: var(--text); }
+  .section-head .chevron {
+    transition: transform 0.2s;
+    font-size: 12px;
+    opacity: 0.6;
+  }
+  .section.collapsed .section-body { display: none; }
+  .section.collapsed .chevron { transform: rotate(-90deg); }
+  .section-body {
+    padding: 4px 16px 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .section-body .full { grid-column: 1 / -1; }
+
+  label.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  label.field input[type="text"],
+  label.field input[type="color"],
+  label.field select,
+  label.field textarea {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 10px 12px;
+    width: 100%;
+    transition: border-color 0.15s;
+  }
+  label.field input:focus,
+  label.field select:focus,
+  label.field textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  label.field input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent);
+    margin-top: 4px;
+  }
+  label.field input[type="file"] {
+    background: var(--bg);
+    border: 1px dashed var(--border);
+    color: var(--text-secondary);
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 12px !important;
+    width: 100%;
+  }
+  textarea { resize: none; overflow: hidden; min-height: 44px; }
+
+  .checkbox-row {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .checkbox-row input { width: 18px; height: 18px; accent-color: var(--accent); }
+
+  /* Evidence items */
+  .items-wrap { display: flex; flex-direction: column; gap: 8px; }
+  .item-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .item-box .num {
+    color: var(--accent);
+    font-weight: 800;
+    font-size: 14px;
+    padding-top: 10px;
+    min-width: 24px;
+  }
+  .item-box textarea { flex: 1; background: transparent; border: none; color: var(--text); padding: 6px 0; }
+  .item-box textarea:focus { outline: none; }
+  .item-controls { display: flex; flex-direction: column; gap: 4px; }
+  .item-controls button {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 4px 6px;
+    font-size: 11px;
+    border-radius: 6px;
+    min-width: 28px;
+    min-height: 28px;
+  }
+  .item-controls button:hover { color: var(--text); }
+
+  .template-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .template-btns button {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    border-radius: 8px;
+    padding: 7px 11px;
+    font-size: 12px !important;
+    font-weight: 600;
+    min-height: 34px;
+  }
+  .template-btns button:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Action buttons */
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    flex: 1;
+    background: var(--accent);
+    color: #000;
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-weight: 700;
+    font-size: 15px !important;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 40%, transparent);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn-primary:hover { transform: translateY(-1px); }
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-weight: 600;
+    font-size: 14px !important;
+  }
+  .btn-danger {
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid color-mix(in srgb, var(--danger) 30%, transparent);
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-weight: 600;
+    font-size: 14px !important;
+  }
+
+  /* Preview */
+  .preview-area {
+    padding: 32px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background: var(--bg);
+  }
+  .preview-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+    margin-bottom: 16px;
+    align-self: flex-start;
+  }
+  .canvas-wrap {
+    position: sticky;
+    top: 32px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    max-width: 100%;
+  }
+  canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    background: #000;
+  }
+
+  .color-swatch {
+    width: 100%;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    padding: 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- LEFT PANEL -->
+  <aside class="panel">
+    <div class="panel-header">
+      <div>
+        <h1>🔎 팩트체크 카드</h1>
+        <p class="sub">WEST150.DAILY · 자동저장 · 아이폰 지원</p>
+      </div>
+      <div class="theme-row">
+        <input type="color" id="accentPicker" value="#FF8228" title="포인트 컬러" class="color-swatch" style="width:40px;height:40px;padding:2px;" oninput="updateAccent(this.value)">
+        <button class="icon-btn" id="themeToggle" onclick="toggleTheme()" title="테마 전환">🌙</button>
+      </div>
+    </div>
+
+    <!-- 기본 · 판정 -->
+    <div class="section" id="sec-basic">
+      <div class="section-head" onclick="toggleSection(this)">
+        <span>기본 · 판정</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body">
+        <label class="field">워터마크
+          <input type="text" id="watermark" value="@west150daily" oninput="onFieldChange()">
+        </label>
+        <label class="field">사이즈
+          <select id="sizeMode" onchange="onFieldChange(true)">
+            <option value="4:5" selected>세로형 4:5 (1080×1350)</option>
+            <option value="1:1">정사각형 1:1 (1080×1080)</option>
+            <option value="9:16">스토리 9:16 (1080×1920)</option>
+          </select>
+        </label>
+        <label class="field full">판정
+          <select id="verdictType" onchange="onFieldChange(true)">
+            <option value="false">거짓 (FALSE)</option>
+            <option value="true">사실 (TRUE)</option>
+            <option value="exaggerated" selected>과장됨 (EXAGGERATED)</option>
+            <option value="misleading">오해의 소지 (MISLEADING)</option>
+            <option value="fabricated">조작됨 (FABRICATED)</option>
+            <option value="partial">부분적 사실 (PARTLY TRUE)</option>
+          </select>
+        </label>
+        <label class="field">강조 스타일 (**텍스트**)
+          <select id="highlightStyle" onchange="onFieldChange(true)">
+            <option value="color">색상·굵게</option>
+            <option value="underline">빨간 밑줄</option>
+            <option value="both" selected>색상·굵게 + 빨간 밑줄</option>
+          </select>
+        </label>
+        <label class="field">판정 한줄 요약
+          <input type="text" id="verdictSummary" value="" placeholder="예: 근거 부족 · 날짜 오류" oninput="onFieldChange()">
+        </label>
+        <label class="field">도장 한글 (비우면 기본)
+          <input type="text" id="stampLabelCustom" value="" placeholder="예: 부분적 사실" oninput="onFieldChange()">
+        </label>
+        <label class="field">도장 영문 (비우면 기본)
+          <input type="text" id="stampSubCustom" value="" placeholder="예: PARTLY TRUE" oninput="onFieldChange()">
+        </label>
+      </div>
+    </div>
+
+    <!-- 날짜 · 출처 -->
+    <div class="section" id="sec-date">
+      <div class="section-head" onclick="toggleSection(this)">
+        <span>날짜 · 출처</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body">
+        <label class="field">주장 게시일
+          <input type="text" id="claimDate" value="" placeholder="예: 2026.3.2" oninput="onFieldChange()">
+        </label>
+        <label class="field">팩트체크 확인일
+          <input type="text" id="checkDate" value="" placeholder="예: 2026.3.5" oninput="onFieldChange()">
+        </label>
+        <label class="field full">하단 날짜/매체
+          <input type="text" id="sourceText" value="" oninput="onFieldChange()">
+        </label>
+        <label class="field full">확인 출처 (링크·문서명)
+          <input type="text" id="sourceRef" value="" placeholder="예: State Dept travel.state.gov" oninput="onFieldChange()">
+        </label>
+      </div>
+    </div>
+
+    <!-- 이미지 -->
+    <div class="section" id="sec-img">
+      <div class="section-head" onclick="toggleSection(this)">
+        <span>이미지 설정</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body">
+        <label class="field full">이미지 배치
+          <select id="imgLayout" onchange="onFieldChange(true)">
+            <option value="single" selected>단일 이미지</option>
+            <option value="side">좌우 비교 (2장)</option>
+            <option value="stack">상하 비교 (2장)</option>
+          </select>
+        </label>
+        <label class="field">이미지 1 업로드
+          <input type="file" id="capFile1" accept="image/*" onchange="handleCapUpload(event, 1)">
+        </label>
+        <label class="field">이미지 1 위치
+          <input type="range" id="capYPos1" min="0" max="100" value="50" oninput="onFieldChange()">
+        </label>
+        <label class="field">이미지 2 업로드
+          <input type="file" id="capFile2" accept="image/*" onchange="handleCapUpload(event, 2)">
+        </label>
+        <label class="field">이미지 2 위치
+          <input type="range" id="capYPos2" min="0" max="100" value="50" oninput="onFieldChange()">
+        </label>
+        <label class="field">이미지 1 라벨
+          <input type="text" id="imgLabel1" value="" placeholder="예: 주장 이미지" oninput="onFieldChange()">
+        </label>
+        <label class="field">이미지 2 라벨
+          <input type="text" id="imgLabel2" value="" placeholder="예: 실제 원본" oninput="onFieldChange()">
+        </label>
+      </div>
+    </div>
+
+    <!-- 도장 1 -->
+    <div class="section" id="sec-stamp1">
+      <div class="section-head" onclick="toggleSection(this)">
+        <span>도장 1</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body">
+        <label class="checkbox-row full">
+          <input type="checkbox" id="stamp1Show" checked onchange="onFieldChange(true)"> 표시
+        </label>
+        <label class="field">투명도
+          <input type="range" id="stampOpacity" min="0" max="100" value="100" oninput="onFieldChange()">
+        </label>
+        <label class="field">가로
+          <input type="range" id="stampX" min="0" max="100" value="76" oninput="onFieldChange()">
+        </label>
+        <label class="field">세로
+          <input type="range" id="stampY" min="0" max="100" value="35" oninput="onFieldChange()">
+        </label>
+        <label class="field">기울기
+          <input type="range" id="stampAngle" min="-45" max="45" value="-12" oninput="onFieldChange()">
+        </label>
+        <label class="field">크기
+          <input type="range" id="stampSize" min="60" max="140" value="100" oninput="onFieldChange()">
+        </label>
+      </div>
+    </div>
+
+    <!-- 도장 2 -->
+    <div class="section" id="sec-stamp2">
+      <div class="section-head" onclick="toggleSection(this)">
+        <span>도장 2 (선택)</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body">
+        <label class="checkbox-row full">
+          <input type="checkbox" id="stamp2Show" onchange="onFieldChange(true)"> 표시
+        </label>
+        <label class="field full">판정 색상 기준
+          <select id="stamp2Verdict" onchange="onFieldChange(true)">
+            <option value="true">사실 (TRUE)</option>
+            <option value="false">거짓 (FALSE)</option>
+            <option value="exaggerated">과장됨</option>
+            <option value="misleading">오해의 소지</option>
+            <option value="fabricated">조작됨</option>
+            <option value="partial">부분적 사실</option>
+          </select>
+        </label>
+        <label class="field">한글 문구
+          <input type="text" id="stamp2Label" value="사실" oninput="onFieldChange()">
+        </label>
+        <label class="field">영문 문구
+          <input type="text" id="stamp2Sub" value="TRUE" oninput="onFieldChange()">
+        </label>
+        <label class="field">투명도
+          <input type="range" id="stamp2Opacity" min="0" max="100" value="100" oninput="onFieldChange()">
+        </label>
+        <label class="field">가로
+          <input type="range" id="stamp2X" min="0" max="100" value="24" oninput="onFieldChange()">
+        </label>
+        <label class="field">세로
+          <input type="range" id="stamp2Y" min="0" max="100" value="35" oninput="onFieldChange()">
+        </label>
+        <label class="field">기울기
+          <input type="range" id="stamp2Angle" min="-45" max="45" value="12" oninput="onFieldChange()">
+        </label>
+        <label class="field">크기
+          <input type="range" id="stamp2Size" min="60" max="140" value="100" oninput="onFieldChange()">
+        </label>
+      </div>
+    </div>
+
+    <!-- 텍스트 -->
+    <div class="section" id="sec-text">
+      <div class="section-head" onclick="toggleSection(this)">
+        <span>텍스트 편집</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body">
+        <label class="field">카테고리
+          <input type="text" id="categoryText" value="국제" oninput="onFieldChange()">
+        </label>
+        <label class="field">상단 출처 표시
+          <input type="text" id="topSource" value="@Foxnews" oninput="onFieldChange()">
+        </label>
+        <label class="field full">헤드라인
+          <textarea id="headlineText" rows="2" oninput="autoResize(this); onFieldChange()">미국, **스페인 세우타 여행 재고 권고**… 모로코 이주민 대거 유입 여파</textarea>
+        </label>
+        <label class="field full">인용구 (주장)
+          <textarea id="claimText" rows="2" oninput="autoResize(this); onFieldChange()">국무부, **여행 경보 3단계 상향**… "안보 상황 예측 불가 및 위험"</textarea>
+        </label>
+        <div class="full items-wrap" id="evidenceWrap"></div>
+        <div class="full">
+          <p style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;font-weight:600;">근거 템플릿 빠른 추가</p>
+          <div class="template-btns">
+            <button type="button" onclick="addEvidenceTemplate('numeric')">수치 오류</button>
+            <button type="button" onclick="addEvidenceTemplate('context')">맥락 누락</button>
+            <button type="button" onclick="addEvidenceTemplate('date')">날짜·시점 오류</button>
+            <button type="button" onclick="addEvidenceTemplate('manipulate')">조작·편집 의심</button>
+            <button type="button" onclick="addEvidenceTemplate('source')">출처 불충분</button>
+            <button type="button" onclick="addEvidenceTemplate('partial')">부분만 사실</button>
+          </div>
+        </div>
+        <div class="full">
+          <button type="button" class="btn-secondary" style="width:100%;margin-top:4px;" onclick="addEvidence()">+ 빈 판정 근거 추가</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-primary" onclick="downloadCanvas()">이미지 저장하기</button>
+      <button class="btn-danger" onclick="resetAll()">초기화</button>
+    </div>
+  </aside>
+
+  <!-- RIGHT PREVIEW -->
+  <main class="preview-area">
+    <p class="preview-label">실시간 미리보기</p>
+    <div class="canvas-wrap">
+      <canvas id="cv" width="1080" height="1350"></canvas>
+    </div>
+  </main>
+</div>
+
+<script>
+const W = 1080;
+const STORAGE_KEY = 'west150_factcheck_v2';
+let capImageData = null;
+let capImageData2 = null;
+let capImageObj1 = null;
+let capImageObj2 = null;
+let evidenceItems = [];
+let appReady = false;
+const CIRCLED = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
+
+const VERDICTS = {
+  true: { label:'사실', sub:'TRUE', color:'#3DDC84' },
+  false: { label:'거짓', sub:'FALSE', color:'#FF4D4F' },
+  exaggerated: { label:'과장됨', sub:'EXAGGERATED', color:'#FF8228' },
+  misleading: { label:'오해의 소지', sub:'MISLEADING', color:'#F5C518' },
+  fabricated: { label:'조작됨', sub:'FABRICATED', color:'#B983FF' },
+  partial: { label:'부분적 사실', sub:'PARTLY TRUE', color:'#5B8DEF' }
+};
+
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+    const radius = Math.min(typeof r === 'number' ? r : 0, Math.abs(w)/2, Math.abs(h)/2);
+    this.beginPath();
+    this.moveTo(x + radius, y);
+    this.arcTo(x + w, y, x + w, y + h, radius);
+    this.arcTo(x + w, y + h, x, y + h, radius);
+    this.arcTo(x, y + h, x, y, radius);
+    this.arcTo(x, y, x + w, y, radius);
+    this.closePath();
+    return this;
+  };
+}
+
+function getKoreanDate() {
+  const n = new Date();
+  return `${n.getFullYear()}년 ${n.getMonth()+1}월 ${n.getDate()}일`;
+}
+
+function isIOS() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
+function autoResize(ta) {
+  ta.style.height = 'auto';
+  ta.style.height = ta.scrollHeight + 'px';
+}
+
+function toggleSection(head) {
+  head.parentElement.classList.toggle('collapsed');
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', next === 'light' ? 'light' : '');
+  document.getElementById('themeToggle').textContent = next === 'light' ? '☀️' : '🌙';
+  localStorage.setItem('west150_theme', next);
+}
+
+function updateAccent(color) {
+  document.documentElement.style.setProperty('--accent', color);
+  localStorage.setItem('west150_accent', color);
+}
+
+let renderTimer, saveTimer;
+function delayedRender() {
+  clearTimeout(renderTimer);
+  renderTimer = setTimeout(render, 80);
+}
+function delayedSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveData, 400);
+}
+function onFieldChange(immediate) {
+  if (immediate) render();
+  else delayedRender();
+  delayedSave();
+}
+
+function collectState() {
+  return {
+    watermark: document.getElementById('watermark').value,
+    sizeMode: document.getElementById('sizeMode').value,
+    verdictType: document.getElementById('verdictType').value,
+    highlightStyle: document.getElementById('highlightStyle')?.value || 'both',
+    verdictSummary: document.getElementById('verdictSummary')?.value || '',
+    stampLabelCustom: document.getElementById('stampLabelCustom')?.value || '',
+    stampSubCustom: document.getElementById('stampSubCustom')?.value || '',
+    claimDate: document.getElementById('claimDate')?.value || '',
+    checkDate: document.getElementById('checkDate')?.value || '',
+    sourceText: document.getElementById('sourceText').value,
+    sourceRef: document.getElementById('sourceRef')?.value || '',
+    imgLayout: document.getElementById('imgLayout')?.value || 'single',
+    capYPos1: document.getElementById('capYPos1').value,
+    capYPos2: document.getElementById('capYPos2')?.value || '50',
+    imgLabel1: document.getElementById('imgLabel1')?.value || '',
+    imgLabel2: document.getElementById('imgLabel2')?.value || '',
+    stamp1Show: document.getElementById('stamp1Show')?.checked !== false,
+    stampOpacity: document.getElementById('stampOpacity').value,
+    stampX: document.getElementById('stampX').value,
+    stampY: document.getElementById('stampY').value,
+    stampAngle: document.getElementById('stampAngle').value,
+    stampSize: document.getElementById('stampSize').value,
+    stamp2Show: document.getElementById('stamp2Show')?.checked === true,
+    stamp2Verdict: document.getElementById('stamp2Verdict')?.value || 'true',
+    stamp2Label: document.getElementById('stamp2Label')?.value || '사실',
+    stamp2Sub: document.getElementById('stamp2Sub')?.value || 'TRUE',
+    stamp2Opacity: document.getElementById('stamp2Opacity')?.value || '100',
+    stamp2X: document.getElementById('stamp2X')?.value || '24',
+    stamp2Y: document.getElementById('stamp2Y')?.value || '35',
+    stamp2Angle: document.getElementById('stamp2Angle')?.value || '12',
+    stamp2Size: document.getElementById('stamp2Size')?.value || '100',
+    categoryText: document.getElementById('categoryText').value,
+    topSource: document.getElementById('topSource').value,
+    headlineText: document.getElementById('headlineText').value,
+    claimText: document.getElementById('claimText').value,
+    evidence: evidenceItems.map(it => ({
+      id: it.id,
+      text: document.getElementById(`ev-${it.id}`)?.value || ''
+    })),
+    capImageData: capImageData,
+    capImageData2: capImageData2
+  };
+}
+
+function saveData() {
+  if (!appReady) return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(collectState()));
+  } catch (e) {
+    console.warn('저장 실패 (용량 초과 가능)', e);
+  }
+}
+
+function loadImageFromData(dataUrl) {
+  return new Promise(resolve => {
+    if (!dataUrl) return resolve(null);
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = dataUrl;
+  });
+}
+
+async function restoreState() {
+  const savedTheme = localStorage.getItem('west150_theme');
+  if (savedTheme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.getElementById('themeToggle').textContent = '☀️';
+  }
+  const savedAccent = localStorage.getItem('west150_accent');
+  if (savedAccent) {
+    document.getElementById('accentPicker').value = savedAccent;
+    updateAccent(savedAccent);
+  }
+
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) {
+    document.getElementById('sourceText').value = `${getKoreanDate()} | @Foxnews`;
+    addEvidence('스페인은 해당 영토의 치안을 확보하기 위해 군대와 국립 경찰, 시민 경비대를 현장에 배치했습니다.');
+    return;
+  }
+  try {
+    const s = JSON.parse(raw);
+    const set = (id, v) => { const el = document.getElementById(id); if (el && v != null) el.value = v; };
+    set('watermark', s.watermark);
+    set('sizeMode', s.sizeMode);
+    set('verdictType', s.verdictType);
+    set('highlightStyle', s.highlightStyle || 'both');
+    set('verdictSummary', s.verdictSummary || '');
+    set('stampLabelCustom', s.stampLabelCustom || '');
+    set('stampSubCustom', s.stampSubCustom || '');
+    set('claimDate', s.claimDate || '');
+    set('checkDate', s.checkDate || '');
+    set('sourceText', s.sourceText || `${getKoreanDate()} | @Foxnews`);
+    set('sourceRef', s.sourceRef || '');
+    set('imgLayout', s.imgLayout || 'single');
+    set('capYPos1', s.capYPos1);
+    set('capYPos2', s.capYPos2 || '50');
+    set('imgLabel1', s.imgLabel1 || '');
+    set('imgLabel2', s.imgLabel2 || '');
+    const s1 = document.getElementById('stamp1Show');
+    if (s1) s1.checked = s.stamp1Show !== false;
+    set('stampOpacity', s.stampOpacity);
+    set('stampX', s.stampX);
+    set('stampY', s.stampY);
+    set('stampAngle', s.stampAngle);
+    set('stampSize', s.stampSize);
+    const s2 = document.getElementById('stamp2Show');
+    if (s2) s2.checked = s.stamp2Show === true;
+    set('stamp2Verdict', s.stamp2Verdict || 'true');
+    set('stamp2Label', s.stamp2Label || '사실');
+    set('stamp2Sub', s.stamp2Sub || 'TRUE');
+    set('stamp2Opacity', s.stamp2Opacity || '100');
+    set('stamp2X', s.stamp2X || '24');
+    set('stamp2Y', s.stamp2Y || '35');
+    set('stamp2Angle', s.stamp2Angle || '12');
+    set('stamp2Size', s.stamp2Size || '100');
+    set('categoryText', s.categoryText);
+    set('topSource', s.topSource);
+    set('headlineText', s.headlineText);
+    set('claimText', s.claimText);
+    autoResize(document.getElementById('headlineText'));
+    autoResize(document.getElementById('claimText'));
+
+    if (s.capImageData) {
+      capImageData = s.capImageData;
+      capImageObj1 = await loadImageFromData(capImageData);
+    }
+    if (s.capImageData2) {
+      capImageData2 = s.capImageData2;
+      capImageObj2 = await loadImageFromData(capImageData2);
+    }
+
+    evidenceItems = [];
+    document.getElementById('evidenceWrap').innerHTML = '';
+    if (s.evidence && s.evidence.length) {
+      s.evidence.forEach(ev => addEvidence(ev.text || '', ev.id, true));
+    } else {
+      addEvidence('', null, true);
+    }
+  } catch (e) {
+    console.error(e);
+    document.getElementById('sourceText').value = `${getKoreanDate()} | @Foxnews`;
+    addEvidence('');
+  }
+}
+
+function handleCapUpload(e, slot = 1) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (ev) => {
+    const img = new Image();
+    img.onload = () => {
+      const maxW = 1400;
+      let w = img.width, h = img.height;
+      if (w > maxW) { h = h * (maxW / w); w = maxW; }
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      const data = c.toDataURL('image/jpeg', 0.85);
+      const out = new Image();
+      out.onload = () => {
+        if (slot === 2) {
+          capImageData2 = data;
+          capImageObj2 = out;
+        } else {
+          capImageData = data;
+          capImageObj1 = out;
+        }
+        render();
+        saveData();
+      };
+      out.src = data;
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function drawImageCover(ctx, img, x, y, rw, rh, yPosPct) {
+  if (!img) {
+    ctx.fillStyle = '#16161A';
+    ctx.fillRect(x, y, rw, rh);
+    return;
+  }
+  const ir = img.width / img.height;
+  const cr = rw / rh;
+  let dw, dh, dx, dy;
+  if (ir > cr) {
+    dh = rh; dw = rh * ir; dy = y;
+    dx = x - (dw - rw) * (yPosPct / 100);
+  } else {
+    dw = rw; dh = rw / ir; dx = x;
+    dy = y - (dh - rh) * (yPosPct / 100);
+  }
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, rw, rh);
+  ctx.clip();
+  ctx.drawImage(img, dx, dy, dw, dh);
+  ctx.restore();
+}
+
+function drawImgLabel(ctx, text, x, y, scale, color) {
+  if (!text) return;
+  ctx.font = fontStack(16 * scale, '700');
+  const tw = ctx.measureText(text).width;
+  const pad = 10 * scale;
+  ctx.fillStyle = 'rgba(0,0,0,0.7)';
+  ctx.beginPath();
+  ctx.roundRect(x, y, tw + pad * 2, 28 * scale, 6);
+  ctx.fill();
+  ctx.fillStyle = color || '#fff';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, x + pad, y + 14 * scale);
+  ctx.textBaseline = 'alphabetic';
+}
+
+function rebuildEvidenceUI() {
+  const wrap = document.getElementById('evidenceWrap');
+  wrap.innerHTML = '';
+  evidenceItems.forEach((it, idx) => {
+    const div = document.createElement('div');
+    div.className = 'item-box';
+    div.id = `evitem-${it.id}`;
+    div.innerHTML = `
+      <span class="num">${CIRCLED[idx] || '•'}</span>
+      <textarea id="ev-${it.id}" rows="1" oninput="autoResize(this); onFieldChange()">${it._text || ''}</textarea>
+      <div class="item-controls">
+        <button type="button" title="위로" onclick="moveEvidence(${it.id}, -1)">▲</button>
+        <button type="button" title="아래로" onclick="moveEvidence(${it.id}, 1)">▼</button>
+        <button type="button" title="삭제" onclick="removeEvidence(${it.id})">✕</button>
+      </div>
+    `;
+    wrap.appendChild(div);
+    const ta = div.querySelector('textarea');
+    if (it._text) autoResize(ta);
+  });
+}
+
+function addEvidence(val = '', fixedId = null, skipSave = false) {
+  evidenceItems.forEach(it => {
+    const el = document.getElementById(`ev-${it.id}`);
+    if (el) it._text = el.value;
+  });
+  const id = fixedId || (Date.now() + Math.random());
+  evidenceItems.push({ id, _text: val });
+  rebuildEvidenceUI();
+  if (!skipSave) {
+    render();
+    saveData();
+  }
+}
+
+const EVIDENCE_TEMPLATES = {
+  numeric: '**수치 오류:** 주장에 제시된 숫자/비율이 공식 통계·원문과 일치하지 않음.',
+  context: '**맥락 누락:** 일부 사실만 잘라 전체 맥락과 다른 인상을 줌.',
+  date: '**날짜·시점 오류:** 과거 사건·자료를 현재인 것처럼 제시하거나 시점이 뒤바뀜.',
+  manipulate: '**조작·편집 의심:** 이미지/영상 편집, 합성, 오컷 가능성이 있음.',
+  source: '**출처 불충분:** 1차 자료·공식 발표 없이 확인되지 않은 주장에 의존.',
+  partial: '**부분만 사실:** 일부는 맞지만 핵심 결론을 뒷받침하기에는 부족하거나 과장됨.'
+};
+
+function addEvidenceTemplate(key) {
+  const text = EVIDENCE_TEMPLATES[key] || '';
+  if (!text) return;
+  addEvidence(text);
+}
+
+function removeEvidence(id) {
+  evidenceItems.forEach(it => {
+    const el = document.getElementById(`ev-${it.id}`);
+    if (el) it._text = el.value;
+  });
+  evidenceItems = evidenceItems.filter(i => i.id !== id);
+  rebuildEvidenceUI();
+  render();
+  saveData();
+}
+
+function moveEvidence(id, dir) {
+  evidenceItems.forEach(it => {
+    const el = document.getElementById(`ev-${it.id}`);
+    if (el) it._text = el.value;
+  });
+  const idx = evidenceItems.findIndex(i => i.id === id);
+  if (idx < 0) return;
+  const target = idx + dir;
+  if (target < 0 || target >= evidenceItems.length) return;
+  const tmp = evidenceItems[idx];
+  evidenceItems[idx] = evidenceItems[target];
+  evidenceItems[target] = tmp;
+  rebuildEvidenceUI();
+  render();
+  saveData();
+}
+
+function fontStack(size, weight) {
+  return `${weight} ${size}px 'Pretendard', 'Noto Sans KR', sans-serif`;
+}
+
+function parseMarkup(t) {
+  return (t || '').split('\n').map(l => {
+    const p = l.split('**');
+    return p.map((s, i) => ({ text: s, highlight: i % 2 !== 0 }));
+  });
+}
+
+function drawRichText(ctx, lr, x, y, mw, fs, cn, ch, lg, measureOnly = false) {
+  const style = document.getElementById('highlightStyle')?.value || 'both';
+  const useColor = style === 'color' || style === 'both';
+  const useUnderline = style === 'underline' || style === 'both';
+  const underlineColor = '#E53E3E';
+  const tb = ctx.textBaseline || 'alphabetic';
+  const ulY = (cy) => {
+    if (tb === 'top' || tb === 'hanging') return cy + fs + Math.max(2, fs * 0.1);
+    if (tb === 'middle') return cy + fs * 0.55;
+    return cy + Math.max(3, fs * 0.14);
+  };
+  let cy = y;
+  const lh = fs + lg;
+  lr.forEach(r => {
+    let cx = x;
+    r.forEach(u => {
+      const isHL = !!u.highlight;
+      ctx.font = fontStack(fs, (isHL && useColor) ? '900' : '400');
+      ctx.fillStyle = (isHL && useColor) ? ch : cn;
+      let ulStart = null;
+      for (const char of u.text) {
+        const ww = ctx.measureText(char).width;
+        if (cx + ww > x + mw) {
+          if (!measureOnly && isHL && useUnderline && ulStart !== null) {
+            ctx.strokeStyle = underlineColor;
+            ctx.lineWidth = Math.max(2, fs * 0.07);
+            ctx.beginPath();
+            ctx.moveTo(ulStart, ulY(cy));
+            ctx.lineTo(cx, ulY(cy));
+            ctx.stroke();
+            ulStart = null;
+          }
+          cx = x; cy += lh;
+        }
+        if (isHL && useUnderline && ulStart === null) ulStart = cx;
+        if (!measureOnly) ctx.fillText(char, cx, cy);
+        cx += ww;
+      }
+      if (!measureOnly && isHL && useUnderline && ulStart !== null) {
+        ctx.strokeStyle = underlineColor;
+        ctx.lineWidth = Math.max(2, fs * 0.07);
+        ctx.beginPath();
+        ctx.moveTo(ulStart, ulY(cy));
+        ctx.lineTo(cx, ulY(cy));
+        ctx.stroke();
+      }
+    });
+    cy += lh;
+  });
+  return cy;
+}
+
+function render() {
+  const canvas = document.getElementById('cv');
+  const ctx = canvas.getContext('2d');
+  const sizeMode = document.getElementById('sizeMode').value;
+  const H = sizeMode === '1:1' ? 1080 : (sizeMode === '9:16' ? 1920 : 1350);
+  canvas.height = H;
+
+  ctx.fillStyle = '#0C0C0E';
+  ctx.fillRect(0, 0, W, H);
+
+  const imgLayout = document.getElementById('imgLayout')?.value || 'single';
+  const yPos1 = Number(document.getElementById('capYPos1').value);
+  const yPos2 = Number(document.getElementById('capYPos2')?.value || 50);
+  const label1 = document.getElementById('imgLabel1')?.value || '';
+  const label2 = document.getElementById('imgLabel2')?.value || '';
+  const scale0 = H / 1350;
+
+  if (imgLayout === 'side' && (capImageObj1 || capImageObj2)) {
+    const gap = 6;
+    const half = (W - gap) / 2;
+    drawImageCover(ctx, capImageObj1, 0, 0, half, H, yPos1);
+    drawImageCover(ctx, capImageObj2, half + gap, 0, half, H, yPos2);
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.fillRect(half, 0, gap, H);
+    drawImgLabel(ctx, label1 || '이미지 1', 20, 20 * scale0, scale0, '#fff');
+    drawImgLabel(ctx, label2 || '이미지 2', half + gap + 20, 20 * scale0, scale0, '#fff');
+  } else if (imgLayout === 'stack' && (capImageObj1 || capImageObj2)) {
+    const gap = 6;
+    const half = (H - gap) / 2;
+    drawImageCover(ctx, capImageObj1, 0, 0, W, half, yPos1);
+    drawImageCover(ctx, capImageObj2, 0, half + gap, W, half, yPos2);
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.fillRect(0, half, W, gap);
+    drawImgLabel(ctx, label1 || '이미지 1', 20, 16 * scale0, scale0, '#fff');
+    drawImgLabel(ctx, label2 || '이미지 2', 20, half + gap + 16 * scale0, scale0, '#fff');
+  } else if (capImageObj1) {
+    drawImageCover(ctx, capImageObj1, 0, 0, W, H, yPos1);
+  }
+
+  if (capImageObj1 || capImageObj2) {
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, 'rgba(0,0,0,0.78)');
+    grad.addColorStop(0.32, 'rgba(0,0,0,0.42)');
+    grad.addColorStop(0.68, 'rgba(0,0,0,0.52)');
+    grad.addColorStop(1, 'rgba(0,0,0,0.90)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  const margin = 70;
+  const verdict = VERDICTS[document.getElementById('verdictType').value];
+  const scale = H / 1350;
+
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#fff';
+  ctx.font = fontStack(32 * scale, '900');
+  ctx.fillText('WEST150.DAILY', margin, 60 * scale);
+  ctx.fillStyle = verdict.color;
+  ctx.font = fontStack(18 * scale, '800');
+  ctx.fillText('FACT CHECK', margin, 90 * scale);
+
+  let curY = 180 * scale;
+  ctx.fillStyle = verdict.color;
+  ctx.beginPath(); ctx.arc(margin + 8, curY - 10, 6, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.font = fontStack(24 * scale, '800');
+  ctx.fillText(document.getElementById('categoryText').value, margin + 25, curY);
+
+  ctx.fillStyle = '#999';
+  ctx.font = fontStack(18 * scale, '500');
+  ctx.fillText(document.getElementById('topSource').value, margin + 110, curY - 2);
+
+  const claimDate = (document.getElementById('claimDate')?.value || '').trim();
+  const checkDate = (document.getElementById('checkDate')?.value || '').trim();
+  if (claimDate || checkDate) {
+    curY += 36 * scale;
+    ctx.font = fontStack(16 * scale, '500');
+    ctx.fillStyle = '#8E8E96';
+    let dateLine = '';
+    if (claimDate) dateLine += `주장 게시: ${claimDate}`;
+    if (claimDate && checkDate) dateLine += '   ·   ';
+    if (checkDate) dateLine += `확인: ${checkDate}`;
+    ctx.fillText(dateLine, margin, curY);
+  }
+
+  curY += 60 * scale;
+  const runsH = parseMarkup(document.getElementById('headlineText').value);
+  curY = drawRichText(ctx, runsH, margin, curY, W - margin * 2, 48 * scale, '#fff', verdict.color, 15 * scale);
+
+  const vSummary = (document.getElementById('verdictSummary')?.value || '').trim();
+  if (vSummary) {
+    curY += 28 * scale;
+    ctx.font = fontStack(20 * scale, '700');
+    const sw = ctx.measureText(vSummary).width;
+    const sp = 14 * scale;
+    ctx.fillStyle = verdict.color;
+    ctx.globalAlpha = 0.2;
+    ctx.beginPath();
+    ctx.roundRect(margin, curY - 18 * scale, sw + sp * 2, 32 * scale, 8);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = verdict.color;
+    ctx.fillText(vSummary, margin + sp, curY + 4 * scale);
+    curY += 20 * scale;
+  }
+
+  curY += 50 * scale;
+  ctx.fillStyle = '#555';
+  ctx.font = fontStack(60 * scale, '900');
+  ctx.fillText('“', margin - 10, curY + 30 * scale);
+
+  const runsC = parseMarkup(document.getElementById('claimText').value);
+  curY = drawRichText(ctx, runsC, margin, curY + 35 * scale, W - margin * 2, 32 * scale, '#ddd', verdict.color, 12 * scale);
+
+  curY += 60 * scale;
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(margin, curY); ctx.lineTo(W - margin, curY); ctx.stroke();
+
+  curY += 50 * scale;
+  evidenceItems.forEach((it, idx) => {
+    const txt = document.getElementById(`ev-${it.id}`)?.value || '';
+    ctx.fillStyle = verdict.color;
+    ctx.font = fontStack(26 * scale, '900');
+    ctx.fillText(CIRCLED[idx] || '•', margin, curY + 20 * scale);
+
+    const runsE = parseMarkup(txt);
+    curY = drawRichText(ctx, runsE, margin + 45, curY, W - margin - 150, 24 * scale, '#bbb', verdict.color, 10 * scale);
+    curY += 20 * scale;
+  });
+
+  const sourceRef = (document.getElementById('sourceRef')?.value || '').trim();
+  ctx.fillStyle = '#777';
+  ctx.font = fontStack(18 * scale, '400');
+  const footY = sourceRef ? H - 95 * scale : H - 70 * scale;
+  ctx.fillText(document.getElementById('sourceText').value, margin, footY);
+  if (sourceRef) {
+    ctx.fillStyle = '#9A9AA2';
+    ctx.font = fontStack(15 * scale, '400');
+    ctx.fillText('확인 출처: ' + sourceRef, margin, H - 68 * scale);
+  }
+
+  const wm = document.getElementById('watermark').value;
+  ctx.font = fontStack(20 * scale, '500');
+  const tw = ctx.measureText(wm).width;
+  ctx.fillStyle = 'rgba(255,255,255,0.1)';
+  ctx.beginPath();
+  ctx.roundRect(W - margin - tw - 40, H - 95 * scale, tw + 40, 44 * scale, 22);
+  ctx.fill();
+  ctx.fillStyle = verdict.color;
+  ctx.beginPath(); ctx.arc(W - margin - tw - 20, H - 73 * scale, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.fillText(wm, W - margin - tw - 5, H - 73 * scale + 7);
+
+  function drawStamp(opts) {
+    const { xPct, yPct, angle, sizePct, opacity, label, sub, color } = opts;
+    const sx = margin + (W - margin * 2) * (xPct / 100);
+    const sy = H * (yPct / 100);
+    const sSize = 110 * (sizePct / 100) * scale;
+    ctx.save();
+    ctx.globalAlpha = opacity / 100;
+    ctx.translate(sx, sy);
+    ctx.rotate(angle * Math.PI / 180);
+    ctx.font = fontStack(sSize, '900');
+    const labelW = Math.max(ctx.measureText(label).width, ctx.measureText(sub).width * 0.9);
+    const bw = labelW + 80;
+    const bh = sSize * 1.5;
+    ctx.fillStyle = 'rgba(0,0,0,0.85)';
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 8;
+    ctx.strokeRect(-bw / 2, -bh / 2, bw, bh);
+    ctx.fillRect(-bw / 2, -bh / 2, bw, bh);
+    ctx.lineWidth = 2;
+    ctx.strokeRect(-bw / 2 + 12, -bh / 2 + 12, bw - 24, bh - 24);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = color;
+    ctx.font = fontStack(sSize, '900');
+    ctx.fillText(label, 0, -bh * 0.12);
+    ctx.font = fontStack(sSize * 0.35, '800');
+    ctx.fillText(sub, 0, bh * 0.3);
+    ctx.restore();
+  }
+
+  if (document.getElementById('stamp1Show')?.checked !== false) {
+    const stampLabel = (document.getElementById('stampLabelCustom')?.value || '').trim() || verdict.label;
+    const stampSub = (document.getElementById('stampSubCustom')?.value || '').trim() || verdict.sub;
+    drawStamp({
+      xPct: Number(document.getElementById('stampX').value),
+      yPct: Number(document.getElementById('stampY').value),
+      angle: Number(document.getElementById('stampAngle').value),
+      sizePct: Number(document.getElementById('stampSize').value),
+      opacity: Number(document.getElementById('stampOpacity').value),
+      label: stampLabel,
+      sub: stampSub,
+      color: verdict.color
+    });
+  }
+
+  if (document.getElementById('stamp2Show')?.checked) {
+    const v2key = document.getElementById('stamp2Verdict')?.value || 'true';
+    const v2 = VERDICTS[v2key] || VERDICTS.true;
+    const l2 = (document.getElementById('stamp2Label')?.value || '').trim() || v2.label;
+    const s2 = (document.getElementById('stamp2Sub')?.value || '').trim() || v2.sub;
+    drawStamp({
+      xPct: Number(document.getElementById('stamp2X')?.value || 24),
+      yPct: Number(document.getElementById('stamp2Y')?.value || 35),
+      angle: Number(document.getElementById('stamp2Angle')?.value || 12),
+      sizePct: Number(document.getElementById('stamp2Size')?.value || 100),
+      opacity: Number(document.getElementById('stamp2Opacity')?.value || 100),
+      label: l2,
+      sub: s2,
+      color: v2.color
+    });
+  }
+}
+
+function downloadCanvas() {
+  const canvas = document.getElementById('cv');
+  render();
+  canvas.toBlob((blob) => {
+    if (!blob) {
+      alert('이미지 생성에 실패했습니다.');
+      return;
+    }
+    const url = URL.createObjectURL(blob);
+    if (isIOS()) {
+      const w = window.open(url, '_blank');
+      if (!w) {
+        location.href = url;
+      } else {
+        setTimeout(() => alert('이미지를 길게 누른 뒤 "이미지 저장"을 선택하세요.'), 300);
+      }
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    } else {
+      const a = document.createElement('a');
+      a.download = `WEST150_FactCheck_${Date.now()}.png`;
+      a.href = url;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+  }, 'image/png');
+}
+
+function resetAll() {
+  if (!confirm('모든 입력과 이미지를 초기화할까요?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+}
+
+window.onload = async () => {
+  await restoreState();
+  appReady = true;
+  render();
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>세밀 문장 분해기 · WEST150</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
+<style>
+:root{
+  --bg:#0b0b0c;--panel:#161618;--input:#1e1e21;--border:rgba(255,255,255,.08);
+  --text:#f3f3f5;--muted:#8e8e93;--accent:#FF8228;--ok:#3ddc84;--radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Pretendard,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:20px}
+.wrap{max-width:920px;margin:0 auto}
+h1{font-size:22px;font-weight:800;letter-spacing:-.03em}
+.sub{color:var(--muted);font-size:13px;margin:6px 0 18px;line-height:1.5}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px}
+textarea{width:100%;min-height:180px;background:var(--input);border:1px solid var(--border);border-radius:12px;color:var(--text);padding:14px;font-size:15px;line-height:1.6;resize:vertical;outline:none}
+textarea:focus{border-color:var(--accent)}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+select,button,.chip{
+  font:inherit;border-radius:10px;border:1px solid var(--border);background:var(--input);color:var(--text);
+  padding:10px 12px;font-size:13px;font-weight:600;cursor:pointer
+}
+button.primary{background:var(--accent);color:#000;border-color:transparent;font-weight:800}
+button.ghost:hover,.chip:hover{border-color:var(--accent);color:var(--accent)}
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.chip.on{border-color:var(--accent);color:var(--accent);background:rgba(255,130,40,.12)}
+.stats{font-size:12px;color:var(--muted);margin-bottom:10px}
+.list{display:flex;flex-direction:column;gap:8px;max-height:58vh;overflow:auto;padding-right:4px}
+.item{
+  display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:start;
+  background:var(--input);border:1px solid var(--border);border-radius:12px;padding:12px
+}
+.item.selected{border-color:var(--accent);background:rgba(255,130,40,.08)}
+.item .num{color:var(--accent);font-weight:800;font-size:13px;padding-top:2px}
+.item .txt{font-size:14px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.item .len{font-size:11px;color:var(--muted);white-space:nowrap}
+.item .actions{display:flex;gap:6px;grid-column:2/-1}
+.item .actions button{padding:6px 10px;font-size:12px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.empty{color:var(--muted);font-size:14px;padding:20px 8px;text-align:center}
+.out{
+  width:100%;min-height:110px;background:var(--input);border:1px solid var(--border);border-radius:12px;
+  color:var(--text);padding:12px;font-size:14px;line-height:1.6;resize:vertical
+}
+.hint{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.45}
+@media(max-width:640px){.item{grid-template-columns:24px 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>세밀 문장 분해기</h1>
+  <p class="sub">보도자료·X 글을 붙여넣으면 아주 잘게 나눕니다. AI 없이 로컬에서만 동작 · 카드 생성 없음</p>
+
+  <div class="panel">
+    <label for="src">원문 붙여넣기</label>
+    <textarea id="src" placeholder="보도자료, 기사, X 게시글 본문을 붙여넣으세요."></textarea>
+
+    <div style="margin-top:14px">
+      <label>분해 강도</label>
+      <div class="modes" id="modes">
+        <button type="button" class="chip on" data-mode="ultra">초세밀 (절·구)</button>
+        <button type="button" class="chip" data-mode="sentence">문장</button>
+        <button type="button" class="chip" data-mode="line">줄 단위</button>
+        <button type="button" class="chip" data-mode="para">문단</button>
+        <button type="button" class="chip" data-mode="bullet">목록 우선</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <button type="button" class="primary" id="btnSplit">분해하기</button>
+      <button type="button" class="ghost" id="btnClear">비우기</button>
+      <label style="display:flex;align-items:center;gap:8px;margin:0;font-size:13px;color:var(--text);font-weight:500">
+        <input type="checkbox" id="dropShort" checked style="width:16px;height:16px;accent-color:var(--accent)">
+        너무 짧은 조각 숨기기 (2글자 이하)
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;margin:0;font-size:13px;color:var(--text);font-weight:500">
+        <input type="checkbox" id="dropDup" checked style="width:16px;height:16px;accent-color:var(--accent)">
+        중복 제거
+      </label>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="stats" id="stats">아직 분해하지 않았습니다.</div>
+    <div class="list" id="list"><div class="empty">여기에 잘게 나뉜 조각이 표시됩니다.</div></div>
+    <div class="toolbar">
+      <button type="button" class="primary" id="btnCopySel">선택 항목 복사</button>
+      <button type="button" class="ghost" id="btnCopyAll">전체 복사</button>
+      <button type="button" class="ghost" id="btnSelAll">전체 선택</button>
+      <button type="button" class="ghost" id="btnSelNone">선택 해제</button>
+      <button type="button" class="ghost" id="btnTop3">앞에서 3개 선택</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <label for="out">복사 미리보기 / 직접 편집</label>
+    <textarea class="out" id="out" placeholder="선택한 조각이 여기 모입니다. 수정 후 다시 복사 가능"></textarea>
+    <div class="row">
+      <button type="button" class="primary" id="btnCopyOut">이 내용 복사</button>
+    </div>
+    <p class="hint">
+      · <b>초세밀</b>: 문장 + 쉼표/접속 기준으로 한 번 더 쪼갭니다.<br>
+      · 카드뉴스에는 여기서 고른 문장만 가져가면 됩니다.<br>
+      · 데이터는 이 브라우저에만 있고 서버로 전송되지 않습니다.
+    </p>
+  </div>
+</div>
+
+<script>
+let mode = 'ultra';
+let pieces = [];
+let selected = new Set();
+
+const $ = id => document.getElementById(id);
+const src = $('src');
+const list = $('list');
+const stats = $('stats');
+const out = $('out');
+
+document.querySelectorAll('#modes .chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#modes .chip').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    mode = btn.dataset.mode;
+  });
+});
+
+function normalize(text) {
+  return String(text || '')
+    .replace(/\r\n/g, '\n')
+    .replace(/\u00a0/g, ' ')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+function cleanPiece(s) {
+  return s
+    .replace(/^[\"'“”‘’\[\(【「『]+/, '')
+    .replace(/[\"'“”‘’\]\)】」』]+$/, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** 한국어·영어 문장 분리 */
+function splitSentences(text) {
+  const t = normalize(text);
+  if (!t) return [];
+  // 문장 끝: . ! ? … 그리고 한글 종결 근처 줄바꿈 보존
+  const parts = t.split(/(?<=[.!?…。．])\s+|\n+/);
+  const out = [];
+  for (const p of parts) {
+    const c = cleanPiece(p);
+    if (c) out.push(c);
+  }
+  return out;
+}
+
+/** 초세밀: 문장 안에서 절 단위로 추가 분리 */
+function splitUltra(text) {
+  const sentences = splitSentences(text);
+  const out = [];
+  for (const s of sentences) {
+    // 목록 기호로 시작하면 그대로
+    if (/^([•●■▶►▪‣·\-–—*]|[0-9]+[.)]|[①-⑳])\s*/.test(s) && s.length < 120) {
+      out.push(s);
+      continue;
+    }
+    // 쉼표·중점·접속 부호 기준 (너무 잘게 쪼개지지 않게 최소 길이 유지는 나중에)
+    const chunks = s.split(/(?<=[,，、;；·]| 그리고 | 하지만 | 그러나 | 또 | 및 | 또는 | 하며 | 하고 | 해서 | 하자 | 했다가 | —|–)\s+/);
+    if (chunks.length === 1) {
+      // 긴 문장은 조사 패턴 근처에서 보조 분리 시도
+      if (s.length > 60) {
+        const soft = s.split(/(?<=다[,.]|요[,.]|음[,.]|임[,.]|음\.|다\.)\s+/);
+        soft.forEach(x => { const c = cleanPiece(x); if (c) out.push(c); });
+      } else {
+        out.push(s);
+      }
+    } else {
+      chunks.forEach(x => {
+        const c = cleanPiece(x);
+        if (c) out.push(c);
+      });
+    }
+  }
+  return out;
+}
+
+function splitLines(text) {
+  return normalize(text).split('\n').map(cleanPiece).filter(Boolean);
+}
+
+function splitParas(text) {
+  return normalize(text).split(/\n\s*\n/).map(p => cleanPiece(p.replace(/\n/g, ' '))).filter(Boolean);
+}
+
+function splitBullets(text) {
+  const t = normalize(text);
+  const raw = t.split('\n');
+  const out = [];
+  let buf = '';
+  const isBullet = line => /^(\s*)([•●■▶►▪‣·\-–—*]|[0-9]+\s*[.)]|[①-⑳]|[가-힣]\s*[.)])\s+/.test(line);
+  for (const line of raw) {
+    const L = line.trim();
+    if (!L) {
+      if (buf) { out.push(cleanPiece(buf)); buf = ''; }
+      continue;
+    }
+    if (isBullet(L)) {
+      if (buf) out.push(cleanPiece(buf));
+      buf = L;
+    } else if (buf) {
+      buf += ' ' + L;
+    } else {
+      // 일반 문장도 문장 단위로 투하
+      splitSentences(L).forEach(s => out.push(s));
+    }
+  }
+  if (buf) out.push(cleanPiece(buf));
+  return out;
+}
+
+function splitByMode(text, m) {
+  switch (m) {
+    case 'ultra': return splitUltra(text);
+    case 'sentence': return splitSentences(text);
+    case 'line': return splitLines(text);
+    case 'para': return splitParas(text);
+    case 'bullet': return splitBullets(text);
+    default: return splitUltra(text);
+  }
+}
+
+function dedupe(arr) {
+  const seen = new Set();
+  const out = [];
+  for (const x of arr) {
+    const key = x.replace(/\s+/g, '').toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(x);
+  }
+  return out;
+}
+
+function runSplit() {
+  let arr = splitByMode(src.value, mode);
+  if ($('dropShort').checked) arr = arr.filter(x => x.replace(/\s/g, '').length > 2);
+  if ($('dropDup').checked) arr = dedupe(arr);
+  pieces = arr;
+  selected = new Set();
+  renderList();
+  syncOut();
+}
+
+function renderList() {
+  if (!pieces.length) {
+    list.innerHTML = '<div class="empty">조각이 없습니다. 원문을 넣고 분해하기를 눌러주세요.</div>';
+    stats.textContent = '0개';
+    return;
+  }
+  stats.textContent = `총 ${pieces.length}개 조각 · 선택 ${selected.size}개 · 모드: ${mode}`;
+  list.innerHTML = '';
+  pieces.forEach((text, i) => {
+    const div = document.createElement('div');
+    div.className = 'item' + (selected.has(i) ? ' selected' : '');
+    div.innerHTML = `
+      <div class="num">${i + 1}</div>
+      <div class="txt"></div>
+      <div class="len">${text.length}자</div>
+      <div class="actions">
+        <button type="button" data-act="toggle">${selected.has(i) ? '선택됨' : '선택'}</button>
+        <button type="button" data-act="copy">복사</button>
+      </div>`;
+    div.querySelector('.txt').textContent = text;
+    div.querySelector('[data-act="toggle"]').onclick = () => {
+      if (selected.has(i)) selected.delete(i); else selected.add(i);
+      renderList();
+      syncOut();
+    };
+    div.querySelector('[data-act="copy"]').onclick = async () => {
+      await copyText(text);
+    };
+    div.querySelector('.txt').onclick = () => {
+      if (selected.has(i)) selected.delete(i); else selected.add(i);
+      renderList();
+      syncOut();
+    };
+    list.appendChild(div);
+  });
+}
+
+function selectedTexts() {
+  return [...selected].sort((a, b) => a - b).map(i => pieces[i]).filter(Boolean);
+}
+
+function syncOut() {
+  const texts = selectedTexts();
+  out.value = texts.map((t, i) => `${i + 1}. ${t}`).join('\n');
+  stats.textContent = pieces.length
+    ? `총 ${pieces.length}개 조각 · 선택 ${selected.size}개 · 모드: ${mode}`
+    : '아직 분해하지 않았습니다.';
+}
+
+async function copyText(t) {
+  try {
+    await navigator.clipboard.writeText(t);
+    flash('복사됨');
+  } catch {
+    prompt('복사:', t);
+  }
+}
+
+function flash(msg) {
+  const old = stats.textContent;
+  stats.textContent = msg;
+  setTimeout(() => { stats.textContent = old; }, 800);
+}
+
+$('btnSplit').onclick = runSplit;
+$('btnClear').onclick = () => {
+  src.value = '';
+  pieces = [];
+  selected = new Set();
+  out.value = '';
+  renderList();
+};
+$('btnCopySel').onclick = async () => {
+  const t = selectedTexts().map((x, i) => `${i + 1}. ${x}`).join('\n');
+  if (!t) return alert('선택된 항목이 없습니다.');
+  await copyText(t);
+};
+$('btnCopyAll').onclick = async () => {
+  if (!pieces.length) return alert('먼저 분해하세요.');
+  await copyText(pieces.map((x, i) => `${i + 1}. ${x}`).join('\n'));
+};
+$('btnSelAll').onclick = () => {
+  selected = new Set(pieces.map((_, i) => i));
+  renderList();
+  syncOut();
+};
+$('btnSelNone').onclick = () => {
+  selected = new Set();
+  renderList();
+  syncOut();
+};
+$('btnTop3').onclick = () => {
+  selected = new Set([0, 1, 2].filter(i => i < pieces.length));
+  renderList();
+  syncOut();
+};
+$('btnCopyOut').onclick = async () => {
+  if (!out.value.trim()) return alert('내용이 없습니다.');
+  await copyText(out.value);
+};
+$('dropShort').onchange = () => { if (src.value.trim()) runSplit(); };
+$('dropDup').onchange = () => { if (src.value.trim()) runSplit(); };
+</script>
+</body>
+</html>
