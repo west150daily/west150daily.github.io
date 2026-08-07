@@ -2,1550 +2,2702 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>개인용 인포그래픽 카드 생성기 (최종 완성판)</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>WEST150.DAILY NEWS V4 · Apple</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@400;500;700;800;900&family=Noto+Serif+KR:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
 <style>
   :root {
-    --accent: #007AFF;
-    --bg: #f2f2f7;
-    --card-bg: rgba(255,255,255,0.72);
-    --card-border: rgba(255,255,255,0.45);
-    --text: #1d1d1f;
-    --text-secondary: #6e6e73;
-    --radius: 28px;
-    --shadow: 0 12px 40px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
-    --glass-blur: 24px;
-    --box-bg: rgba(255,255,255,0.5);
-    --box-border: rgba(0,0,0,0.08);
+    --orange: #FF8228;
+    --orange-soft: rgba(255, 130, 40, 0.14);
+    --dark-bg: #000000;
+    --panel: #1C1C1E;
+    --panel-elevated: #2C2C2E;
+    --panel-border: rgba(255,255,255,0.08);
+    --input-bg: #2C2C2E;
+    --text: #F5F5F7;
+    --gray: #8E8E93;
+    --muted: #8E8E93;
+    --btn-sec: #3A3A3C;
+    --danger-bg: #3A1F1F;
+    --danger-text: #FF8A8A;
+    --warn-bg: #2A1A1A;
+    --warn-border: #5A2A2A;
+    --warn-text: #E8A0A0;
+    --modal-bg: rgba(0,0,0,0.55);
+    --shadow: 0 8px 32px rgba(0,0,0,0.4);
+    --shadow-sm: 0 2px 12px rgba(0,0,0,0.28);
+    --radius: 16px;
+    --radius-sm: 12px;
+    --radius-xs: 10px;
+    --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
-  body.dark {
-    --bg: #000000;
-    --card-bg: rgba(28,28,30,0.78);
-    --card-border: rgba(255,255,255,0.14);
-    --text: #f5f5f7;
-    --text-secondary: #98989d;
-    --shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 20px 50px rgba(0,0,0,0.55);
-    --box-bg: rgba(255,255,255,0.06);
-    --box-border: rgba(255,255,255,0.12);
+  body.light {
+    --dark-bg: #F5F5F7;
+    --panel: #FFFFFF;
+    --panel-elevated: #F2F2F7;
+    --panel-border: rgba(0,0,0,0.06);
+    --input-bg: #F2F2F7;
+    --text: #1D1D1F;
+    --gray: #6E6E73;
+    --muted: #6E6E73;
+    --btn-sec: #E8E8ED;
+    --danger-bg: #FFF0F0;
+    --danger-text: #C41E3A;
+    --warn-bg: #FFF5F5;
+    --warn-border: #FFD0D0;
+    --warn-text: #8D1F24;
+    --modal-bg: rgba(0,0,0,0.35);
+    --shadow: 0 8px 32px rgba(0,0,0,0.08);
+    --shadow-sm: 0 2px 12px rgba(0,0,0,0.06);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
-    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Pretendard", "Noto Sans KR", sans-serif;
+    background: var(--dark-bg);
     color: var(--text);
-    padding: 20px;
-    transition: background 0.3s;
+    -webkit-text-size-adjust: 100%;
+    overscroll-behavior-y: contain;
+    overflow-x: hidden;
+    transition: background 0.3s var(--ease), color 0.3s var(--ease);
+    line-height: 1.47;
+    letter-spacing: -0.015em;
     min-height: 100vh;
   }
 
-  .container {
-    max-width: 1600px;
-    margin: 0 auto;
+  input[type="text"], input[type="password"], input[type="color"], textarea, select {
+    font-size: 16px !important;
+    font-family: inherit;
+  }
+  button { font-family: inherit; cursor: pointer; border: none; color: inherit; }
+
+  /* ===== APP LAYOUT ===== */
+  .app {
     display: grid;
-    grid-template-columns: 420px 1fr;
-    gap: 28px;
+    grid-template-columns: minmax(300px, 380px) 1fr;
+    min-height: 100vh;
+  }
+  @media (max-width: 1100px) {
+    .app { grid-template-columns: 1fr; }
+    .side-panel {
+      position: static !important;
+      height: auto !important;
+      max-height: none !important;
+      border-right: none;
+      border-bottom: 1px solid var(--panel-border);
+    }
   }
 
-  h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.6px; margin-bottom: 4px; }
-  .subtitle { color: var(--text-secondary); font-size: 14px; margin-bottom: 22px; }
-
-  .panel {
-    background: var(--card-bg);
-    backdrop-filter: blur(var(--glass-blur));
-    -webkit-backdrop-filter: blur(var(--glass-blur));
-    border: 1px solid var(--card-border);
-    border-radius: 24px;
-    padding: 22px;
-    box-shadow: var(--shadow);
-    height: fit-content;
-    position: sticky;
-    top: 20px;
-    max-height: calc(100vh - 40px);
+  /* ===== SIDE PANEL ===== */
+  .side-panel {
+    background: var(--panel);
+    border-right: 1px solid var(--panel-border);
+    padding: 28px 20px 48px;
     overflow-y: auto;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    max-height: 100vh;
+  }
+  .side-header {
+    margin-bottom: 24px;
+  }
+  .side-header h1 {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.25;
+  }
+  .side-header .sub {
+    font-size: 13px;
+    color: var(--gray);
+    margin-top: 6px;
+    font-weight: 400;
+  }
+  .side-tools {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    align-items: center;
+  }
+  .icon-btn {
+    height: 40px;
+    padding: 0 14px;
+    border-radius: 10px;
+    background: var(--input-bg);
+    border: 1px solid var(--panel-border);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s var(--ease);
+  }
+  .icon-btn:hover { filter: brightness(1.08); }
+  .color-chip {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--panel-border);
+    padding: 3px;
+    background: var(--input-bg);
+    cursor: pointer;
   }
 
-  .section { margin-bottom: 20px; }
-  .section-title {
-    font-size: 12px; font-weight: 600; color: var(--text-secondary);
-    text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 9px;
+  /* Storage */
+  .storage-box {
+    background: var(--input-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-bottom: 18px;
   }
-
-  .btn-group { display: flex; flex-wrap: wrap; gap: 7px; }
-
-  button {
-    background: rgba(120,120,128,0.12);
-    border: none; border-radius: 11px;
-    padding: 9px 12px; font-size: 13px; font-weight: 500;
-    cursor: pointer; transition: all 0.2s; color: var(--text);
-    font-family: inherit;
+  .storage-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray);
+    margin-bottom: 8px;
   }
-  button:hover { background: rgba(120,120,128,0.22); }
-  button.active { background: var(--accent); color: white; }
-
-  input[type="text"], input[type="number"], textarea, select {
-    width: 100%; padding: 11px 13px; border-radius: 12px;
-    border: 1px solid rgba(0,0,0,0.08);
-    background: rgba(120,120,128,0.08);
-    color: var(--text); font-size: 14px; margin-bottom: 8px;
-    font-family: inherit;
-  }
-  body.dark input, body.dark textarea, body.dark select { border-color: rgba(255,255,255,0.1); }
-  textarea { min-height: 80px; resize: vertical; }
-
-  .color-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-  input[type="color"] {
-    width: 42px; height: 42px; border: none; border-radius: 11px;
-    cursor: pointer; padding: 0; background: none; flex-shrink: 0;
-  }
-
-  input[type="range"] { width: 100%; accent-color: var(--accent); }
-
-  .preview-area { display: flex; flex-direction: column; align-items: center; gap: 20px; }
-  #pages-container { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; }
-
-  .card-wrapper { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-
-  .card-preview {
-    background: var(--card-bg);
-    backdrop-filter: blur(var(--glass-blur));
-    -webkit-backdrop-filter: blur(var(--glass-blur));
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    overflow: hidden; position: relative;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-  }
-
-  .style-apple { --radius: 32px; }
-  .style-modern { --radius: 36px; }
-  .style-bold { --radius: 20px; }
-  .style-warm { --radius: 24px; }
-  body:not(.dark) .style-warm { --card-bg: rgba(255,248,240,0.78); }
-
-  .style-editorial { --radius: 2px; --card-border: rgba(28,27,25,0.14); }
-  body:not(.dark) .style-editorial { --card-bg: #F1EDE4; --text: #1C1B19; --text-secondary: #8a8377; --box-bg: rgba(28,27,25,0.04); --box-border: rgba(28,27,25,0.12); }
-  body.dark .style-editorial { --card-bg: #17160f; --text: #F1EDE4; --text-secondary: #9a9284; --card-border: rgba(241,237,228,0.14); --box-bg: rgba(241,237,228,0.06); --box-border: rgba(241,237,228,0.12); }
-
-  .style-apple::before {
-    content:""; position: absolute; inset:0; pointer-events: none; z-index: 0;
-    background: radial-gradient(ellipse 62% 50% at 10% 6%, var(--accent), transparent 62%), radial-gradient(ellipse 55% 45% at 94% 92%, var(--accent), transparent 66%);
-    filter: blur(46px); opacity: 0.20;
-  }
-  body.dark .style-apple::before { opacity: 0.30; }
-
-  .texture-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 1; mix-blend-mode: overlay; opacity: 0.35; }
-  .texture-noise { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
-  .texture-grid { background-size: 24px 24px; background-image: linear-gradient(to right, rgba(120,120,128,0.2) 1px, transparent 1px), linear-gradient(to bottom, rgba(120,120,128,0.2) 1px, transparent 1px); }
-  .texture-paper { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paperNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='5' result='noise'/%3E%3CfeDiffuseLighting in='noise' lighting-color='%23fff' surfaceScale='2'%3E%3CfeDistantLight azimuth='45' elevation='60'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paperNoise)'/%3E%3C/svg%3E"); opacity: 0.25; }
-
-  .bg-photo-overlay { position: absolute; inset: 0; background-size: cover; background-position: center; z-index: 0; }
-  .bg-photo-overlay.effect-vignette::after,
-  .img-wrapper.effect-vignette::after {
-    content: ""; position: absolute; inset: 0; box-shadow: inset 0 0 160px rgba(0,0,0,0.8); pointer-events: none;
-  }
-  .bg-photo-overlay.effect-film,
-  .img-wrapper.effect-film img.card-image {
-    filter: contrast(1.15) saturate(0.8) sepia(0.25) brightness(0.9);
-  }
-  .bg-dark-overlay {
-    position: absolute; inset: 0; z-index: 1; pointer-events: none;
-    background: linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.45) 100%);
-  }
-  body:not(.dark) .bg-dark-overlay {
-    background: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.25) 40%, rgba(0,0,0,0.35) 100%);
-  }
-  .card-preview:has(.bg-photo-overlay) .title,
-  .card-preview:has(.bg-photo-overlay) .subtitle-text,
-  .card-preview:has(.bg-photo-overlay) .box-title,
-  .card-preview:has(.bg-photo-overlay) .box-body,
-  .card-preview:has(.bg-photo-overlay) .body-text,
-  .card-preview:has(.bg-photo-overlay) .meta {
-    text-shadow: 0 1px 3px rgba(0,0,0,0.7), 0 0 12px rgba(0,0,0,0.4);
-  }
-  .card-preview:has(.bg-photo-overlay) .content-box {
-    background: rgba(0,0,0,0.35);
-    border-color: rgba(255,255,255,0.2);
-    backdrop-filter: blur(8px);
-  }
-  body:not(.dark) .card-preview:has(.bg-photo-overlay) .content-box {
-    background: rgba(255,255,255,0.55);
-    border-color: rgba(0,0,0,0.1);
-  }
-
-  .card-inner { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; z-index: 2; overflow: hidden; padding: 44px 40px; -webkit-transform: translateZ(0); }
-  .card-header { margin-bottom: 18px; }
-
-  .title { font-family: var(--font-title, 'Pretendard Variable', sans-serif); font-weight: 700; line-height: 1.22; letter-spacing: -0.9px; margin-bottom: 6px; word-break: keep-all; }
-  .subtitle-text { font-family: var(--font-title, 'Pretendard Variable', sans-serif); font-weight: 500; color: var(--text-secondary); line-height: 1.4; word-break: keep-all; }
-  .body-text { font-family: var(--font-body, 'Pretendard Variable', sans-serif); line-height: 1.65; color: var(--text); flex: 1; word-break: keep-all; overflow: hidden; }
-
-  /* ===== iOS Safari 다단 클리핑 버그 우회: CSS Grid 기반 컬럼 ===== */
-  .card-columns-flex {
-    display: grid;
-    grid-template-columns: repeat(var(--cols, 2), 1fr);
-    gap: 20px;
-    width: 100%;
-    flex: 1;
+  .storage-bar-bg {
+    width: 100%; height: 5px;
+    background: var(--panel);
+    border-radius: 3px;
     overflow: hidden;
-    position: relative;
-    align-items: start;
   }
-  .card-column {
+  .storage-bar-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, #FF8228, #FFB028);
+    border-radius: 3px;
+    transition: width 0.4s var(--ease);
+  }
+  .storage-bar-fill.warning { background: linear-gradient(90deg, #ed8936, #ecc94b); }
+  .storage-bar-fill.danger { background: linear-gradient(90deg, #e53e3e, #ff8a8a); }
+
+  /* Collapsible sections */
+  .sec {
+    background: var(--input-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .sec-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 16px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+  .sec-head .chev { font-size: 11px; opacity: 0.55; transition: transform 0.2s; color: var(--gray); }
+  .sec.collapsed .sec-body { display: none; }
+  .sec.collapsed .chev { transform: rotate(-90deg); }
+  .sec-body {
+    padding: 4px 16px 16px;
     display: flex;
     flex-direction: column;
-    min-width: 0;
+    gap: 12px;
   }
-
-  .flow-connector {
-    display: flex; justify-content: center; align-items: center;
-    margin: 2px 0 10px 0; flex-shrink: 0; width: 100%;
+  .sec-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
   }
-  .flow-connector .line-solid {
-    width: 3px; height: 24px; background: var(--accent); border-radius: 2px; opacity: 0.9;
-  }
-  .flow-connector .line-dashed {
-    width: 0; height: 24px; border-left: 3px dashed var(--accent); opacity: 0.9;
-  }
-  .flow-connector .line-arrow {
-    color: var(--accent); font-weight: 800; font-size: 20px; line-height: 1; opacity: 0.95;
-  }
+  .sec-grid .full { grid-column: 1 / -1; }
 
-  .content-box {
-    display: block; width: 100%; break-inside: avoid; page-break-inside: avoid; -webkit-column-break-inside: avoid;
-    background: var(--box-bg); border: 1px solid var(--box-border); border-radius: 16px; padding: 18px 18px 18px 22px; margin-bottom: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.02); position: relative;
-    flex-shrink: 0;
-  }
-
-  /* 왼쪽 액센트 바 (모든 스타일 공통) */
-  .content-box::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 14px;
-    bottom: 14px;
-    width: 4px;
-    background: var(--accent);
-    border-radius: 0 3px 3px 0;
-  }
-
-  /* 2번: Apple / Modern 스타일에서만 소프트 글래스 효과 */
-  .style-apple .content-box,
-  .style-modern .content-box {
-    background: rgba(255,255,255,0.42);
-    backdrop-filter: blur(16px) saturate(1.4);
-    -webkit-backdrop-filter: blur(16px) saturate(1.4);
-    border: 1px solid rgba(255,255,255,0.55);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.6);
-  }
-  body.dark .style-apple .content-box,
-  body.dark .style-modern .content-box {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.14);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
-  }
-  
-  .box-title { font-family: var(--font-title, 'Pretendard Variable', sans-serif); font-weight: 700; color: var(--accent); margin-bottom: 8px; line-height: 1.35; letter-spacing: -0.3px; word-break: keep-all; }
-  .box-body { font-family: var(--font-body, 'Pretendard Variable', sans-serif); line-height: 1.6; color: var(--text); word-break: keep-all; }
-
-  .box-inline-img { width: 100%; border-radius: 10px; margin: 8px 0; display: block; object-fit: cover; }
-
-  .meta { margin-top: auto; padding-top: 20px; font-size: 13px; color: var(--text-secondary); display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(0,0,0,0.06); flex-shrink: 0; }
-  body.dark .meta { border-top-color: rgba(255,255,255,0.08); }
-
-  .watermark-container { display: flex; align-items: center; gap: 8px; }
-  .watermark-logo { height: 24px; max-width: 80px; object-fit: contain; border-radius: 4px; }
-  .watermark-text { font-weight: 600; opacity: 0.85; font-size: 13px; }
-
-  .accent-bar { width: 36px; height: 3.5px; background: var(--accent); border-radius: 2px; margin-bottom: 16px; flex-shrink: 0; }
-
-  .img-wrapper { position: relative; width: 100%; margin-bottom: 18px; border-radius: 16px; overflow: hidden; flex-shrink: 0; }
-  .img-wrapper.pos-bottom { margin-top: auto; margin-bottom: 16px; }
-  .img-wrapper img.card-image { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-  mark { background: transparent; color: inherit; padding: 0 3px; border-radius: 3px; }
-  .red-underline { text-decoration: underline; text-decoration-color: #FF3B30; text-decoration-thickness: 3px; text-underline-offset: 3px; }
-
-  .actions { display: flex; flex-direction: column; gap: 9px; margin-top: 16px; }
-  .btn-primary { background: var(--accent); color: white; border: none; padding: 13px 18px; border-radius: 14px; font-weight: 600; font-size: 15px; width: 100%; }
-  .btn-secondary { background: rgba(120,120,128,0.12); border: none; padding: 11px 18px; border-radius: 14px; font-weight: 500; width: 100%; }
-
-  .field-group { display: none; }
-  .field-group.active { display: block; }
-  .mode-toggle { display: flex; background: rgba(120,120,128,0.12); border-radius: 12px; padding: 3px; margin-bottom: 12px; }
-  .mode-toggle button { flex: 1; border: none; background: transparent; padding: 8px; }
-  .mode-toggle button.active { background: var(--card-bg); box-shadow: 0 2px 8px rgba(0,0,0,0.06); color: var(--text); }
-
-  .box-field-card {
-    background: rgba(120,120,128,0.06); border: 1px solid rgba(120,120,128,0.18); border-radius: 14px; padding: 12px; margin-bottom: 12px; cursor: grab;
-  }
-  .box-field-card.dragging { opacity: 0.5; border: 2px dashed var(--accent); }
-  .box-field-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .box-field-title { font-size: 12px; font-weight: 700; color: var(--accent); cursor: grab; }
-  .box-btn-controls { display: flex; gap: 4px; }
-  .box-btn-controls button { padding: 3px 8px; font-size: 11px; }
-
-  .box-field-label {
-    font-size: 11px;
+  label.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
     font-weight: 600;
-    color: var(--text-secondary);
-    margin-bottom: 4px;
-    margin-top: 2px;
-    letter-spacing: 0.3px;
+    color: var(--gray);
+  }
+  label.field input[type="text"],
+  label.field input[type="color"],
+  label.field select,
+  label.field textarea {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    color: var(--text);
+    border-radius: var(--radius-xs);
+    padding: 10px 12px;
+    width: 100%;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  label.field input:focus,
+  label.field select:focus,
+  label.field textarea:focus {
+    outline: none;
+    border-color: var(--orange);
+    box-shadow: 0 0 0 3px var(--orange-soft);
+  }
+  label.field input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: var(--panel);
+    border-radius: 2px;
+    border: none;
+    width: 100%;
+    margin-top: 6px;
+  }
+  label.field input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--orange);
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+  label.field input[type="file"] {
+    background: var(--panel);
+    border: 1px dashed var(--panel-border);
+    color: var(--gray);
+    border-radius: var(--radius-xs);
+    padding: 10px;
+    font-size: 12px !important;
+    width: 100%;
+  }
+  .checkbox-label {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 8px !important;
+    cursor: pointer;
+    user-select: none;
+    color: var(--text) !important;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .checkbox-label input { width: auto; accent-color: var(--orange); cursor: pointer; }
+
+  .wm-row {
+    display: grid;
+    grid-template-columns: 1fr 110px auto;
+    gap: 8px;
+    align-items: end;
   }
 
-  .box-img-area { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; background: rgba(0,0,0,0.03); padding: 8px 10px; border-radius: 8px; }
-  .box-img-row { display: flex; align-items: center; gap: 8px; }
+  .font-manager {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius-xs);
+    padding: 10px;
+    max-height: 120px;
+    overflow-y: auto;
+  }
+  .font-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 4px;
+    border-bottom: 1px solid var(--panel-border);
+    font-size: 13px;
+  }
+  .font-list-item:last-child { border-bottom: none; }
 
-  .slider-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
-  .slider-row span { font-size: 13px; min-width: 75px; font-weight: 600; }
+  .side-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 16px;
+  }
 
-  /* iPhone 저장용 오버레이 */
-  #save-overlay {
+  /* Buttons */
+  button.btn-primary, button.btn-secondary, button.btn-danger, button.btn-ghost, button.btn-sm {
+    border-radius: 980px;
+    padding: 11px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    transition: all 0.2s var(--ease);
+  }
+  button:active { transform: scale(0.97); }
+  .btn-primary { background: var(--orange); color: #000; }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-secondary { background: var(--btn-sec); color: var(--text); }
+  .btn-secondary:hover { filter: brightness(1.1); }
+  .btn-danger { background: var(--danger-bg); color: var(--danger-text); }
+  .btn-ghost { background: transparent; border: 1px solid var(--panel-border); color: var(--text); }
+  .btn-sm { padding: 8px 14px; font-size: 13px; min-height: 34px; }
+  .btn-block { width: 100%; border-radius: 12px !important; }
+
+  /* ===== MAIN AREA ===== */
+  .main-area {
+    padding: 32px 36px 120px;
+    background: var(--dark-bg);
+  }
+  @media (max-width: 767px) {
+    .main-area { padding: 16px 14px max(100px, env(safe-area-inset-bottom) + 80px); }
+  }
+
+  .batch-card, .tool-card, .cover-card, .card-editor {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--orange);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .batch-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .batch-row:last-child { margin-bottom: 0; }
+  .batch-hint {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-top: 6px;
+  }
+  .batch-label {
+    font-size: 13px;
+    color: var(--gray);
+    font-weight: 600;
+    min-width: 80px;
+  }
+
+  .btn-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .editor-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 340px);
+    gap: 24px;
+    width: 100%;
+  }
+  .editor-grid > * { min-width: 0; }
+  .preview-zone {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .preview-zone canvas {
+    width: 100% !important;
+    max-width: 100%;
+    height: auto !important;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--panel-border);
+    background: #000;
+  }
+
+  .card-editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .fields { display: flex; flex-direction: column; gap: 12px; }
+  .field-row { display: flex; gap: 12px; align-items: center; }
+  .field-row > * { flex: 1; min-width: 0; }
+  .image-control-box { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+
+  .drop-zone {
+    border: 1.5px dashed var(--panel-border);
+    padding: 18px;
+    border-radius: var(--radius-xs);
+    text-align: center;
+    color: var(--gray);
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.2s var(--ease);
+  }
+  .drop-zone:hover {
+    border-color: var(--orange);
+    color: var(--text);
+    background: var(--orange-soft);
+  }
+
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--gray);
+    flex-wrap: wrap;
+  }
+  .warn-box {
+    display: none;
+    margin-top: 4px;
+    padding: 10px 14px;
+    border-radius: var(--radius-xs);
+    background: var(--warn-bg);
+    border: 1px solid var(--warn-border);
+    color: var(--warn-text);
+    font-size: 12px;
+    line-height: 1.45;
+  }
+  .warn-box.show { display: block; }
+
+  .hl-help {
+    background: var(--input-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .hl-help-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--orange);
+  }
+  .hl-help-body {
+    font-size: 12px;
+    color: var(--gray);
+    line-height: 1.6;
+  }
+  .hl-help-body b { color: var(--text); font-weight: 700; }
+  .hl-preset-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .hl-preset-btn {
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    border: 1px solid var(--panel-border);
+    padding: 0;
+    cursor: pointer;
+  }
+
+  textarea, input[type="text"], select {
+    background: var(--input-bg);
+    border: 1px solid var(--panel-border);
+    color: var(--text);
+    border-radius: var(--radius-xs);
+    padding: 11px 13px;
+    width: 100%;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  textarea:focus, input[type="text"]:focus, select:focus {
+    outline: none;
+    border-color: var(--orange);
+    box-shadow: 0 0 0 3px var(--orange-soft);
+  }
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: var(--input-bg);
+    border-radius: 2px;
+    border: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--orange);
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+  input[type="file"] {
+    background: var(--input-bg);
+    border: 1px dashed var(--panel-border);
+    color: var(--gray);
+    border-radius: var(--radius-xs);
+    padding: 10px;
+    font-size: 12px !important;
+    width: 100%;
+  }
+  input[type="color"] {
+    background: var(--input-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius-xs);
+    padding: 4px;
+    width: 100%;
+    height: 40px;
+  }
+
+  #cardsWrap { display: flex; flex-direction: column; gap: 20px; }
+
+  /* Modal */
+  .modal-backdrop {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.85);
-    z-index: 9999;
-    flex-direction: column;
+    background: var(--modal-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 10000;
     align-items: center;
     justify-content: center;
     padding: 20px;
-    overflow-y: auto;
   }
-  #save-overlay.active { display: flex; }
-  #save-overlay img {
-    max-width: 100%;
-    max-height: 70vh;
-    border-radius: 16px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  .modal-backdrop.show { display: flex; }
+  .modal {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 20px;
+    padding: 28px;
+    width: 100%;
+    max-width: 420px;
+    color: var(--text);
+    box-shadow: var(--shadow);
   }
-  #save-overlay .save-guide {
-    color: white;
-    text-align: center;
-    margin-top: 18px;
+  .modal h3 { margin: 0 0 8px; font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+  .modal p { margin: 0 0 18px; font-size: 14px; color: var(--gray); line-height: 1.5; }
+  .modal .check-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
     font-size: 15px;
-    line-height: 1.5;
   }
-  #save-overlay .save-guide strong { color: #5AC8FA; }
-  #save-overlay .close-btn {
-    margin-top: 16px;
-    background: rgba(255,255,255,0.15);
-    color: white;
-    border: none;
-    padding: 12px 28px;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 600;
-  }
+  .modal .check-item input { width: 20px; height: 20px; accent-color: var(--orange); }
+  .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 22px; }
+  .modal-actions button { padding: 14px; border-radius: 980px; font-weight: 700; }
+  .modal-ok:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  @media (max-width: 1100px) {
-    .container { grid-template-columns: 1fr; }
-    .panel { position: static; max-height: none; }
+  @media (max-width: 900px) {
+    .editor-grid { grid-template-columns: 1fr !important; }
+    .card-editor .editor-grid,
+    .cover-card .editor-grid { display: flex !important; flex-direction: column !important; }
+  }
+  @media (max-width: 767px) {
+    .batch-card, .tool-card, .cover-card, .card-editor { padding: 16px; border-radius: 14px; }
+    .wm-row { grid-template-columns: 1fr; }
+    .sec-grid { grid-template-columns: 1fr; }
+    .btn-group button { min-height: 44px; }
   }
 </style>
 </head>
 <body>
-  <div class="container">
-    <div class="panel">
-      <h1>카드 생성기</h1>
-      <p class="subtitle">개인용 · 고퀄리티 인포그래픽 (최종 완성판)</p>
 
-      <div class="section">
-        <div class="section-title">사이즈</div>
-        <div class="btn-group" id="size-btns">
-          <button class="active" data-w="1080" data-h="1080">인스타 정사각</button>
-          <button data-w="1080" data-h="1350">인스타 세로</button>
-          <button data-w="1080" data-h="1920">스토리/릴스</button>
-          <button data-w="1600" data-h="900">X 와이드</button>
-          <button data-w="custom">커스텀</button>
-        </div>
-        <div id="custom-size" style="display:none; margin-top:10px;">
-          <input type="number" id="custom-w" placeholder="가로 px" value="1080">
-          <input type="number" id="custom-h" placeholder="세로 px" value="1080">
-        </div>
-      </div>
+<div id="lockScreen" style="display:none; position:fixed; inset:0; background:#000; z-index:9999; align-items:center; justify-content:center; flex-direction:column; gap:18px;">
+  <div style="font-size:24px; font-weight:700; color:#fff; letter-spacing:-0.02em;">잠금 해제</div>
+  <input type="password" id="lockInput" placeholder="비밀번호 입력" style="width:280px; padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.12); background:#1C1C1E; color:#fff; font-size:16px;" onkeydown="if(event.key==='Enter') tryUnlock()">
+  <button class="btn-primary" style="width:280px; padding:14px;" onclick="tryUnlock()">확인</button>
+</div>
 
-      <div class="section">
-        <div class="section-title">템플릿 유형</div>
-        <div class="btn-group" id="template-btns">
-          <button class="active" data-template="boxes">다단 쌓기 (소제목+본문)</button>
-          <button data-template="news">일반 텍스트형</button>
-        </div>
-      </div>
-
-      <div class="section" id="column-setting-section">
-        <div class="section-title">다단(섹션) 분할 개수</div>
-        <div class="btn-group" id="column-btns" style="margin-bottom: 10px;">
-          <button data-cols="1">1단</button>
-          <button class="active" data-cols="2">2단 (기본)</button>
-          <button data-cols="3">3단</button>
-        </div>
-        <div class="section-title">단락 간 연결선 (Flow Line)</div>
-        <div class="btn-group" id="flow-line-btns">
-          <button class="active" data-line="none">없음</button>
-          <button data-line="solid">실선</button>
-          <button data-line="dashed">점선</button>
-          <button data-line="arrow">화살표</button>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">글꼴 크기 조절</div>
-        <div class="btn-group" style="margin-bottom:8px;">
-          <button class="active" id="font-auto">자동 맞춤</button>
-          <button id="font-manual">수동 조절</button>
-        </div>
-        <div id="font-slider-wrap" style="display:none; background:rgba(120,120,128,0.06); padding:12px; border-radius:12px;">
-          <div class="slider-row">
-            <span>소제목 크기</span>
-            <input type="range" id="sub-font-size" min="12" max="50" value="20">
-            <span id="sub-font-size-label">20px</span>
-          </div>
-          <div class="slider-row">
-            <span>본문 크기</span>
-            <input type="range" id="body-font-size" min="12" max="50" value="16">
-            <span id="font-size-label">16px</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="section" id="box-builder-section">
-        <div class="section-title">카드 전체 제목 (선택)</div>
-        <input type="text" id="b-main-title" placeholder="전체 메인 제목">
-        <input type="text" id="b-main-subtitle" placeholder="전체 부제목" style="margin-bottom:12px;">
-
-        <div class="section-title">단락 추가 및 순서 조정 (드래그 또는 ▲▼)</div>
-        <div id="boxes-input-container"></div>
-        <button class="btn-secondary" style="width:100%; border: 1.5px dashed var(--accent); color:var(--accent); font-weight:600;" onclick="addNewBoxField()">+ 똑같은 [칸] 계속 추가하기</button>
-      </div>
-
-      <div class="section" id="standard-text-section" style="display:none;">
-        <div class="section-title">일반 텍스트 입력</div>
-        <div class="mode-toggle">
-          <button class="active" id="mode-bulk">단순 붙여넣기</button>
-          <button id="mode-fields">필드별 입력</button>
-        </div>
-
-        <div id="bulk-input" class="field-group active">
-          <textarea id="bulk-text" placeholder="제목&#10;부제목&#10;본문 내용...&#10;출처 | 2026.08.06"></textarea>
-          <button class="btn-primary" style="margin-top:6px;" onclick="parseBulk()">자동 채우기</button>
-        </div>
-
-        <div id="fields-input" class="field-group">
-          <input type="text" id="f-title" placeholder="제목">
-          <input type="text" id="f-subtitle" placeholder="부제목 / 설명">
-          <textarea id="f-body" placeholder="본문 또는 리스트 내용"></textarea>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">출처 및 날짜 (하단)</div>
-        <input type="text" id="f-source" placeholder="출처 (예: OO뉴스)">
-        <input type="text" id="f-date" placeholder="날짜 (예: 2026. 08. 06)">
-      </div>
-
-      <div class="section">
-        <div class="section-title">로고 / 워터마크</div>
-        <input type="file" id="logo-input" accept="image/*" style="margin-bottom:6px;">
-        <input type="text" id="f-watermark-text" placeholder="인스타 계정명 (예: @my_brand)">
-      </div>
-
-      <div class="section">
-        <div class="section-title">디자인 스타일 및 모서리 곡률</div>
-        <div class="btn-group" id="style-btns" style="margin-bottom:10px;">
-          <button class="active" data-style="apple">Apple</button>
-          <button data-style="modern">Modern</button>
-          <button data-style="bold">Bold</button>
-          <button data-style="warm">Warm</button>
-          <button data-style="editorial">Editorial</button>
-        </div>
-        <div class="slider-row" style="background:rgba(120,120,128,0.06); padding:10px 12px; border-radius:12px;">
-          <span>모서리 둥글기</span>
-          <input type="range" id="card-radius-slider" min="0" max="60" value="28">
-          <span id="card-radius-label">28px</span>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">배경 텍스처 (질감 효과)</div>
-        <div class="btn-group" id="texture-btns">
-          <button class="active" data-texture="none">없음 (기본)</button>
-          <button data-texture="noise">필름 노이즈</button>
-          <button data-texture="grid">모눈종이</button>
-          <button data-texture="paper">종이 질감</button>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">테마 및 포인트 컬러</div>
-        <div class="btn-group" style="margin-bottom:10px;">
-          <button id="theme-light" class="active">라이트</button>
-          <button id="theme-dark">다크</button>
-        </div>
-        <div class="color-row">
-          <input type="color" id="accent-color" value="#007AFF">
-          <span style="font-size:13px; font-weight:600;">컬러 변경</span>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">글꼴 (무료 17종)</div>
-        <div style="margin-bottom:6px; font-size:12px; color:var(--text-secondary);">제목 / 소제목</div>
-        <select id="font-title-select"></select>
-        <div style="margin-bottom:6px; font-size:12px; color:var(--text-secondary);">본문 / 내용</div>
-        <select id="font-body-select"></select>
-      </div>
-
-      <div class="section">
-        <div class="section-title">텍스트 강조 (드래그 후 클릭)</div>
-        <div class="color-row">
-          <input type="color" id="highlight-color" value="#FFF176">
-          <button onclick="insertHighlight()">🖍 형광펜</button>
-          <button onclick="insertUnderline()">빨간 밑줄</button>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">대표 사진 업로드 및 위치 선택</div>
-        <input type="file" id="image-input" accept="image/*">
-        
-        <div style="margin-top:8px; margin-bottom:6px; font-size:12px; color:var(--text-secondary);">대표 사진 배치 방식</div>
-        <div class="btn-group" id="photo-pos-btns" style="margin-bottom:10px;">
-          <button class="active" data-pos="top">상단 (기본)</button>
-          <button data-pos="background">전체 배경형</button>
-          <button data-pos="bottom">하단 배치형</button>
-        </div>
-
-        <div id="rep-photo-height-wrap" style="background:rgba(120,120,128,0.06); padding:10px 12px; border-radius:12px; margin-bottom:10px;">
-          <div class="slider-row" style="margin:0;">
-            <span style="min-width:70px;">사진 높이</span>
-            <input type="range" id="rep-photo-height" min="8" max="45" value="22">
-            <span id="rep-photo-height-label">22%</span>
-          </div>
-          <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">상단/하단 배치 시 카드 높이 대비 비율 (배경형은 무시)</div>
-        </div>
-
-        <div style="margin-bottom:6px; font-size:12px; color:var(--text-secondary);">사진 필터 효과</div>
-        <div class="btn-group" id="photo-effect-btns">
-          <button class="active" data-effect="none">원본</button>
-          <button data-effect="vignette">비네팅 효과</button>
-          <button data-effect="film">필름 효과</button>
-        </div>
-        <button class="btn-secondary" style="margin-top:10px;" onclick="removeImage()">대표 사진 제거</button>
-      </div>
-
-      <div class="actions">
-        <button class="btn-primary" onclick="downloadAllPages()">고화질 PNG 저장하기</button>
-        <button class="btn-secondary" onclick="showSavePreview()">아이폰용 · 이미지 보기 (길게 눌러 저장)</button>
-      </div>
-    </div>
-
-    <div class="preview-area">
-      <div id="pages-container"></div>
-      <p style="color:var(--text-secondary); font-size:13px;" id="size-label">1080 × 1080</p>
+<div id="checklistModal" class="modal-backdrop" onclick="if(event.target===this) closeChecklist()">
+  <div class="modal">
+    <h3>내보내기 전 체크리스트</h3>
+    <p id="checklistDesc">저장 전에 아래 항목을 확인하세요.</p>
+    <div class="check-item"><input type="checkbox" id="ck1" onchange="updateChecklistBtn()"><label for="ck1">헤드라인·부제·인용구 확인</label></div>
+    <div class="check-item"><input type="checkbox" id="ck2" onchange="updateChecklistBtn()"><label for="ck2">출처·워터마크·브랜드 확인</label></div>
+    <div class="check-item"><input type="checkbox" id="ck3" onchange="updateChecklistBtn()"><label for="ck3">이미지·프레임·효과 확인</label></div>
+    <div class="check-item"><input type="checkbox" id="ck4" onchange="updateChecklistBtn()"><label for="ck4">안전 영역(스토리 UI) 침범 없음</label></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeChecklist()">취소</button>
+      <button class="btn-primary modal-ok" id="checklistSaveBtn" disabled onclick="confirmChecklistDownload()">저장</button>
     </div>
   </div>
+</div>
 
-  <!-- iPhone 저장 오버레이 -->
-  <div id="save-overlay">
-    <img id="save-preview-img" alt="저장용 이미지">
-    <div class="save-guide">
-      <strong>이미지를 길게 눌러서 저장</strong>하세요<br>
-      (사진 앱에 저장됩니다)
+<div id="main-content" class="app">
+
+  <!-- ========== LEFT SIDE PANEL ========== -->
+  <aside class="side-panel">
+    <div class="side-header">
+      <h1>WEST150.DAILY</h1>
+      <p class="sub">NEWS V4 · Apple Edition</p>
+      <div class="side-tools">
+        <input type="color" id="themeColor" class="color-chip" value="#FF8228" title="강조 색상" oninput="updateAll()">
+        <button type="button" class="icon-btn" id="themeBtn" onclick="toggleUiTheme()">라이트 UI</button>
+      </div>
     </div>
-    <button class="close-btn" onclick="closeSaveOverlay()">닫기</button>
-  </div>
+
+    <div class="storage-box">
+      <div class="storage-header">
+        <span>브라우저 저장 공간</span>
+        <span id="storage-text">계산 중…</span>
+      </div>
+      <div class="storage-bar-bg">
+        <div id="storage-bar" class="storage-bar-fill"></div>
+      </div>
+    </div>
+
+    <!-- 공통 -->
+    <div class="sec" id="sec-common">
+      <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span>공통 설정</span><span class="chev">▼</span>
+      </div>
+      <div class="sec-body">
+        <label class="field">워터마크 태그 (카드 고정)
+          <input type="text" id="pillTag" value="@west150daily" readonly style="opacity:0.55; cursor:not-allowed;">
+        </label>
+        <label class="field">활성 폰트 선택
+          <select id="activeFont" onchange="updateAll()">
+            <option value="default">노토 세리프 (기본 명조)</option>
+            <option value="Pretendard">프리텐다드 (Pretendard)</option>
+            <option value="Noto Sans KR">노토 산스 (Noto Sans KR)</option>
+            <option value="Nanum Gothic">나눔 고딕 (Nanum Gothic)</option>
+            <option value="Nanum Myeongjo">나눔 명조 (Nanum Myeongjo)</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <!-- 커버 -->
+    <div class="sec" id="sec-cover">
+      <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span>커버 설정</span><span class="chev">▼</span>
+      </div>
+      <div class="sec-body">
+        <div class="sec-grid">
+          <label class="field">커버 제목 1
+            <input type="text" id="coverTitle1" value="오늘의" oninput="debouncedUpdateAll()">
+          </label>
+          <label class="field">커버 제목 2
+            <input type="text" id="coverTitle2" value="뉴스 브리핑" oninput="debouncedUpdateAll()">
+          </label>
+          <label class="field full">커버 스타일
+            <select id="coverStyle" onchange="updateAll()">
+              <option value="default">기본형 (Dark)</option>
+              <option value="full">전체 이미지 배경</option>
+              <option value="top">상단 이미지형</option>
+            </select>
+          </label>
+          <label class="field full">커버 배경 이미지
+            <input type="file" accept="image/*" onchange="handleCoverImg(event)">
+          </label>
+          <label class="field full">밝기(어둡게)
+            <input type="range" id="coverBright" min="0" max="90" value="40" oninput="updateAll()">
+          </label>
+          <label class="checkbox-label full"><input type="checkbox" id="coverVig" onchange="updateAll()"> 비네팅 적용</label>
+          <label class="checkbox-label full"><input type="checkbox" id="coverGrain" onchange="toggleCoverGrainUI(); updateAll();"> 그레인 (필름 노이즈)</label>
+          <label class="field full" id="coverGrainField" style="display:none;">그레인 강도
+            <input type="range" id="coverGrainAmt" min="5" max="50" value="20" oninput="updateAll()">
+          </label>
+          <label class="field full">프레임 / 테두리
+            <select id="coverFrame" onchange="updateAll()">
+              <option value="none">없음</option>
+              <option value="thin">얇은 단선</option>
+              <option value="thick">두꺼운 단선</option>
+              <option value="double">이중 라인</option>
+            </select>
+          </label>
+          <label class="checkbox-label full"><input type="checkbox" id="coverSafeGuide" onchange="updateAll()"> 안전 영역 가이드 (미리보기만)</label>
+          <label class="field">위치(Y)
+            <input type="range" id="coverYOff" min="0" max="100" value="50" oninput="updateAll()">
+          </label>
+          <label class="field">확대(Zoom)
+            <input type="range" id="coverScale" min="100" max="250" value="100" oninput="updateAll()">
+          </label>
+        </div>
+
+        <div style="font-size:12px; color:var(--gray); font-weight:600; margin-top:4px;">커버 워터마크 (최대 3개)</div>
+        <div class="wm-row">
+          <label class="field">1. 텍스트
+            <input type="text" id="coverWmText1" value="@west150daily" oninput="debouncedUpdateAll()" placeholder="@west150daily">
+          </label>
+          <label class="field">위치
+            <select id="coverWmPos1" onchange="updateAll()">
+              <option value="tr">우측 상단</option>
+              <option value="br">우측 하단</option>
+              <option value="tl">좌측 상단</option>
+              <option value="bl">좌측 하단</option>
+              <option value="tm">상단 중앙</option>
+              <option value="bm">하단 중앙</option>
+            </select>
+          </label>
+          <label class="checkbox-label" style="padding-bottom:8px;"><input type="checkbox" id="coverWmShow1" checked onchange="updateAll()"> 표시</label>
+        </div>
+        <div class="wm-row">
+          <label class="field">2. 텍스트
+            <input type="text" id="coverWmText2" value="" oninput="debouncedUpdateAll()" placeholder="비우면 미사용">
+          </label>
+          <label class="field">위치
+            <select id="coverWmPos2" onchange="updateAll()">
+              <option value="tr">우측 상단</option>
+              <option value="br" selected>우측 하단</option>
+              <option value="tl">좌측 상단</option>
+              <option value="bl">좌측 하단</option>
+              <option value="tm">상단 중앙</option>
+              <option value="bm">하단 중앙</option>
+            </select>
+          </label>
+          <label class="checkbox-label" style="padding-bottom:8px;"><input type="checkbox" id="coverWmShow2" checked onchange="updateAll()"> 표시</label>
+        </div>
+        <div class="wm-row">
+          <label class="field">3. 텍스트
+            <input type="text" id="coverWmText3" value="" oninput="debouncedUpdateAll()" placeholder="비우면 미사용">
+          </label>
+          <label class="field">위치
+            <select id="coverWmPos3" onchange="updateAll()">
+              <option value="tr">우측 상단</option>
+              <option value="br">우측 하단</option>
+              <option value="tl" selected>좌측 상단</option>
+              <option value="bl">좌측 하단</option>
+              <option value="tm">상단 중앙</option>
+              <option value="bm">하단 중앙</option>
+            </select>
+          </label>
+          <label class="checkbox-label" style="padding-bottom:8px;"><input type="checkbox" id="coverWmShow3" checked onchange="updateAll()"> 표시</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 폰트 -->
+    <div class="sec" id="sec-font">
+      <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span>커스텀 폰트</span><span class="chev">▼</span>
+      </div>
+      <div class="sec-body">
+        <label class="field">폰트 저장 (TTF/OTF/WOFF)
+          <input type="file" id="fontUpload" accept=".otf,.ttf,.woff,.woff2" onchange="handleFontUpload(event)">
+        </label>
+        <div class="font-manager" id="fontList"></div>
+      </div>
+    </div>
+
+    <div class="side-actions">
+      <button class="btn-primary btn-block" onclick="addCard()">+ 새 카드 추가</button>
+      <button class="btn-secondary btn-block" onclick="requestDownload('zip')">모든 카드 ZIP</button>
+      <button class="btn-secondary btn-block" onclick="undo()">실행취소 (Ctrl+Z)</button>
+      <button class="btn-secondary btn-block" onclick="exportJSON()">데이터 백업</button>
+      <button class="btn-secondary btn-block" onclick="document.getElementById('importFile').click()">불러오기</button>
+      <input type="file" id="importFile" style="display:none" accept=".json" onchange="importJSON(event)">
+      <button class="btn-secondary btn-block" onclick="managePassword()">비밀번호 설정</button>
+      <button class="btn-danger btn-block" onclick="clearAllData()">초기화 (전체삭제)</button>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN ========== -->
+  <main class="main-area">
+
+    <!-- 일괄 -->
+    <div class="batch-card">
+      <div class="card-title">일괄 이미지 · 레이아웃 · 효과</div>
+      <div class="batch-row">
+        <label style="font-size:13px; color:var(--gray); font-weight:500;">여러 장 한 번에 불러오기
+          <input type="file" id="batchImgInput" accept="image/*" multiple style="margin-top:6px;">
+        </label>
+        <button class="btn-primary btn-sm" onclick="applyBatchImages()">순서대로 카드에 적용</button>
+      </div>
+      <p class="batch-hint">선택한 이미지를 위에서부터 순서대로 기존 카드에 넣고, 이미지가 더 많으면 새 카드를 자동 생성합니다.</p>
+
+      <div class="batch-row" style="margin-top:16px;">
+        <span class="batch-label">레이아웃</span>
+        <button class="btn-secondary btn-sm" onclick="batchSetLayout('standard')">모든 카드 · 기본형</button>
+        <button class="btn-secondary btn-sm" onclick="batchSetLayout('full')">모든 카드 · 이미지배경형</button>
+        <button class="btn-secondary btn-sm" onclick="batchSetLayout('video')">모든 카드 · 영상합성용</button>
+      </div>
+      <div class="batch-row">
+        <span class="batch-label">위치 / 확대</span>
+        <label style="font-size:12px; color:var(--muted); display:flex; align-items:center; gap:8px;">
+          Y <input type="range" id="batchYOff" min="0" max="100" value="50" style="width:100px;">
+        </label>
+        <label style="font-size:12px; color:var(--muted); display:flex; align-items:center; gap:8px;">
+          Zoom <input type="range" id="batchScale" min="100" max="250" value="100" style="width:100px;">
+        </label>
+        <button class="btn-secondary btn-sm" onclick="batchApplyZoom()">모든 카드에 적용</button>
+      </div>
+      <div class="batch-row">
+        <span class="batch-label">효과</span>
+        <button class="btn-secondary btn-sm" onclick="batchToggleEffect('vignette', true)">비네팅 ON</button>
+        <button class="btn-secondary btn-sm" onclick="batchToggleEffect('vignette', false)">비네팅 OFF</button>
+        <button class="btn-secondary btn-sm" onclick="batchToggleEffect('grain', true)">그레인 ON</button>
+        <button class="btn-secondary btn-sm" onclick="batchToggleEffect('grain', false)">그레인 OFF</button>
+        <label style="font-size:12px; color:var(--muted); display:flex; align-items:center; gap:8px;">
+          그레인 강도 <input type="range" id="batchGrainAmt" min="5" max="50" value="20" style="width:90px;">
+        </label>
+        <button class="btn-secondary btn-sm" onclick="batchApplyGrainAmt()">강도 적용</button>
+      </div>
+      <div class="batch-row">
+        <span class="batch-label">프레임</span>
+        <button class="btn-secondary btn-sm" onclick="batchSetFrame('none')">없음</button>
+        <button class="btn-secondary btn-sm" onclick="batchSetFrame('thin')">얇은 단선</button>
+        <button class="btn-secondary btn-sm" onclick="batchSetFrame('thick')">두꺼운 단선</button>
+        <button class="btn-secondary btn-sm" onclick="batchSetFrame('double')">이중 라인</button>
+      </div>
+    </div>
+
+    <!-- 찾기/바꾸기 -->
+    <div class="tool-card">
+      <div class="card-title">전체 카드 찾기/바꾸기</div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr auto; gap:14px; align-items:end;">
+        <label class="field">찾을 텍스트
+          <input type="text" id="findText" placeholder="예: @Source">
+        </label>
+        <label class="field">바꿀 텍스트
+          <input type="text" id="replaceText" placeholder="예: @실제출처">
+        </label>
+        <button class="btn-primary" style="padding:12px 20px; white-space:nowrap; border-radius:12px;" onclick="findReplaceAll()">적용</button>
+      </div>
+    </div>
+
+    <!-- 벌크 붙여넣기 -->
+    <div class="tool-card">
+      <div class="card-title">텍스트 붙여넣기 → 카드에 자동 입력</div>
+      <div style="font-size:13px; color:var(--gray); line-height:1.6; margin-bottom:12px;">
+        <span style="color:var(--orange);">카테고리: / 출처: / 헤드라인: / 부제: / 서브라벨: / 인용: / 본문:</span><br>
+        여러 건은 블록 사이에 <span style="color:var(--orange);">---</span>
+      </div>
+      <textarea id="bulkPasteText" style="min-height:140px;" placeholder="카테고리: 정치
+출처: @Foxnews
+헤드라인: 3개 주, 파우치 조사 착수
+부제: 주정부 차원 조사 착수
+서브라벨: BREAKING
+인용: 주 차원의 조사는 사면 대상이 아니다.
+본문:
+플로리다·앨라배마·루이지애나주가 앤서니 파우치 박사에 대한 조사에 착수했다."></textarea>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+        <button class="btn-primary" onclick="applyBulkPaste('first')">첫 번째 카드에 적용</button>
+        <button class="btn-secondary" onclick="applyBulkPaste('new')">새 카드로 추가</button>
+        <button class="btn-secondary" onclick="document.getElementById('bulkPasteText').value=''">입력창 비우기</button>
+      </div>
+    </div>
+
+    <!-- 커버 미리보기 -->
+    <div class="cover-card">
+      <div class="card-title">커버</div>
+      <div class="editor-grid">
+        <div class="fields">
+          <button class="btn-secondary" onclick="requestDownload('cover')">커버 저장</button>
+        </div>
+        <div class="preview-zone">
+          <canvas id="coverCanvas" width="1080" height="1080"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div id="cardsWrap"></div>
+  </main>
+</div>
 
 <script>
-  let currentSize = { w: 1080, h: 1080 };
-  let currentTemplate = 'boxes';
-  let currentStyle = 'apple';
-  let currentTexture = 'none';
-  let columnCount = 2;
-  let flowLineStyle = 'none';
-  let currentPhotoEffect = 'none';
-  let currentPhotoPos = 'top';
-  let repPhotoHeightPct = 22;
-  let cardImage = null;
-  let logoImage = null;
-  let scale = 0.48;
-  
-  let fontMode = 'auto';
-  let manualBodySize = 16;
-  let manualSubSize = 20;
-
-  let boxList = [
-    { title: '첫 번째 단락 제목', body: '첫 번째 본문입니다. 드래그 앤 드롭으로 이 카드 박스의 순서를 자유롭게 바꿀 수 있습니다.', img: null, imgPos: 'middle', imgHeight: 180, imgFit: 'cover', connectNext: true },
-    { title: '두 번째 단락 제목', body: '단락 내 개별 사진의 위치(소제목 위, 중간, 본문 아래)와 수동 높이/짤림 방지 모드를 자유롭게 설정할 수 있습니다.', img: null, imgPos: 'middle', imgHeight: 180, imgFit: 'cover', connectNext: true }
-  ];
-
-  let lastFocusedInput = null;
-  let draggedIndex = null;
-
-  const FONT_OPTIONS = [
-    { value: "'Pretendard Variable', -apple-system, sans-serif", label: "Pretendard (기본, 모던 고딕)" },
-    { value: "'Noto Sans KR', sans-serif", label: "Noto Sans KR (표준 고딕)" },
-    { value: "'Noto Serif KR', serif", label: "Noto Serif KR (표준 명조)" },
-    { value: "'Nanum Myeongjo', serif", label: "나눔명조 (클래식 명조)" },
-    { value: "'Nanum Gothic', sans-serif", label: "나눔고딕 (친숙한 고딕)" },
-    { value: "'Gowun Batang', serif", label: "고운바탕 (부드러운 명조)" },
-    { value: "'Gowun Dodum', sans-serif", label: "고운돋움 (부드러운 고딕)" },
-    { value: "'Gothic A1', sans-serif", label: "고딕 A1 (기하학적 고딕)" },
-    { value: "'IBM Plex Sans KR', sans-serif", label: "IBM Plex Sans KR (테크/리포트)" },
-    { value: "'Black Han Sans', sans-serif", label: "Black Han Sans (굵고 강한 임팩트)" },
-    { value: "'Do Hyeon', sans-serif", label: "도현체 (굵은 스트릿 고딕)" },
-    { value: "'Jua', sans-serif", label: "주아체 (둥글고 귀여움)" },
-    { value: "'Song Myung', serif", label: "송명체 (붓글씨풍 명조)" },
-    { value: "'Stylish', sans-serif", label: "Stylish체 (심플 세리프)" },
-    { value: "'Gaegu', cursive", label: "개구체 (손글씨)" },
-    { value: "'Poor Story', cursive", label: "포스토리 (손글씨)" },
-    { value: "'East Sea Dokdo', cursive", label: "동해 독도체 (캘리그라피)" }
-  ];
-
-  function populateFonts() {
-    const titleSel = document.getElementById('font-title-select');
-    const bodySel = document.getElementById('font-body-select');
-    FONT_OPTIONS.forEach(f => {
-      titleSel.appendChild(new Option(f.label, f.value));
-      bodySel.appendChild(new Option(f.label, f.value));
-    });
-    titleSel.addEventListener('change', e => { document.documentElement.style.setProperty('--font-title', e.target.value); updatePreview(); });
-    bodySel.addEventListener('change', e => { document.documentElement.style.setProperty('--font-body', e.target.value); updatePreview(); });
-  }
-
-  function moveBox(index, direction) {
-    const newIndex = index + direction;
-    if (newIndex < 0 || newIndex >= boxList.length) return;
-    const temp = boxList[index];
-    boxList[index] = boxList[newIndex];
-    boxList[newIndex] = temp;
-    renderBoxInputs();
-    updatePreview();
-  }
-
-  function renderBoxInputs() {
-    const wrap = document.getElementById('boxes-input-container');
-    wrap.innerHTML = '';
-
-    boxList.forEach((box, i) => {
-      if (!box.imgHeight) box.imgHeight = 180;
-      if (!box.imgFit) box.imgFit = 'cover';
-      if (!box.imgPos) box.imgPos = 'middle';
-
-      const card = document.createElement('div');
-      card.className = 'box-field-card';
-      card.draggable = true;
-
-      card.addEventListener('dragstart', (e) => {
-        draggedIndex = i;
-        card.classList.add('dragging');
-        e.dataTransfer.effectAllowed = 'move';
-      });
-      card.addEventListener('dragend', () => {
-        card.classList.remove('dragging');
-      });
-      card.addEventListener('dragover', (e) => {
-        e.preventDefault();
-      });
-      card.addEventListener('drop', (e) => {
-        e.preventDefault();
-        if (draggedIndex !== null && draggedIndex !== i) {
-          const movedItem = boxList.splice(draggedIndex, 1)[0];
-          boxList.splice(i, 0, movedItem);
-          renderBoxInputs();
-          updatePreview();
-        }
-      });
-
-      const header = document.createElement('div');
-      header.className = 'box-field-header';
-
-      const label = document.createElement('div');
-      label.className = 'box-field-title';
-      label.textContent = `☰ 📦 [${i + 1}번째 단락] (드래그 가능)`;
-      header.appendChild(label);
-
-      const btnGroup = document.createElement('div');
-      btnGroup.className = 'box-btn-controls';
-
-      const upBtn = document.createElement('button');
-      upBtn.textContent = '▲';
-      upBtn.onclick = () => moveBox(i, -1);
-      if (i === 0) upBtn.disabled = true;
-
-      const downBtn = document.createElement('button');
-      downBtn.textContent = '▼';
-      downBtn.onclick = () => moveBox(i, 1);
-      if (i === boxList.length - 1) downBtn.disabled = true;
-
-      btnGroup.appendChild(upBtn);
-      btnGroup.appendChild(downBtn);
-
-      if (boxList.length > 1) {
-        const delBtn = document.createElement('button');
-        delBtn.textContent = '삭제';
-        delBtn.style.color = '#FF3B30';
-        delBtn.onclick = () => {
-          boxList.splice(i, 1);
-          renderBoxInputs();
-          updatePreview();
-        };
-        btnGroup.appendChild(delBtn);
-      }
-      header.appendChild(btnGroup);
-      card.appendChild(header);
-
-      const titleLabel = document.createElement('div');
-      titleLabel.className = 'box-field-label';
-      titleLabel.textContent = '소제목';
-      card.appendChild(titleLabel);
-
-      const titleIn = document.createElement('input');
-      titleIn.type = 'text';
-      titleIn.placeholder = '단락의 소제목 입력';
-      titleIn.value = box.title;
-      titleIn.addEventListener('input', e => { box.title = e.target.value; updatePreview(); });
-      titleIn.addEventListener('focus', () => { lastFocusedInput = titleIn; });
-      card.appendChild(titleIn);
-
-      const bodyLabel = document.createElement('div');
-      bodyLabel.className = 'box-field-label';
-      bodyLabel.textContent = '본문';
-      card.appendChild(bodyLabel);
-
-      const bodyTa = document.createElement('textarea');
-      bodyTa.placeholder = '단락의 본문 입력';
-      bodyTa.value = box.body;
-      bodyTa.addEventListener('input', e => { box.body = e.target.value; updatePreview(); });
-      bodyTa.addEventListener('focus', () => { lastFocusedInput = bodyTa; });
-      card.appendChild(bodyTa);
-
-      const boxImgArea = document.createElement('div');
-      boxImgArea.className = 'box-img-area';
-      
-      const boxImgRow = document.createElement('div');
-      boxImgRow.className = 'box-img-row';
-
-      const boxImgInput = document.createElement('input');
-      boxImgInput.type = 'file';
-      boxImgInput.accept = 'image/*';
-      boxImgInput.style.display = 'none';
-      boxImgInput.id = `box-img-file-${i}`;
-      boxImgInput.addEventListener('change', e => {
-        const file = e.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = ev => { box.img = ev.target.result; renderBoxInputs(); updatePreview(); };
-          reader.readAsDataURL(file);
-        }
-      });
-
-      const boxImgBtn = document.createElement('button');
-      boxImgBtn.style.fontSize = '12px';
-      boxImgBtn.style.padding = '5px 8px';
-      boxImgBtn.textContent = box.img ? '📸 단락 사진 변경' : '📸 이 단락에 개별 사진 첨부';
-      boxImgBtn.onclick = () => boxImgInput.click();
-
-      boxImgRow.appendChild(boxImgInput);
-      boxImgRow.appendChild(boxImgBtn);
-
-      if (box.img) {
-        const delBoxImgBtn = document.createElement('button');
-        delBoxImgBtn.style.fontSize = '11px';
-        delBoxImgBtn.style.color = '#FF3B30';
-        delBoxImgBtn.textContent = '사진 제거';
-        delBoxImgBtn.onclick = () => { box.img = null; renderBoxInputs(); updatePreview(); };
-        boxImgRow.appendChild(delBoxImgBtn);
-
-        boxImgArea.appendChild(boxImgRow);
-
-        const posSelect = document.createElement('select');
-        posSelect.style.fontSize = '12px';
-        posSelect.style.padding = '4px 6px';
-        posSelect.style.marginTop = '6px';
-        posSelect.style.marginBottom = '6px';
-        posSelect.style.width = '100%';
-
-        const optTop = new Option('위치: 소제목 위', 'top');
-        const optMid = new Option('위치: 소제목/본문 사이', 'middle');
-        const optBot = new Option('위치: 본문 아래', 'bottom');
-
-        posSelect.appendChild(optTop);
-        posSelect.appendChild(optMid);
-        posSelect.appendChild(optBot);
-        posSelect.value = box.imgPos || 'middle';
-
-        posSelect.addEventListener('change', (e) => {
-          box.imgPos = e.target.value;
-          updatePreview();
-        });
-        boxImgArea.appendChild(posSelect);
-
-        const controlsWrap = document.createElement('div');
-        controlsWrap.style.display = 'flex';
-        controlsWrap.style.flexDirection = 'column';
-        controlsWrap.style.gap = '6px';
-
-        const sliderRow = document.createElement('div');
-        sliderRow.className = 'slider-row';
-        sliderRow.style.margin = '0';
-
-        const sliderLabel = document.createElement('span');
-        sliderLabel.textContent = '사진 높이';
-        sliderLabel.style.fontSize = '11px';
-        sliderLabel.style.minWidth = '55px';
-
-        const slider = document.createElement('input');
-        slider.type = 'range';
-        slider.min = '80';
-        slider.max = '500';
-        slider.value = box.imgHeight;
-        slider.addEventListener('input', e => {
-          box.imgHeight = +e.target.value;
-          valText.textContent = box.imgHeight + 'px';
-          updatePreview();
-        });
-
-        const valText = document.createElement('span');
-        valText.style.fontSize = '11px';
-        valText.style.minWidth = '40px';
-        valText.textContent = box.imgHeight + 'px';
-
-        sliderRow.appendChild(sliderLabel);
-        sliderRow.appendChild(slider);
-        sliderRow.appendChild(valText);
-        controlsWrap.appendChild(sliderRow);
-
-        const modeRow = document.createElement('div');
-        modeRow.className = 'btn-group';
-        modeRow.style.marginTop = '2px';
-
-        const btnCover = document.createElement('button');
-        btnCover.textContent = '영역 채우기(기본)';
-        btnCover.className = box.imgFit === 'cover' ? 'active' : '';
-        btnCover.style.fontSize = '11px';
-        btnCover.style.padding = '4px 8px';
-        btnCover.onclick = () => { box.imgFit = 'cover'; renderBoxInputs(); updatePreview(); };
-
-        const btnContain = document.createElement('button');
-        btnContain.textContent = '전체 보기(짤림없음)';
-        btnContain.className = box.imgFit === 'contain' ? 'active' : '';
-        btnContain.style.fontSize = '11px';
-        btnContain.style.padding = '4px 8px';
-        btnContain.onclick = () => { box.imgFit = 'contain'; renderBoxInputs(); updatePreview(); };
-
-        modeRow.appendChild(btnCover);
-        modeRow.appendChild(btnContain);
-        controlsWrap.appendChild(modeRow);
-
-        boxImgArea.appendChild(controlsWrap);
-      } else {
-        boxImgArea.appendChild(boxImgRow);
-      }
-
-      card.appendChild(boxImgArea);
-
-      if (i < boxList.length - 1) {
-        if (typeof box.connectNext === 'undefined') box.connectNext = true;
-        const connectRow = document.createElement('div');
-        connectRow.style.cssText = 'display:flex;align-items:center;gap:8px;margin-top:8px;padding:6px 8px;background:rgba(0,122,255,0.08);border-radius:8px;';
-        const connectChk = document.createElement('input');
-        connectChk.type = 'checkbox';
-        connectChk.checked = box.connectNext;
-        connectChk.id = `connect-next-${i}`;
-        connectChk.addEventListener('change', e => {
-          box.connectNext = e.target.checked;
-          updatePreview();
-        });
-        const connectLabel = document.createElement('label');
-        connectLabel.htmlFor = `connect-next-${i}`;
-        connectLabel.style.cssText = 'font-size:12px;font-weight:600;cursor:pointer;';
-        connectLabel.textContent = '다음 단락과 연결선 표시';
-        connectRow.appendChild(connectChk);
-        connectRow.appendChild(connectLabel);
-        card.appendChild(connectRow);
-      }
-
-      wrap.appendChild(card);
-    });
-  }
-
-  function addNewBoxField() {
-    boxList.push({ title: '', body: '', img: null, imgPos: 'middle', imgHeight: 180, imgFit: 'cover', connectNext: true });
-    renderBoxInputs();
-    updatePreview();
-  }
-
-  function parseBulk() {
-    const rawText = document.getElementById('bulk-text').value.trim();
-    if (!rawText) return alert('텍스트를 입력해주세요.');
-
-    const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-    if (lines.length > 0) document.getElementById('f-title').value = lines[0];
-    if (lines.length > 1) document.getElementById('f-subtitle').value = lines[1];
-    
-    if (lines.length > 2) {
-      let bodyLines = lines.slice(2);
-      const lastLine = bodyLines[bodyLines.length - 1];
-      
-      if (lastLine.includes('|')) {
-        const parts = lastLine.split('|');
-        document.getElementById('f-source').value = parts[0].trim();
-        document.getElementById('f-date').value = parts[1].trim();
-        bodyLines.pop();
-      }
-      document.getElementById('f-body').value = bodyLines.join('\n');
-    }
-    updatePreview();
-  }
-
-  document.querySelectorAll('#size-btns button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('#size-btns button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      if (btn.dataset.w === 'custom') {
-        document.getElementById('custom-size').style.display = 'block';
-        const cw = +document.getElementById('custom-w').value || 1080;
-        const ch = +document.getElementById('custom-h').value || 1080;
-        currentSize = { w: cw, h: ch };
-        updatePreviewSize();
-      } else {
-        document.getElementById('custom-size').style.display = 'none';
-        currentSize = { w: +btn.dataset.w, h: +btn.dataset.h };
-        updatePreviewSize();
-      }
-    });
-  });
-
-  ['custom-w', 'custom-h'].forEach(id => {
-    document.getElementById(id).addEventListener('input', () => {
-      const cw = +document.getElementById('custom-w').value || 1080;
-      const ch = +document.getElementById('custom-h').value || 1080;
-      currentSize = { w: cw, h: ch };
-      updatePreviewSize();
-    });
-  });
-
-  document.querySelectorAll('#template-btns button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('#template-btns button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentTemplate = btn.dataset.template;
-
-      const isBoxes = currentTemplate === 'boxes';
-      document.getElementById('box-builder-section').style.display = isBoxes ? 'block' : 'none';
-      document.getElementById('column-setting-section').style.display = isBoxes ? 'block' : 'none';
-      document.getElementById('standard-text-section').style.display = isBoxes ? 'none' : 'block';
-
-      updatePreview();
-    });
-  });
-
-  document.querySelectorAll('#column-btns button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('#column-btns button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      columnCount = +btn.dataset.cols;
-      updatePreview();
-    });
-  });
-
-  document.querySelectorAll('#flow-line-btns button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('#flow-line-btns button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      flowLineStyle = btn.dataset.line;
-      updatePreview();
-    });
-  });
-
-  document.querySelectorAll('#style-btns button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('#style-btns button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentStyle = btn.dataset.style;
-      updatePreview();
-    });
-  });
-
-  document.querySelectorAll('#texture-btns button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('#texture-btns button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentTexture = btn.dataset.texture;
-      updatePreview();
-    });
-  });
-
-  document.getElementById('card-radius-slider').addEventListener('input', e => {
-    const val = e.target.value;
-    document.getElementById('card-radius-label').textContent = val + 'px';
-    document.documentElement.style.setProperty('--radius', val + 'px');
-  });
-
-  document.getElementById('logo-input').addEventListener('change', e => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = ev => { logoImage = ev.target.result; updatePreview(); };
-      reader.readAsDataURL(file);
-    }
-  });
-  document.getElementById('f-watermark-text').addEventListener('input', updatePreview);
-
-  document.getElementById('theme-light').addEventListener('click', () => { document.body.classList.remove('dark'); document.getElementById('theme-light').classList.add('active'); document.getElementById('theme-dark').classList.remove('active'); });
-  document.getElementById('theme-dark').addEventListener('click', () => { document.body.classList.add('dark'); document.getElementById('theme-dark').classList.add('active'); document.getElementById('theme-light').classList.remove('active'); });
-  document.getElementById('accent-color').addEventListener('input', e => { document.documentElement.style.setProperty('--accent', e.target.value); });
-
-  document.getElementById('font-auto').addEventListener('click', () => { 
-    fontMode = 'auto'; 
-    document.getElementById('font-auto').classList.add('active'); 
-    document.getElementById('font-manual').classList.remove('active'); 
-    document.getElementById('font-slider-wrap').style.display = 'none'; 
-    updatePreview(); 
-  });
-  document.getElementById('font-manual').addEventListener('click', () => { 
-    fontMode = 'manual'; 
-    document.getElementById('font-manual').classList.add('active'); 
-    document.getElementById('font-auto').classList.remove('active'); 
-    document.getElementById('font-slider-wrap').style.display = 'block'; 
-    updatePreview(); 
-  });
-  document.getElementById('body-font-size').addEventListener('input', e => { 
-    manualBodySize = +e.target.value; 
-    document.getElementById('font-size-label').textContent = manualBodySize + 'px'; 
-    updatePreview(); 
-  });
-  document.getElementById('sub-font-size').addEventListener('input', e => { 
-    manualSubSize = +e.target.value; 
-    document.getElementById('sub-font-size-label').textContent = manualSubSize + 'px'; 
-    updatePreview(); 
-  });
-
-  document.getElementById('mode-bulk').addEventListener('click', () => { document.getElementById('mode-bulk').classList.add('active'); document.getElementById('mode-fields').classList.remove('active'); document.getElementById('bulk-input').classList.add('active'); document.getElementById('fields-input').classList.remove('active'); });
-  document.getElementById('mode-fields').addEventListener('click', () => { document.getElementById('mode-fields').classList.add('active'); document.getElementById('mode-bulk').classList.remove('active'); document.getElementById('fields-input').classList.add('active'); document.getElementById('bulk-input').classList.remove('active'); });
-
-  function insertHighlight() {
-    if (!lastFocusedInput) return alert('강조할 입력창을 먼저 클릭 후 글자를 드래그하세요.');
-    const s = lastFocusedInput.selectionStart, e = lastFocusedInput.selectionEnd;
-    if (s === e) return alert('강조할 글자를 드래그하세요.');
-    const val = lastFocusedInput.value;
-    const color = document.getElementById('highlight-color').value;
-    lastFocusedInput.value = val.substring(0, s) + `==${color}|` + val.substring(s, e) + `==` + val.substring(e);
-    lastFocusedInput.dispatchEvent(new Event('input', { bubbles: true }));
-  }
-
-  function insertUnderline() {
-    if (!lastFocusedInput) return alert('강조할 입력창을 먼저 클릭 후 글자를 드래그하세요.');
-    const s = lastFocusedInput.selectionStart, e = lastFocusedInput.selectionEnd;
-    if (s === e) return alert('강조할 글자를 드래그하세요.');
-    const val = lastFocusedInput.value;
-    lastFocusedInput.value = val.substring(0, s) + `[[` + val.substring(s, e) + `]]` + val.substring(e);
-    lastFocusedInput.dispatchEvent(new Event('input', { bubbles: true }));
-  }
-
-  function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-  function formatText(rawText) {
-    if(!rawText) return '';
-    let escaped = escapeHtml(rawText);
-    escaped = escaped.replace(/==(#[0-9A-Fa-f]{6})\|([\s\S]+?)==/g, '<mark style="background-color:$1;">$2</mark>');
-    escaped = escaped.replace(/\[\[([\s\S]+?)\]\]/g, '<span class="red-underline">$1</span>');
-    return escaped;
-  }
-
-  document.getElementById('image-input').addEventListener('change', e => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = ev => { cardImage = ev.target.result; updatePreview(); };
-      reader.readAsDataURL(file);
-    }
-  });
-  function removeImage() { cardImage = null; document.getElementById('image-input').value = ''; updatePreview(); }
-
-  document.querySelectorAll('#photo-pos-btns button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('#photo-pos-btns button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentPhotoPos = btn.dataset.pos;
-      updatePreview();
-    });
-  });
-
-  document.getElementById('rep-photo-height').addEventListener('input', e => {
-    repPhotoHeightPct = +e.target.value;
-    document.getElementById('rep-photo-height-label').textContent = repPhotoHeightPct + '%';
-    updatePreview();
-  });
-
-  document.querySelectorAll('#photo-effect-btns button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('#photo-effect-btns button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentPhotoEffect = btn.dataset.effect;
-      updatePreview();
-    });
-  });
-
-  function updatePreviewSize() {
-    // 모바일(아이폰)에서도 카드 전체가 화면에 들어오도록 동적 계산
-    const availableWidth = Math.min(window.innerWidth - 32, 520);
-    const availableHeight = Math.min(window.innerHeight * 0.55, 520);
-    scale = Math.min(
-      availableWidth / currentSize.w,
-      availableHeight / currentSize.h,
-      0.5
-    );
-    // 너무 작아지지 않도록 최소 스케일 보장
-    scale = Math.max(scale, 0.28);
-    document.getElementById('size-label').textContent = `${currentSize.w} × ${currentSize.h}`;
-    updatePreview();
-  }
-
-  // 화면 회전 / 리사이즈 대응
-  window.addEventListener('resize', () => {
-    clearTimeout(window.__resizeTimer);
-    window.__resizeTimer = setTimeout(updatePreviewSize, 150);
-  });
-  window.addEventListener('orientationchange', () => {
-    setTimeout(updatePreviewSize, 200);
-  });
-
-  function calcFontSizes(titleLength, bodyLength) {
-    const area = currentSize.w * currentSize.h;
-    const base = Math.sqrt(area) / 28;
-
-    let titleSize = Math.round(base * 1.5);
-    let subtitleSize = Math.round(base * 0.92);
-    let bodySize = fontMode === 'manual' ? manualBodySize : Math.round(base * 0.75);
-    let subSizeFinal = fontMode === 'manual' ? manualSubSize : Math.round(base * 0.98); 
-    let metaSize = Math.round(base * 0.62);
-
-    if (titleLength > 30) titleSize = Math.round(titleSize * 0.9);
-    
-    if (fontMode === 'auto') {
-      if (bodyLength > 150) bodySize = Math.round(bodySize * 0.9);
-      if (bodyLength > 280) bodySize = Math.round(bodySize * 0.85);
-    }
-
-    return { 
-      titleSize: Math.max(20, Math.min(titleSize, 60)), 
-      subtitleSize: Math.max(14, Math.min(subtitleSize, 36)), 
-      bodySize: Math.max(12, Math.min(bodySize, 50)), 
-      subBoxSize: Math.max(12, Math.min(subSizeFinal, 50)),
-      metaSize 
-    };
-  }
-
-  function estimateBoxHeight(box, fonts, colW) {
-    const pad = 36 + 16;
-    let h = pad;
-    if (box.title) h += fonts.subBoxSize * 1.4 + 8;
-    if (box.body) {
-      const charsPerLine = Math.max(12, Math.floor(colW / (fonts.bodySize * 0.55)));
-      const lines = Math.max(1, Math.ceil(box.body.length / charsPerLine) + (box.body.match(/\n/g) || []).length);
-      h += lines * fonts.bodySize * 1.65;
-    }
-    if (box.img) h += (box.imgHeight || 180) + 16;
-    return h;
-  }
-
-  // ===== iOS Safari 다단(column-count) 클리핑 버그 우회 =====
-  // CSS column-count 대신, 박스들을 JS로 미리 N개 컬럼 배열로 나눠서
-  // 각 컬럼을 별도 <div class="card-column">으로 렌더링한다.
-  // (iOS Safari는 column-count + overflow:hidden 조합에서 2번째 컬럼부터
-  //  내용을 그리지 않는 알려진 렌더링 버그가 있음)
-  function distributeBoxesToColumns(pageBoxes, fonts, colW, cols) {
-    const columns = Array.from({ length: cols }, () => []);
-    if (cols <= 1) {
-      columns[0] = pageBoxes.map((box, i) => ({ box, pageIdx: i }));
-      return columns;
-    }
-
-    // 전체 예상 높이를 구해서 컬럼당 목표 높이를 계산 (가능한 균등 분배)
-    let totalH = 0;
-    const heights = pageBoxes.map((box, i) => {
-      const bh = estimateBoxHeight(box, fonts, colW);
-      const extra = (box.connectNext && i < pageBoxes.length - 1 && flowLineStyle !== 'none') ? 30 : 0;
-      const h = bh + extra;
-      totalH += h;
-      return h;
-    });
-    const target = totalH / cols;
-
-    let colIdx = 0;
-    let colHeight = 0;
-    pageBoxes.forEach((box, i) => {
-      const h = heights[i];
-      // 현재 컬럼에 이미 내용이 있고, 목표 높이를 넘으면 다음 컬럼으로 이동
-      if (colIdx < cols - 1 && columns[colIdx].length > 0 && colHeight + h > target) {
-        colIdx++;
-        colHeight = 0;
-      }
-      columns[colIdx].push({ box, pageIdx: i });
-      colHeight += h;
-    });
-
-    return columns;
-  }
-
-  // 실제 렌더링(distributeBoxesToColumns)과 동일한 방식으로 컬럼을 나눈 뒤
-  // 각 컬럼의 실제 예상 높이 배열을 반환한다. 페이지 자동 분할 판단에 사용.
-  function columnHeightsFor(list, fonts, colW, cols) {
-    if (!list.length) return [0];
-    const columns = distributeBoxesToColumns(list, fonts, colW, cols);
-    return columns.map(colItems => {
-      let h = 0;
-      colItems.forEach((item, localIdx) => {
-        const box = item.box;
-        h += estimateBoxHeight(box, fonts, colW);
-        const isLast = localIdx === colItems.length - 1;
-        if (box.connectNext && flowLineStyle !== 'none' && !isLast) h += 30;
-      });
-      return h;
-    });
-  }
-
-  function renderColumnBoxesHtml(columnItems) {
-    let html = '';
-    columnItems.forEach((item, localIdx) => {
-      const box = item.box;
-      const imgStyle = `width:100%; height:${box.imgHeight || 180}px; object-fit:${box.imgFit || 'cover'}; border-radius:10px; margin:8px 0; display:block;`;
-      const imgTag = box.img ? `<img src="${box.img}" class="box-inline-img" style="${imgStyle}" alt="">` : '';
-      const titleTag = box.title ? `<div class="box-title" style="font-size:${window.__fontsForRender.subBoxSize}px">${formatText(box.title)}</div>` : '';
-      const bodyTag = `<div class="box-body" style="font-size:${window.__fontsForRender.bodySize}px">${formatText(box.body || '').replace(/\n/g, '<br>')}</div>`;
-
-      const pos = box.imgPos || 'middle';
-
-      html += `<div class="content-box">`;
-      if (pos === 'top') html += `${imgTag}${titleTag}${bodyTag}`;
-      else if (pos === 'bottom') html += `${titleTag}${bodyTag}${imgTag}`;
-      else html += `${titleTag}${imgTag}${bodyTag}`;
-      html += `</div>`;
-
-      const isLastInColumn = localIdx === columnItems.length - 1;
-      if (box.connectNext && flowLineStyle !== 'none' && !isLastInColumn) {
-        let lineInner = '';
-        if (flowLineStyle === 'solid') lineInner = '<div class="line-solid"></div>';
-        else if (flowLineStyle === 'dashed') lineInner = '<div class="line-dashed"></div>';
-        else if (flowLineStyle === 'arrow') lineInner = '<div class="line-arrow">↓</div>';
-        html += `<div class="flow-connector">${lineInner}</div>`;
-      }
-    });
-    return html;
-  }
-
-  function updatePreview() {
-    const container = document.getElementById('pages-container');
-    container.innerHTML = '';
-
-    const sourceTxt = document.getElementById('f-source').value || '';
-    const dateTxt = document.getElementById('f-date').value || '';
-    const watermarkTxt = document.getElementById('f-watermark-text').value || '';
-
-    let repImgHeight = Math.round(currentSize.h * (repPhotoHeightPct / 100));
-    if (currentSize.h / currentSize.w > 1.5) repImgHeight = Math.round(currentSize.h * Math.min(repPhotoHeightPct / 100, 0.18));
-
-    let imgHtml = '';
-    if (cardImage && (currentPhotoPos === 'top' || currentPhotoPos === 'bottom')) {
-      imgHtml = `
-        <div class="img-wrapper ${currentPhotoPos === 'bottom' ? 'pos-bottom' : ''} effect-${currentPhotoEffect}" style="height:${repImgHeight}px">
-          <img src="${cardImage}" class="card-image" alt="">
-        </div>`;
-    }
-
-    let pageGroups = [boxList];
-    const mainTitle = document.getElementById('b-main-title').value || '';
-    const mainSub = document.getElementById('b-main-subtitle').value || '';
-
-    if (currentTemplate === 'boxes' && boxList.length > 0) {
-      const totalBodyLen = boxList.reduce((acc, b) => acc + (b.body || '').length, 0);
-      const fonts = calcFontSizes(mainTitle.length, totalBodyLen);
-      const paddingV = 44 * 2;
-      const headerH = (mainTitle || mainSub) ? (fonts.titleSize * 1.3 + fonts.subtitleSize * 1.4 + 30) : 20;
-      const metaH = (sourceTxt || dateTxt || logoImage || watermarkTxt) ? 50 : 0;
-      const photoH = (cardImage && (currentPhotoPos === 'top' || currentPhotoPos === 'bottom')) ? repImgHeight + 18 : 0;
-      const accentH = 20;
-      const availableH = currentSize.h - paddingV - headerH - metaH - photoH - accentH - 20;
-
-      const colW = (currentSize.w - 80 - (columnCount - 1) * 20) / columnCount;
-
-      // 컬럼 개수(1/2/3단)를 반영해 "실제로 렌더링될 컬럼 중 가장 높은 컬럼"이
-      // 카드 높이를 넘는 시점에 새 페이지를 만든다. (기존에는 누적높이를
-      // 단순히 컬럼 수로 나누기만 해서 2~3단일 때 새 페이지가 거의 안 생기던 버그)
-      const groups = [];
-      let currentGroup = [];
-
-      boxList.forEach((box) => {
-        const candidate = currentGroup.concat([box]);
-        const heights = columnHeightsFor(candidate, fonts, colW, columnCount);
-        const maxH = Math.max(...heights);
-
-        if (currentGroup.length > 0 && maxH > availableH * 0.98) {
-          groups.push(currentGroup);
-          currentGroup = [box];
-        } else {
-          currentGroup.push(box);
-        }
-      });
-      if (currentGroup.length) groups.push(currentGroup);
-      pageGroups = groups.length ? groups : [boxList];
-    }
-
-    pageGroups.forEach((pageBoxes, pageIdx) => {
-      const isFirst = pageIdx === 0;
-      const pageNum = pageIdx + 1;
-      const totalPages = pageGroups.length;
-
-      const wrapper = document.createElement('div');
-      wrapper.className = 'card-wrapper';
-
-      const preview = document.createElement('div');
-      preview.className = `card-preview style-${currentStyle}`;
-      preview.style.width = (currentSize.w * scale) + 'px';
-      preview.style.height = (currentSize.h * scale) + 'px';
-      preview.dataset.page = pageNum;
-
-      if (cardImage && currentPhotoPos === 'background') {
-        const bgImg = document.createElement('div');
-        bgImg.className = `bg-photo-overlay effect-${currentPhotoEffect}`;
-        bgImg.style.backgroundImage = `url('${cardImage}')`;
-        preview.appendChild(bgImg);
-        const darkOverlay = document.createElement('div');
-        darkOverlay.className = 'bg-dark-overlay';
-        preview.appendChild(darkOverlay);
-      }
-
-      if (currentTexture !== 'none') {
-        const tex = document.createElement('div');
-        tex.className = `texture-overlay texture-${currentTexture}`;
-        preview.appendChild(tex);
-      }
-
-      const content = document.createElement('div');
-      content.className = 'card-inner';
-      content.style.width = currentSize.w + 'px';
-      content.style.height = currentSize.h + 'px';
-      content.style.transform = `scale(${scale})`;
-      content.style.transformOrigin = 'top left';
-
-      let html = '';
-      
-      if (currentPhotoPos === 'top') html += imgHtml;
-
-      html += `<div class="accent-bar"></div>`;
-
-      if (currentTemplate === 'boxes') {
-        const totalBodyLen = pageBoxes.reduce((acc, b) => acc + (b.body || '').length, 0);
-        const fonts = calcFontSizes(mainTitle.length, totalBodyLen);
-        window.__fontsForRender = fonts;
-
-        if (isFirst && (mainTitle || mainSub)) {
-          html += `<div class="card-header">`;
-          if (mainTitle) html += `<div class="title" style="font-size:${fonts.titleSize}px">${formatText(mainTitle)}</div>`;
-          if (mainSub) html += `<div class="subtitle-text" style="font-size:${fonts.subtitleSize}px">${formatText(mainSub)}</div>`;
-          html += `</div>`;
-        } else if (!isFirst) {
-          html += `<div class="card-header" style="margin-bottom:12px;"><div class="subtitle-text" style="font-size:${fonts.subtitleSize * 0.9}px; opacity:0.7;">(이어서) ${pageNum}/${totalPages}</div></div>`;
-        }
-
-        const colW = (currentSize.w - 80 - (columnCount - 1) * 20) / columnCount;
-        const columns = distributeBoxesToColumns(pageBoxes, fonts, colW, columnCount);
-
-        html += `<div class="card-columns-flex" style="--cols: ${columnCount}">`;
-        columns.forEach(columnItems => {
-          html += `<div class="card-column">`;
-          html += renderColumnBoxesHtml(columnItems);
-          html += `</div>`;
-        });
-        html += `</div>`;
-
-      } else {
-        const t = document.getElementById('f-title').value || '제목을 입력하세요';
-        const sub = document.getElementById('f-subtitle').value || '';
-        const body = document.getElementById('f-body').value || '';
-        const fonts = calcFontSizes(t.length, body.length);
-
-        html += `
-          <div class="card-header">
-            <div class="title" style="font-size:${fonts.titleSize}px">${formatText(t)}</div>
-            ${sub ? `<div class="subtitle-text" style="font-size:${fonts.subtitleSize}px">${formatText(sub)}</div>` : ''}
-          </div>
-          <div class="body-text" style="font-size:${fonts.bodySize}px">${formatText(body).replace(/\n/g, '<br>')}</div>
-        `;
-      }
-
-      if (currentPhotoPos === 'bottom') html += imgHtml;
-
-      if (sourceTxt || dateTxt || logoImage || watermarkTxt || totalPages > 1) {
-        const fonts = calcFontSizes(10, 10);
-        html += `<div class="meta" style="font-size:${fonts.metaSize}px">`;
-        let leftMeta = `<span>${escapeHtml(sourceTxt)}</span>`;
-        if (dateTxt) leftMeta += ` | <span>${escapeHtml(dateTxt)}</span>`;
-        if (totalPages > 1) leftMeta += ` · ${pageNum}/${totalPages}`;
-        html += `<div>${leftMeta}</div>`;
-        if (logoImage || watermarkTxt) {
-          html += `<div class="watermark-container">`;
-          if (logoImage) html += `<img src="${logoImage}" class="watermark-logo" alt="logo">`;
-          if (watermarkTxt) html += `<span class="watermark-text">${escapeHtml(watermarkTxt)}</span>`;
-          html += `</div>`;
-        }
-        html += `</div>`;
-      }
-
-      content.innerHTML = html;
-      preview.appendChild(content);
-      wrapper.appendChild(preview);
-
-      if (totalPages > 1) {
-        const pageLabel = document.createElement('div');
-        pageLabel.style.cssText = 'font-size:12px;color:var(--text-secondary);margin-top:4px;';
-        pageLabel.textContent = `페이지 ${pageNum} / ${totalPages}`;
-        wrapper.appendChild(pageLabel);
-      }
-
-      container.appendChild(wrapper);
-    });
-  }
-
-  // 공통 캔버스 생성 함수
-  async function generateCanvas(previewEl) {
-    const content = previewEl.querySelector('.card-inner');
-    if (!content) return null;
-
-    const originalTransform = content.style.transform;
-    const originalW = previewEl.style.width;
-    const originalH = previewEl.style.height;
-
-    content.style.transform = 'scale(1)';
-    previewEl.style.width = currentSize.w + 'px';
-    previewEl.style.height = currentSize.h + 'px';
-    content.style.width = currentSize.w + 'px';
-    content.style.height = currentSize.h + 'px';
-
-    await new Promise(r => setTimeout(r, 160));
-
+const measurementCanvas = document.createElement('canvas');
+const testCtx = measurementCanvas.getContext('2d');
+
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+    let radius = 0;
+    if (typeof r === 'number') radius = r;
+    else if (Array.isArray(r) && r.length > 0) radius = r[0];
+    radius = Math.min(radius, Math.abs(w) / 2, Math.abs(h) / 2);
+    this.beginPath();
+    this.moveTo(x + radius, y);
+    this.arcTo(x + w, y, x + w, y + h, radius);
+    this.arcTo(x + w, y + h, x, y + h, radius);
+    this.arcTo(x, y + h, x, y, radius);
+    this.arcTo(x, y, x + w, y, radius);
+    this.closePath();
+    return this;
+  };
+}
+
+const W = 1080;
+const STANDARD_H = 1350;
+let cards = [];
+let db;
+let undoStack = [];
+let appReady = false;
+let coverImgData = null;
+const debounceTimers = {};
+let pendingDownload = null;
+let grainCache = null;
+let grainCacheKey = '';
+
+const UI_THEME_KEY = 'west150_ui_theme';
+
+const HL_PRESETS = [
+  { hex: '#FF8228', label: '주황' },
+  { hex: '#FFD166', label: '노랑' },
+  { hex: '#5B8DEF', label: '파랑' },
+  { hex: '#4ECDC4', label: '민트' },
+  { hex: '#E85D75', label: '로즈' },
+  { hex: '#A78BFA', label: '보라' },
+  { hex: '#FFFFFF', label: '흰색' },
+  { hex: '#F4F4F2', label: '오프화이트' }
+];
+
+function debouncedUpdateCard(id) {
+  clearTimeout(debounceTimers[id]);
+  debounceTimers[id] = setTimeout(() => updateCard(id), 350);
+}
+function debouncedUpdateAll() {
+  clearTimeout(debounceTimers['_all']);
+  debounceTimers['_all'] = setTimeout(() => updateAll(), 350);
+}
+function toggleCoverGrainUI() {
+  document.getElementById('coverGrainField').style.display =
+    document.getElementById('coverGrain').checked ? 'block' : 'none';
+}
+function applyUiTheme(mode) {
+  const light = mode === 'light';
+  document.body.classList.toggle('light', light);
+  const btn = document.getElementById('themeBtn');
+  if (btn) btn.textContent = light ? '다크 UI' : '라이트 UI';
+  localStorage.setItem(UI_THEME_KEY, light ? 'light' : 'dark');
+}
+function toggleUiTheme() {
+  applyUiTheme(document.body.classList.contains('light') ? 'dark' : 'light');
+}
+function initUiTheme() {
+  applyUiTheme(localStorage.getItem(UI_THEME_KEY) || 'dark');
+}
+
+async function updateStorageGauge() {
+  if (navigator.storage && navigator.storage.estimate) {
     try {
-      const canvas = await html2canvas(previewEl, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: null,
-        width: currentSize.w,
-        height: currentSize.h,
-        logging: false,
-        allowTaint: true
+      const estimate = await navigator.storage.estimate();
+      const usageMB = (estimate.usage / (1024 * 1024)).toFixed(1);
+      const quotaMB = (estimate.quota / (1024 * 1024)).toFixed(0);
+      const percent = ((estimate.usage / estimate.quota) * 100).toFixed(1);
+      const barElement = document.getElementById('storage-bar');
+      const textElement = document.getElementById('storage-text');
+      if (barElement && textElement) {
+        textElement.innerText = `${usageMB} MB / ${quotaMB} MB (${percent}%)`;
+        barElement.style.width = `${Math.max(percent, 1)}%`;
+        barElement.classList.remove('warning', 'danger');
+        if (percent >= 80) barElement.classList.add('danger');
+        else if (percent >= 50) barElement.classList.add('warning');
+      }
+    } catch (error) {
+      console.error('용량 측정 실패:', error);
+    }
+  } else {
+    const textElement = document.getElementById('storage-text');
+    if (textElement) textElement.innerText = '용량 측정 비지원 브라우저';
+  }
+}
+
+window.onload = () => {
+  try { undoStack = JSON.parse(sessionStorage.getItem('undo_stack') || '[]'); } catch(e) { undoStack = []; }
+  initUiTheme();
+  checkLock();
+  initApp();
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); }
+  });
+};
+
+const PW_KEY = 'card_news_pw_hash';
+async function sha256(text) {
+  const enc = new TextEncoder().encode(text);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+async function checkLock() {
+  const hash = localStorage.getItem(PW_KEY);
+  if (!hash) return;
+  document.getElementById('lockScreen').style.display = 'flex';
+  document.getElementById('main-content').style.display = 'none';
+}
+async function tryUnlock() {
+  const input = document.getElementById('lockInput').value;
+  const hash = localStorage.getItem(PW_KEY);
+  if ((await sha256(input)) === hash) {
+    document.getElementById('lockScreen').style.display = 'none';
+    document.getElementById('main-content').style.display = '';
+    document.getElementById('main-content').classList.add('app');
+  } else alert('비밀번호가 틀렸습니다.');
+}
+async function managePassword() {
+  const hasPw = !!localStorage.getItem(PW_KEY);
+  if (hasPw) {
+    const wantsChange = confirm('비밀번호 변경은 확인, 삭제는 취소');
+    const cur = prompt('현재 비밀번호:');
+    if (cur === null) return;
+    if (await sha256(cur) !== localStorage.getItem(PW_KEY)) return alert('불일치');
+    if (wantsChange) {
+      const np = prompt('새 비밀번호:');
+      if (!np) return;
+      localStorage.setItem(PW_KEY, await sha256(np));
+      alert('비밀번호가 변경되었습니다.');
+    } else {
+      localStorage.removeItem(PW_KEY);
+      alert('비밀번호 잠금이 해제되었습니다.');
+    }
+  } else {
+    const np = prompt('비밀번호 설정:');
+    if (!np) return;
+    const np2 = prompt('한 번 더 입력:');
+    if (np2 === null) return;
+    if (np !== np2) return alert('비밀번호가 서로 다릅니다.');
+    localStorage.setItem(PW_KEY, await sha256(np));
+    alert('비밀번호가 설정되었습니다.');
+  }
+}
+
+function compressImage(base64Str, maxWidth = 1200) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = base64Str;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+      if (width > maxWidth) {
+        height = (maxWidth / width) * height;
+        width = maxWidth;
+      }
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/jpeg', 0.85));
+    };
+  });
+}
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open("FontStore_V6", 2);
+    request.onupgradeneeded = (e) => {
+      db = e.target.result;
+      if (!db.objectStoreNames.contains("fonts")) db.createObjectStore("fonts", { keyPath: "name" });
+      if (!db.objectStoreNames.contains("images")) db.createObjectStore("images", { keyPath: "id" });
+    };
+    request.onsuccess = (e) => { db = e.target.result; resolve(db); };
+    request.onerror = () => reject(request.error);
+  });
+}
+function saveImageToDB(id, data) {
+  return new Promise((resolve) => {
+    if (!db || !data) return resolve();
+    const tx = db.transaction("images", "readwrite");
+    tx.objectStore("images").put({ id, data });
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => resolve();
+  });
+}
+function loadImageFromDB(id) {
+  return new Promise((resolve) => {
+    if (!db) return resolve(null);
+    const tx = db.transaction("images", "readonly");
+    const req = tx.objectStore("images").get(id);
+    req.onsuccess = () => resolve(req.result ? req.result.data : null);
+    req.onerror = () => resolve(null);
+  });
+}
+function deleteImageFromDB(id) {
+  return new Promise((resolve) => {
+    if (!db) return resolve();
+    const tx = db.transaction("images", "readwrite");
+    tx.objectStore("images").delete(id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => resolve();
+  });
+}
+
+async function initApp() {
+  try { await openDB(); } catch (e) { console.error("DB 열기 실패", e); }
+
+  const saved = localStorage.getItem('card_news_data');
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      document.getElementById('themeColor').value = parsed.themeColor || '#FF8228';
+      document.getElementById('coverTitle1').value = parsed.coverTitle1 || '오늘의';
+      document.getElementById('coverTitle2').value = parsed.coverTitle2 || '뉴스 브리핑';
+      document.getElementById('activeFont').value = parsed.activeFont || 'default';
+      document.getElementById('coverStyle').value = parsed.coverStyle || 'default';
+      document.getElementById('coverYOff').value = parsed.coverYOff || 50;
+      document.getElementById('coverScale').value = parsed.coverScale || 100;
+      document.getElementById('coverBright').value = parsed.coverBright || 40;
+      document.getElementById('coverVig').checked = parsed.coverVig || false;
+      document.getElementById('coverGrain').checked = !!parsed.coverGrain;
+      document.getElementById('coverGrainAmt').value = parsed.coverGrainAmt || 20;
+      document.getElementById('coverFrame').value = parsed.coverFrame || 'none';
+      document.getElementById('coverSafeGuide').checked = !!parsed.coverSafeGuide;
+      toggleCoverGrainUI();
+
+      const wms = parsed.coverWatermarks || [
+        { text: parsed.coverWmText ?? '@west150daily', pos: parsed.coverWmPos || 'tr', show: parsed.coverWmShow !== false },
+        { text: '', pos: 'br', show: true },
+        { text: '', pos: 'tl', show: true }
+      ];
+      for (let i = 0; i < 3; i++) {
+        const w = wms[i] || { text: '', pos: 'tr', show: true };
+        const te = document.getElementById('coverWmText' + (i+1));
+        const pe = document.getElementById('coverWmPos' + (i+1));
+        const se = document.getElementById('coverWmShow' + (i+1));
+        if (te) te.value = w.text ?? '';
+        if (pe) pe.value = w.pos || 'tr';
+        if (se) se.checked = w.show !== false;
+      }
+
+      coverImgData = parsed.coverImgData || await loadImageFromDB('cover') || null;
+      if (parsed.coverImgData) await saveImageToDB('cover', parsed.coverImgData);
+
+      if (parsed.cards && parsed.cards.length > 0) {
+        for (const c of parsed.cards) {
+          if (!c.imgData) c.imgData = await loadImageFromDB(`card_${c.id}`);
+          else await saveImageToDB(`card_${c.id}`, c.imgData);
+          addCard(c);
+        }
+      } else addCard();
+    } catch (err) {
+      console.error(err);
+      addCard();
+    }
+  } else addCard();
+
+  await loadSavedFonts();
+  appReady = true;
+  updateAll();
+  await updateStorageGauge();
+}
+
+function pushHistory() {
+  if (!appReady) return;
+  const cur = localStorage.getItem('card_news_data');
+  if (!cur || (undoStack.length && undoStack[undoStack.length - 1] === cur)) return;
+  undoStack.push(cur);
+  if (undoStack.length > 20) undoStack.shift();
+  try { sessionStorage.setItem('undo_stack', JSON.stringify(undoStack)); }
+  catch(e) { console.warn("히스토리 저장 용량이 초과되었지만 작업을 계속 진행합니다."); }
+}
+function undo() {
+  if (undoStack.length === 0) return;
+  const prev = undoStack.pop();
+  sessionStorage.setItem('undo_stack', JSON.stringify(undoStack));
+  localStorage.setItem('card_news_data', prev);
+  location.reload();
+}
+
+async function handleCoverImg(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (ev) => {
+    pushHistory();
+    coverImgData = await compressImage(ev.target.result);
+    await saveImageToDB('cover', coverImgData);
+    updateAll();
+    await updateStorageGauge();
+  };
+  reader.readAsDataURL(file);
+}
+
+async function handleFontUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const fontName = file.name.split('.')[0].replace(/[^a-zA-Z0-9_]/g, "_");
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const buffer = e.target.result;
+    const fontFace = new FontFace(fontName, buffer);
+    await fontFace.load();
+    document.fonts.add(fontFace);
+    const tx = db.transaction("fonts", "readwrite");
+    tx.objectStore("fonts").put({ name: fontName, data: buffer });
+    await loadSavedFonts();
+    updateAll();
+    await updateStorageGauge();
+  };
+  reader.readAsArrayBuffer(file);
+}
+function loadSavedFonts() {
+  return new Promise((resolve) => {
+    if (!db) return resolve();
+    const tx = db.transaction("fonts", "readonly");
+    tx.objectStore("fonts").getAll().onsuccess = async (e) => {
+      const allFonts = e.target.result;
+      const select = document.getElementById('activeFont');
+      const list = document.getElementById('fontList');
+      list.innerHTML = "";
+      Array.from(select.options).forEach(opt => {
+        if (opt.dataset.custom === "true") opt.remove();
       });
-      return canvas;
-    } finally {
-      content.style.transform = originalTransform;
-      previewEl.style.width = originalW;
-      previewEl.style.height = originalH;
+      for (const f of allFonts) {
+        try {
+          const fontFace = new FontFace(f.name, f.data);
+          await fontFace.load();
+          document.fonts.add(fontFace);
+          const opt = document.createElement('option');
+          opt.value = f.name; opt.textContent = f.name;
+          opt.dataset.custom = "true";
+          select.appendChild(opt);
+          list.innerHTML += `<div class='font-list-item'>${f.name} <button class='btn-danger' style='padding:4px 10px; font-size:12px; border-radius:8px;' onclick="deleteFont('${f.name}')">삭제</button></div>`;
+        } catch(err) {}
+      }
+      resolve();
+    };
+  });
+}
+function deleteFont(name) {
+  if (!confirm("삭제하시겠습니까?")) return;
+  db.transaction("fonts", "readwrite").objectStore("fonts").delete(name);
+  location.reload();
+}
+
+/* ===== 일괄 ===== */
+async function applyBatchImages() {
+  const input = document.getElementById('batchImgInput');
+  const files = Array.from(input.files || []);
+  if (!files.length) { alert('이미지를 먼저 선택해주세요.'); return; }
+  pushHistory();
+  const compressed = [];
+  for (const file of files) {
+    const dataUrl = await new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+    compressed.push(await compressImage(dataUrl));
+  }
+  for (let i = 0; i < compressed.length; i++) {
+    if (i < cards.length) {
+      const id = cards[i].id;
+      cards[i].imgData = compressed[i];
+      await saveImageToDB(`card_${id}`, compressed[i]);
+      updateCard(id);
+    } else {
+      const newId = Date.now() + Math.floor(Math.random() * 1000) + i;
+      addCard({ id: newId, imgData: compressed[i], layout: 'standard' });
+      await saveImageToDB(`card_${newId}`, compressed[i]);
     }
   }
+  updateCardNumbers();
+  saveData();
+  await updateStorageGauge();
+  input.value = '';
+  alert(`${compressed.length}장의 이미지를 카드에 적용했습니다.`);
+}
+function batchSetLayout(layout) {
+  if (!cards.length) return;
+  pushHistory();
+  cards.forEach(c => {
+    const el = document.getElementById(`layout-${c.id}`);
+    if (el) { el.value = layout; onLayoutChange(c.id); }
+  });
+  saveData();
+}
+function batchApplyZoom() {
+  if (!cards.length) return;
+  const y = document.getElementById('batchYOff').value;
+  const s = document.getElementById('batchScale').value;
+  pushHistory();
+  cards.forEach(c => {
+    const yEl = document.getElementById(`yOff-${c.id}`);
+    const sEl = document.getElementById(`scale-${c.id}`);
+    if (yEl) yEl.value = y;
+    if (sEl) sEl.value = s;
+    updateCard(c.id);
+  });
+  saveData();
+}
+function batchToggleEffect(type, on) {
+  if (!cards.length) return;
+  pushHistory();
+  cards.forEach(c => {
+    if (type === 'vignette') {
+      const el = document.getElementById(`vig-${c.id}`);
+      if (el) { el.checked = on; updateCard(c.id); }
+    } else if (type === 'grain') {
+      const el = document.getElementById(`grain-${c.id}`);
+      if (el) { el.checked = on; toggleCardGrainUI(c.id); updateCard(c.id); }
+    }
+  });
+  saveData();
+}
+function batchApplyGrainAmt() {
+  if (!cards.length) return;
+  const amt = document.getElementById('batchGrainAmt').value;
+  pushHistory();
+  cards.forEach(c => {
+    const el = document.getElementById(`grainAmt-${c.id}`);
+    if (el) {
+      el.value = amt;
+      const cb = document.getElementById(`grain-${c.id}`);
+      if (cb && !cb.checked) { cb.checked = true; toggleCardGrainUI(c.id); }
+      updateCard(c.id);
+    }
+  });
+  saveData();
+}
+function batchSetFrame(style) {
+  if (!cards.length) return;
+  pushHistory();
+  cards.forEach(c => {
+    const el = document.getElementById(`frame-${c.id}`);
+    if (el) { el.value = style; updateCard(c.id); }
+  });
+  saveData();
+}
 
-  // 일반 다운로드 (Blob)
-  async function downloadAllPages() {
-    const previews = document.querySelectorAll('.card-preview');
-    if (!previews.length) return;
+function collectCardData(id) {
+  const layoutEl = document.getElementById(`layout-${id}`);
+  const currentLayout = layoutEl ? layoutEl.value : 'standard';
+  const themeFallback = document.getElementById('themeColor')?.value || '#FF8228';
+  return {
+    id: id,
+    layout: currentLayout,
+    cat: document.getElementById(`cat-${id}`)?.value || 'NEWS',
+    src: document.getElementById(`src-${id}`)?.value || '@west150daily',
+    highlightStyleHead: document.getElementById(`highlightStyleHead-${id}`)?.value || 'both',
+    highlightStyleSub: document.getElementById(`highlightStyleSub-${id}`)?.value || 'both',
+    highlightStyleBody: document.getElementById(`highlightStyleBody-${id}`)?.value || 'both',
+    highlightColorA: document.getElementById(`hlColorA-${id}`)?.value || themeFallback,
+    highlightColorB: document.getElementById(`hlColorB-${id}`)?.value || '#FFD166',
+    highlightColorC: document.getElementById(`hlColorC-${id}`)?.value || '#5B8DEF',
+    align: document.getElementById(`align-${id}`)?.value || 'left',
+    fontColorHead: document.getElementById(`fontColorHead-${id}`)?.value || '#FFFFFF',
+    fontColorSub: document.getElementById(`fontColorSub-${id}`)?.value || '#D8D5D0',
+    fontColorBody: document.getElementById(`fontColorBody-${id}`)?.value || '#C4C4CA',
+    head: document.getElementById(`head-${id}`)?.value || '',
+    subtitle: document.getElementById(`subtitle-${id}`)?.value || '',
+    sublabel: document.getElementById(`sublabel-${id}`)?.value || '',
+    subhead: document.getElementById(`subhead-${id}`)?.value || '',
+    body: document.getElementById(`body-${id}`)?.value || '',
+    yOffset: document.getElementById(`yOff-${id}`)?.value || 50,
+    scale: document.getElementById(`scale-${id}`)?.value || 100,
+    vignette: document.getElementById(`vig-${id}`)?.checked || false,
+    grain: document.getElementById(`grain-${id}`)?.checked || false,
+    grainAmt: document.getElementById(`grainAmt-${id}`) ? Number(document.getElementById(`grainAmt-${id}`).value) : 20,
+    frameStyle: document.getElementById(`frame-${id}`)?.value || 'none',
+    videoH: document.getElementById(`videoH-${id}`) ? Number(document.getElementById(`videoH-${id}`).value) : 500,
+    showGuide: document.getElementById(`guide-${id}`) ? document.getElementById(`guide-${id}`).checked : true,
+    showSafeGuide: document.getElementById(`safe-${id}`) ? document.getElementById(`safe-${id}`).checked : false,
+    imgData: cards.find(c => String(c.id) === String(id))?.imgData || null
+  };
+}
 
-    for (let i = 0; i < previews.length; i++) {
-      try {
-        const canvas = await generateCanvas(previews[i]);
-        if (!canvas) continue;
+async function onLayoutChange(id) {
+  const layout = document.getElementById(`layout-${id}`).value;
+  const vControls = document.getElementById(`videoControls-${id}`);
+  if (vControls) vControls.style.display = (layout === 'video') ? 'flex' : 'none';
+  const cardObj = cards.find(c => String(c.id) === String(id));
+  if (cardObj) cardObj.layout = layout;
+  pushHistory();
+  await updateCard(id);
+  saveData();
+}
 
-        const pageSuffix = previews.length > 1 ? `_p${i + 1}` : '';
-        const filename = `Infographic_Card_${currentSize.w}x${currentSize.h}${pageSuffix}.png`;
+function saveData() {
+  if (!appReady) return;
+  const data = {
+    themeColor: document.getElementById('themeColor').value,
+    activeFont: document.getElementById('activeFont').value,
+    coverTitle1: document.getElementById('coverTitle1').value,
+    coverTitle2: document.getElementById('coverTitle2').value,
+    coverStyle: document.getElementById('coverStyle').value,
+    coverYOff: document.getElementById('coverYOff').value,
+    coverScale: document.getElementById('coverScale').value,
+    coverBright: document.getElementById('coverBright').value,
+    coverVig: document.getElementById('coverVig').checked,
+    coverGrain: document.getElementById('coverGrain').checked,
+    coverGrainAmt: document.getElementById('coverGrainAmt').value,
+    coverFrame: document.getElementById('coverFrame').value,
+    coverSafeGuide: document.getElementById('coverSafeGuide').checked,
+    coverWatermarks: [1,2,3].map(i => ({
+      text: document.getElementById('coverWmText' + i)?.value || '',
+      pos: document.getElementById('coverWmPos' + i)?.value || 'tr',
+      show: document.getElementById('coverWmShow' + i)?.checked !== false
+    })),
+    cards: cards.map(c => {
+      const d = collectCardData(c.id);
+      delete d.imgData;
+      return d;
+    })
+  };
+  try {
+    localStorage.setItem('card_news_data', JSON.stringify(data));
+    updateStorageGauge();
+  } catch(e) {
+    console.error("저장소 용량 초과. 이미지를 줄여주세요.");
+    alert("저장 공간이 부족합니다. 이미지를 줄이거나 불필요한 카드를 삭제해주세요.");
+  }
+}
 
-        canvas.toBlob(function(blob) {
-          if (!blob) {
-            const dataUrl = canvas.toDataURL('image/png');
-            const link = document.createElement('a');
-            link.download = filename;
-            link.href = dataUrl;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            return;
-          }
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = filename;
-          link.style.display = 'none';
-          document.body.appendChild(link);
-          link.click();
-          setTimeout(() => {
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-          }, 300);
-        }, 'image/png', 1.0);
+function updateCardNumbers() {
+  cards.forEach((c, idx) => {
+    const titleEl = document.getElementById(`cardNum-${c.id}`);
+    if (titleEl) titleEl.textContent = `카드 #${idx + 1}`;
+  });
+}
+function toggleCardGrainUI(id) {
+  const field = document.getElementById(`grainField-${id}`);
+  const cb = document.getElementById(`grain-${id}`);
+  if (field && cb) field.style.display = cb.checked ? 'block' : 'none';
+}
+function fillHlPresets(id, slot) {
+  const box = document.getElementById(`hlPreset${slot}-${id}`);
+  const input = document.getElementById(`hlColor${slot}-${id}`);
+  if (!box || !input) return;
+  box.innerHTML = '';
+  HL_PRESETS.forEach(p => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'hl-preset-btn';
+    btn.title = p.label;
+    btn.style.background = p.hex;
+    btn.onclick = () => { input.value = p.hex; updateCard(id); };
+    box.appendChild(btn);
+  });
+}
 
-        if (i < previews.length - 1) await new Promise(r => setTimeout(r, 700));
-      } catch (err) {
-        console.error(err);
-        alert('이미지 생성 중 오류가 발생했습니다.');
+function addCard(prefill = null) {
+  const id = prefill?.id || Date.now() + Math.floor(Math.random()*1000);
+  const layout = prefill?.layout || 'standard';
+  const themeDefault = document.getElementById('themeColor')?.value || '#FF8228';
+  cards.push({ id: id, imgData: prefill?.imgData || null, layout: layout });
+
+  const div = document.createElement('div');
+  div.className = 'card-editor';
+  div.id = `card-editor-${id}`;
+  div.innerHTML = `
+    <div class="card-editor-header">
+      <h3 id="cardNum-${id}" style="color:var(--orange); font-size:16px; margin:0; font-weight:700;">카드 #${cards.length}</h3>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <select id="layout-${id}" onchange="onLayoutChange(${id})">
+          <option value="standard" ${layout === 'standard' ? 'selected' : ''}>기본형</option>
+          <option value="full" ${layout === 'full' ? 'selected' : ''}>이미지배경형</option>
+          <option value="video" ${layout === 'video' ? 'selected' : ''}>영상합성용</option>
+        </select>
+        <button class="btn-secondary btn-sm" onclick="moveCard(${id},-1)">▲</button>
+        <button class="btn-secondary btn-sm" onclick="moveCard(${id},1)">▼</button>
+        <button class="btn-secondary btn-sm" onclick="duplicateCard(${id})">⧉</button>
+        <button class="btn-danger btn-sm" onclick="removeCard(${id})">삭제</button>
+      </div>
+    </div>
+    <div class="editor-grid">
+      <div class="fields">
+        <div class="field-row">
+          <input type="text" id="cat-${id}" placeholder="카테고리" oninput="debouncedUpdateCard(${id})">
+          <input type="text" id="src-${id}" placeholder="출처" oninput="debouncedUpdateCard(${id})">
+        </div>
+        <div class="hl-help">
+          <div class="hl-help-title">구간 강조 사용법 (헤드라인·인용·본문 공통)</div>
+          <div class="hl-help-body">
+            <b>**1단어**</b> 또는 <b>**1a단어**</b> → 색 A + 굵게 · 
+            <b>**1b단어**</b> → 색 B + 굵게 · 
+            <b>**1c단어**</b> → 색 C + 굵게<br>
+            <b>**2단어**</b> → 빨간 밑줄만<br>
+            <b>**단어**</b> (숫자 없음) → 아래 “강조 스타일” 설정 따름<br>
+            예: <b>**1트럼프 대통령이** 오늘 **2중요한 연설** · **1b3개 주**</b>
+          </div>
+          <div class="field-row" style="align-items:flex-start;">
+            <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">색 A (**1 / **1a)
+              <input type="color" id="hlColorA-${id}" value="${prefill?.highlightColorA || themeDefault}" onchange="updateCard(${id})">
+              <div class="hl-preset-row" id="hlPresetA-${id}"></div>
+            </label>
+            <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">색 B (**1b)
+              <input type="color" id="hlColorB-${id}" value="${prefill?.highlightColorB || '#FFD166'}" onchange="updateCard(${id})">
+              <div class="hl-preset-row" id="hlPresetB-${id}"></div>
+            </label>
+            <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">색 C (**1c)
+              <input type="color" id="hlColorC-${id}" value="${prefill?.highlightColorC || '#5B8DEF'}" onchange="updateCard(${id})">
+              <div class="hl-preset-row" id="hlPresetC-${id}"></div>
+            </label>
+          </div>
+        </div>
+        <div class="field-row">
+          <select id="highlightStyleHead-${id}" onchange="updateCard(${id})">
+            <option value="color">헤드라인 강조(숫자없음): 색상·굵게</option>
+            <option value="underline">헤드라인 강조(숫자없음): 빨간 밑줄</option>
+            <option value="both">헤드라인 강조(숫자없음): 색상·굵게 + 밑줄</option>
+          </select>
+          <select id="align-${id}" onchange="updateCard(${id})">
+            <option value="left">정렬: 좌측</option>
+            <option value="center">정렬: 가운데</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <select id="highlightStyleSub-${id}" onchange="updateCard(${id})">
+            <option value="color">인용구 강조(숫자없음): 색상·굵게</option>
+            <option value="underline">인용구 강조(숫자없음): 빨간 밑줄</option>
+            <option value="both">인용구 강조(숫자없음): 색상·굵게 + 밑줄</option>
+          </select>
+          <select id="highlightStyleBody-${id}" onchange="updateCard(${id})">
+            <option value="color">본문 강조(숫자없음): 색상·굵게</option>
+            <option value="underline">본문 강조(숫자없음): 빨간 밑줄</option>
+            <option value="both">본문 강조(숫자없음): 색상·굵게 + 밑줄</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">헤드라인 글자색
+            <input type="color" id="fontColorHead-${id}" value="#FFFFFF" onchange="updateCard(${id})">
+          </label>
+          <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">인용구 글자색
+            <input type="color" id="fontColorSub-${id}" value="#D8D5D0" onchange="updateCard(${id})">
+          </label>
+          <label style="font-size:12px; color:var(--gray); display:flex; flex-direction:column; gap:6px; flex:1;">본문 글자색
+            <input type="color" id="fontColorBody-${id}" value="#C4C4CA" onchange="updateCard(${id})">
+          </label>
+        </div>
+        <textarea id="head-${id}" placeholder="헤드라인 예: **1트럼프** 오늘 **2연설** · **1b3개 주**" oninput="debouncedUpdateCard(${id})"></textarea>
+        <div class="meta-row"><span id="textStats-${id}">글자 0 · 줄 0</span></div>
+        <div id="readWarn-${id}" class="warn-box"></div>
+        <input type="text" id="subtitle-${id}" placeholder="부제 (한 줄 · 비우면 숨김)" oninput="debouncedUpdateCard(${id})">
+        <input type="text" id="sublabel-${id}" placeholder="서브라벨 (태그·BREAKING 등)" oninput="debouncedUpdateCard(${id})">
+        <textarea id="subhead-${id}" placeholder="인용구 (비우면 자동 숨김)" oninput="debouncedUpdateCard(${id})"></textarea>
+        <textarea id="body-${id}" style="min-height:90px;" placeholder="본문 (**1색A** · **1b색B** · **2밑줄**)" oninput="debouncedUpdateCard(${id})"></textarea>
+        <div id="videoControls-${id}" style="display:${layout==='video'?'flex':'none'}; flex-direction:column; gap:10px; background:var(--input-bg); border:1px solid var(--panel-border); border-radius:10px; padding:14px;">
+          <label style="font-size:13px;">상단 투명 영역 높이: <input type="range" id="videoH-${id}" min="300" max="800" value="${prefill?.videoH || 500}" oninput="updateCard(${id})"></label>
+          <label class="checkbox-label"><input type="checkbox" id="guide-${id}" ${prefill?.showGuide !== false ? 'checked' : ''} onchange="updateCard(${id})"> 영상 가이드 표시</label>
+        </div>
+        <div class="image-control-box">
+          <label style="font-size:13px;">이미지Y/줌: <input type="range" id="yOff-${id}" min="0" max="100" value="${prefill?.yOffset || 50}" oninput="updateCard(${id})"><input type="range" id="scale-${id}" min="100" max="250" value="${prefill?.scale || 100}" oninput="updateCard(${id})"></label>
+          <label class="checkbox-label"><input type="checkbox" id="vig-${id}" ${prefill?.vignette ? 'checked' : ''} onchange="updateCard(${id})"> 비네팅</label>
+          <label class="checkbox-label"><input type="checkbox" id="grain-${id}" ${prefill?.grain ? 'checked' : ''} onchange="toggleCardGrainUI(${id}); updateCard(${id});"> 그레인 (필름 노이즈)</label>
+          <div id="grainField-${id}" style="display:${prefill?.grain ? 'block' : 'none'};">
+            <label style="font-size:13px; color:var(--gray);">그레인 강도
+              <input type="range" id="grainAmt-${id}" min="5" max="50" value="${prefill?.grainAmt || 20}" oninput="updateCard(${id})">
+            </label>
+          </div>
+          <label style="font-size:13px; color:var(--gray);">프레임 / 테두리
+            <select id="frame-${id}" onchange="updateCard(${id})">
+              <option value="none">없음</option>
+              <option value="thin">얇은 단선</option>
+              <option value="thick">두꺼운 단선</option>
+              <option value="double">이중 라인</option>
+            </select>
+          </label>
+          <label class="checkbox-label"><input type="checkbox" id="safe-${id}" ${prefill?.showSafeGuide ? 'checked' : ''} onchange="updateCard(${id})"> 안전 영역 가이드 (미리보기만, 저장 제외)</label>
+          <input type="file" accept="image/*" onchange="handleImg(event, ${id})">
+          <div class="drop-zone" onpaste="handlePaste(event, ${id})" tabIndex="0">이미지 붙여넣기 (Ctrl+V)</div>
+        </div>
+      </div>
+      <div class="preview-zone">
+        <canvas id="canvas-${id}" width="1080" height="1350"></canvas>
+        <button class="btn-secondary" onclick="requestDownload('card', ${id})">이미지 저장</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('cardsWrap').appendChild(div);
+  document.getElementById(`cat-${id}`).value = prefill?.cat ?? 'NEWS';
+  document.getElementById(`src-${id}`).value = prefill?.src ?? '@west150daily';
+  document.getElementById(`highlightStyleHead-${id}`).value = prefill?.highlightStyleHead ?? prefill?.highlightStyle ?? 'both';
+  document.getElementById(`highlightStyleSub-${id}`).value = prefill?.highlightStyleSub ?? prefill?.highlightStyle ?? 'both';
+  document.getElementById(`highlightStyleBody-${id}`).value = prefill?.highlightStyleBody ?? prefill?.highlightStyle ?? 'both';
+  document.getElementById(`align-${id}`).value = prefill?.align ?? 'left';
+  document.getElementById(`fontColorHead-${id}`).value = prefill?.fontColorHead ?? '#FFFFFF';
+  document.getElementById(`fontColorSub-${id}`).value = prefill?.fontColorSub ?? '#D8D5D0';
+  document.getElementById(`fontColorBody-${id}`).value = prefill?.fontColorBody ?? '#C4C4CA';
+  document.getElementById(`head-${id}`).value = prefill?.head ?? '';
+  document.getElementById(`subtitle-${id}`).value = prefill?.subtitle ?? '';
+  document.getElementById(`sublabel-${id}`).value = prefill?.sublabel ?? '';
+  document.getElementById(`subhead-${id}`).value = prefill?.subhead ?? '';
+  document.getElementById(`body-${id}`).value = prefill?.body ?? '';
+  if (prefill?.frameStyle) document.getElementById(`frame-${id}`).value = prefill.frameStyle;
+  if (prefill?.highlightColorA) document.getElementById(`hlColorA-${id}`).value = prefill.highlightColorA;
+  if (prefill?.highlightColorB) document.getElementById(`hlColorB-${id}`).value = prefill.highlightColorB;
+  if (prefill?.highlightColorC) document.getElementById(`hlColorC-${id}`).value = prefill.highlightColorC;
+
+  fillHlPresets(id, 'A');
+  fillHlPresets(id, 'B');
+  fillHlPresets(id, 'C');
+
+  updateCard(id);
+  updateCardNumbers();
+  updateStorageGauge();
+}
+
+function moveCard(id, dir) {
+  const idx = cards.findIndex(c => c.id === id);
+  if (idx === -1) return;
+  const targetIdx = idx + dir;
+  if (targetIdx < 0 || targetIdx >= cards.length) return;
+  pushHistory();
+  const temp = cards[idx];
+  cards[idx] = cards[targetIdx];
+  cards[targetIdx] = temp;
+  const wrap = document.getElementById('cardsWrap');
+  cards.forEach(c => {
+    const el = document.getElementById(`card-editor-${c.id}`);
+    if (el) wrap.appendChild(el);
+  });
+  updateCardNumbers();
+  saveData();
+}
+function duplicateCard(id) {
+  pushHistory();
+  const data = collectCardData(id);
+  data.id = null;
+  addCard(data);
+  const newCard = cards[cards.length - 1];
+  if (newCard && newCard.imgData) saveImageToDB(`card_${newCard.id}`, newCard.imgData);
+  updateAll();
+}
+async function handlePaste(e, id) {
+  const item = Array.from(e.clipboardData.items).find(i => i.type.indexOf("image") !== -1);
+  if (item) {
+    pushHistory();
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const data = await compressImage(ev.target.result);
+      const card = cards.find(c => String(c.id) === String(id));
+      if (card) card.imgData = data;
+      await saveImageToDB(`card_${id}`, data);
+      updateCard(id);
+      await updateStorageGauge();
+    };
+    reader.readAsDataURL(item.getAsFile());
+  }
+}
+function removeCard(id) {
+  if (cards.length <= 1) return alert("최소 한 개의 카드는 존재해야 합니다.");
+  pushHistory();
+  cards = cards.filter(c => String(c.id) !== String(id));
+  const el = document.getElementById(`card-editor-${id}`);
+  if (el) el.remove();
+  deleteImageFromDB(`card_${id}`);
+  updateCardNumbers();
+  saveData();
+  updateStorageGauge();
+}
+async function handleImg(e, id) {
+  const file = e.target.files[0];
+  if (!file) return;
+  pushHistory();
+  const reader = new FileReader();
+  reader.onload = async (ev) => {
+    const data = await compressImage(ev.target.result);
+    const card = cards.find(c => String(c.id) === String(id));
+    if (card) card.imgData = data;
+    await saveImageToDB(`card_${id}`, data);
+    updateCard(id);
+    await updateStorageGauge();
+  };
+  reader.readAsDataURL(file);
+}
+
+function updateAll() { renderCover(); cards.forEach(c => updateCard(c.id)); saveData(); }
+
+function findReplaceAll() {
+  const find = document.getElementById('findText').value;
+  const replace = document.getElementById('replaceText').value;
+  if (!find) return;
+  pushHistory();
+  let count = 0;
+  cards.forEach(c => {
+    ['cat', 'src', 'head', 'subtitle', 'sublabel', 'subhead', 'body'].forEach(f => {
+      const el = document.getElementById(`${f}-${c.id}`);
+      if (el && el.value.includes(find)) {
+        el.value = el.value.split(find).join(replace);
+        count++;
+      }
+    });
+    updateCard(c.id);
+  });
+  alert(count > 0 ? '텍스트 교체가 완료되었습니다!' : '일치하는 텍스트가 없습니다.');
+}
+
+function parseBulkText(raw) {
+  const text = (raw || '').replace(/\r\n/g, '\n').trim();
+  if (!text) return null;
+  const result = { cat: '', src: '', head: '', subtitle: '', sublabel: '', subhead: '', body: '' };
+  const labelMap = [
+    { keys: ['카테고리', '분류', 'category', 'cat'], field: 'cat' },
+    { keys: ['출처', '소스', 'source', 'src'], field: 'src' },
+    { keys: ['헤드라인', '제목', 'headline', 'head', '타이틀', 'title'], field: 'head' },
+    { keys: ['부제', '서브헤드', 'subtitle', 'sub-title'], field: 'subtitle' },
+    { keys: ['날짜 위 텍스트', '날짜위텍스트', '서브라벨', '서브 라벨', '라벨', '태그', '날짜', 'date', 'sublabel', 'tag'], field: 'sublabel' },
+    { keys: ['인용', '인용구', '주장', 'quote', 'subhead'], field: 'subhead' },
+    { keys: ['본문', '내용', 'body', 'bodytext', '설명'], field: 'body' }
+  ];
+  const lines = text.split('\n');
+  let currentField = null;
+  const buffers = { cat: [], src: [], head: [], subtitle: [], sublabel: [], subhead: [], body: [] };
+  function matchLabel(line) {
+    for (const m of labelMap) {
+      for (const k of m.keys) {
+        const re = new RegExp(`^\\s*${k}\\s*[:：]\\s*(.*)$`, 'i');
+        const hit = line.match(re);
+        if (hit) return { field: m.field, rest: hit[1] };
+      }
+    }
+    return null;
+  }
+  for (const line of lines) {
+    const labeled = matchLabel(line);
+    if (labeled) {
+      currentField = labeled.field;
+      if (labeled.rest) buffers[currentField].push(labeled.rest);
+    } else if (currentField) {
+      buffers[currentField].push(line);
+    } else {
+      if (!buffers.head.length) { buffers.head.push(line); currentField = 'head'; }
+      else { currentField = 'body'; buffers.body.push(line); }
+    }
+  }
+  for (const f of Object.keys(buffers)) result[f] = buffers[f].join('\n').trim();
+  if (!result.head && !result.body && !result.subhead) return null;
+  return result;
+}
+function fillCardFields(id, data) {
+  const set = (key, val) => {
+    const el = document.getElementById(`${key}-${id}`);
+    if (el && val != null && val !== '') el.value = val;
+  };
+  set('cat', data.cat); set('src', data.src); set('head', data.head);
+  set('subtitle', data.subtitle); set('sublabel', data.sublabel);
+  set('subhead', data.subhead); set('body', data.body);
+  updateCard(id);
+}
+function splitBulkBlocks(raw) {
+  return (raw || '').split(/^[ \t]*-{3,}[ \t]*$/gm).map(b => b.trim()).filter(Boolean);
+}
+function applyBulkPaste(mode) {
+  const raw = document.getElementById('bulkPasteText').value;
+  const dataList = splitBulkBlocks(raw).map(parseBulkText).filter(Boolean);
+  if (!dataList.length) { alert('인식할 수 있는 텍스트가 없습니다.'); return; }
+  pushHistory();
+  const toPrefill = (data) => ({
+    cat: data.cat || 'NEWS', src: data.src || '@west150daily',
+    head: data.head || '', subtitle: data.subtitle || '',
+    sublabel: data.sublabel || '', subhead: data.subhead || '', body: data.body || ''
+  });
+  if (mode === 'new') {
+    dataList.forEach(data => addCard(toPrefill(data)));
+    alert(dataList.length > 1 ? `${dataList.length}개의 새 카드가 추가되었습니다.` : '새 카드에 적용되었습니다.');
+  } else {
+    if (!cards.length) addCard();
+    const firstId = cards[0].id;
+    const firstData = dataList[0];
+    fillCardFields(firstId, firstData);
+    const catEl = document.getElementById(`cat-${firstId}`);
+    const srcEl = document.getElementById(`src-${firstId}`);
+    if (firstData.cat && catEl) catEl.value = firstData.cat;
+    if (firstData.src && srcEl) srcEl.value = firstData.src;
+    updateCard(firstId);
+    for (let i = 1; i < dataList.length; i++) addCard(toPrefill(dataList[i]));
+    alert(dataList.length > 1
+      ? `첫 번째 카드에 적용하고, 나머지 ${dataList.length - 1}개는 새 카드로 추가했습니다.`
+      : '첫 번째 카드에 적용되었습니다.');
+  }
+  updateCardNumbers();
+  saveData();
+}
+
+/* ===== 시각 효과 ===== */
+function getGrainCanvas(cw, ch, amount) {
+  const key = `${cw}x${ch}_${amount}`;
+  if (grainCache && grainCacheKey === key) return grainCache;
+  const g = document.createElement('canvas');
+  const gw = Math.max(120, Math.floor(cw / 4));
+  const gh = Math.max(120, Math.floor(ch / 4));
+  g.width = gw; g.height = gh;
+  const gctx = g.getContext('2d');
+  const img = gctx.createImageData(gw, gh);
+  const d = img.data;
+  const strength = amount / 100;
+  for (let i = 0; i < d.length; i += 4) {
+    const v = Math.random() * 255;
+    d[i] = d[i+1] = d[i+2] = v;
+    d[i+3] = Math.floor(35 + strength * 140);
+  }
+  gctx.putImageData(img, 0, 0);
+  grainCache = g; grainCacheKey = key;
+  return g;
+}
+function applyGrain(ctx, cw, ch, amount) {
+  if (!amount) return;
+  const noise = getGrainCanvas(cw, ch, amount);
+  ctx.save();
+  ctx.globalAlpha = 0.18 + (amount / 100) * 0.35;
+  ctx.drawImage(noise, 0, 0, cw, ch);
+  ctx.restore();
+}
+function drawFrame(ctx, cw, ch, style, accent) {
+  if (!style || style === 'none') return;
+  const inset = Math.max(10, Math.round(Math.min(cw, ch) * 0.016));
+  ctx.save();
+  if (style === 'thin') {
+    ctx.strokeStyle = 'rgba(244,244,242,0.55)';
+    ctx.lineWidth = Math.max(2, Math.round(Math.min(cw, ch) * 0.003));
+    ctx.strokeRect(inset * 0.5, inset * 0.5, cw - inset, ch - inset);
+  } else if (style === 'thick') {
+    ctx.strokeStyle = 'rgba(244,244,242,0.7)';
+    ctx.lineWidth = Math.max(6, Math.round(Math.min(cw, ch) * 0.01));
+    ctx.strokeRect(inset, inset, cw - inset * 2, ch - inset * 2);
+  } else if (style === 'double') {
+    ctx.strokeStyle = 'rgba(244,244,242,0.65)';
+    ctx.lineWidth = Math.max(2, Math.round(Math.min(cw, ch) * 0.003));
+    ctx.strokeRect(inset * 0.6, inset * 0.6, cw - inset * 1.2, ch - inset * 1.2);
+    ctx.strokeRect(inset * 1.4, inset * 1.4, cw - inset * 2.8, ch - inset * 2.8);
+    ctx.strokeStyle = accent || '#FF8228';
+    ctx.lineWidth = Math.max(2, Math.round(Math.min(cw, ch) * 0.0025));
+    ctx.strokeRect(inset, inset, cw - inset * 2, ch - inset * 2);
+  }
+  ctx.restore();
+}
+function drawSafeGuide(ctx, cw, ch) {
+  const topH = ch * 0.12;
+  const botH = ch * 0.14;
+  ctx.save();
+  ctx.fillStyle = 'rgba(194,63,69,0.16)';
+  ctx.fillRect(0, 0, cw, topH);
+  ctx.fillRect(0, ch - botH, cw, botH);
+  ctx.setLineDash([10, 8]);
+  ctx.strokeStyle = 'rgba(194,63,69,0.85)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(0, topH); ctx.lineTo(cw, topH);
+  ctx.moveTo(0, ch - botH); ctx.lineTo(cw, ch - botH);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font = fontStack(20, '600');
+  ctx.fillStyle = 'rgba(255,180,180,0.95)';
+  ctx.textAlign = 'center';
+  ctx.fillText('SAFE · 상단 UI', cw / 2, topH * 0.55);
+  ctx.fillText('SAFE · 하단 UI', cw / 2, ch - botH * 0.4);
+  ctx.textAlign = 'left';
+  ctx.restore();
+}
+function hexToRgb(hex) {
+  const h = (hex || '#000').replace('#', '');
+  const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
+  const n = parseInt(full, 16);
+  return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+}
+function relLuminance({ r, g, b }) {
+  const srgb = [r, g, b].map(v => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * srgb[0] + 0.7152 * srgb[1] + 0.0722 * srgb[2];
+}
+function contrastRatio(a, b) {
+  const L1 = relLuminance(hexToRgb(a));
+  const L2 = relLuminance(hexToRgb(b));
+  const light = Math.max(L1, L2), dark = Math.min(L1, L2);
+  return (light + 0.05) / (dark + 0.05);
+}
+function updateCardMetaUI(id, d, hasImg) {
+  const stats = document.getElementById(`textStats-${id}`);
+  if (stats) {
+    const plain = (d.head || '').replace(/\*\*/g, '');
+    const chars = [...plain].filter(ch => ch !== '\n').length;
+    const lines = plain.split('\n').filter(l => l.trim().length).length || (chars ? 1 : 0);
+    let tip = '';
+    if (chars > 80) tip = ' · 길면 글자가 작아질 수 있음';
+    stats.textContent = `글자 ${chars} · 줄 ${lines}${tip}`;
+  }
+  const warn = document.getElementById(`readWarn-${id}`);
+  if (!warn) return;
+  const msgs = [];
+  if (hasImg) {
+    msgs.push('배경 이미지가 있어 일부 구간 대비가 낮을 수 있습니다. 비네트·패널을 활용해 보세요.');
+  } else {
+    const bg = '#0A0A0C';
+    const cH = contrastRatio(d.fontColorHead || '#fff', bg);
+    const cB = contrastRatio(d.fontColorBody || '#C4C4CA', bg);
+    if (cH < 3) msgs.push(`헤드라인 대비 낮음 (${cH.toFixed(1)}:1)`);
+    if (cB < 3) msgs.push(`본문 대비 낮음 (${cB.toFixed(1)}:1)`);
+  }
+  if (msgs.length) {
+    warn.textContent = '⚠ ' + msgs.join(' · ');
+    warn.classList.add('show');
+  } else {
+    warn.classList.remove('show');
+    warn.textContent = '';
+  }
+}
+
+async function renderCover(opts = {}) {
+  const skipGuide = !!opts.skipGuide;
+  const canvas = document.getElementById('coverCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const t1 = document.getElementById('coverTitle1').value;
+  const t2 = document.getElementById('coverTitle2').value;
+  const theme = document.getElementById('themeColor').value;
+  const style = document.getElementById('coverStyle').value;
+  const bright = document.getElementById('coverBright').value;
+  const vig = document.getElementById('coverVig').checked;
+  const zoom = document.getElementById('coverScale').value / 100;
+  const yOff = document.getElementById('coverYOff').value;
+  const {coverDateText} = getDates();
+  const margin = 100; const maxW = W - margin * 2;
+
+  ctx.fillStyle = '#0C0C0E'; ctx.fillRect(0,0,W,W);
+
+  if (coverImgData && style !== 'default') {
+    const img = await loadImage(coverImgData);
+    if (img) {
+      let targetH = (style === 'top') ? 520 : W;
+      const s = Math.max(W / img.width, targetH / img.height) * zoom;
+      ctx.save();
+      if (style === 'top') { ctx.beginPath(); ctx.rect(0,0,W,targetH); ctx.clip(); }
+      ctx.drawImage(img, (W - img.width * s) / 2, (targetH - img.height * s) * (yOff / 100), img.width * s, img.height * s);
+      if (vig) applyVignette(ctx, 0, 0, W, targetH);
+      ctx.restore();
+      ctx.fillStyle = `rgba(0,0,0,${bright/100})`;
+      ctx.fillRect(0, 0, W, targetH);
+      if (style === 'top') {
+        const fg = ctx.createLinearGradient(0, targetH - 120, 0, targetH);
+        fg.addColorStop(0, 'rgba(12,12,14,0)');
+        fg.addColorStop(1, '#0C0C0E');
+        ctx.fillStyle = fg;
+        ctx.fillRect(0, targetH - 120, W, 120);
       }
     }
   }
 
-  // 아이폰용: 이미지 크게 보여주기 (길게 눌러 저장)
-  async function showSavePreview() {
-    const previews = document.querySelectorAll('.card-preview');
-    if (!previews.length) return;
-
-    // 첫 페이지만 우선 표시 (여러 페이지면 순서대로)
-    const canvas = await generateCanvas(previews[0]);
-    if (!canvas) return;
-
-    const dataUrl = canvas.toDataURL('image/png');
-    const img = document.getElementById('save-preview-img');
-    img.src = dataUrl;
-
-    const overlay = document.getElementById('save-overlay');
-    overlay.classList.add('active');
-
-    // 여러 페이지가 있으면 안내
-    if (previews.length > 1) {
-      const guide = overlay.querySelector('.save-guide');
-      guide.innerHTML = `<strong>이미지를 길게 눌러서 저장</strong>하세요<br>(현재 1/${previews.length} 페이지 · 사진 앱에 저장됩니다)`;
-    }
+  if (document.getElementById('coverGrain').checked) {
+    applyGrain(ctx, W, W, Number(document.getElementById('coverGrainAmt').value) || 20);
   }
 
-  function closeSaveOverlay() {
-    document.getElementById('save-overlay').classList.remove('active');
+  if (style !== 'default') {
+    ctx.fillStyle = 'rgba(12,12,14,0.72)';
+    ctx.beginPath();
+    ctx.roundRect(margin - 36, 500, maxW + 72, 220, 20);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
   }
 
-  // 오버레이 배경 클릭 시 닫기
-  document.getElementById('save-overlay').addEventListener('click', (e) => {
-    if (e.target.id === 'save-overlay') closeSaveOverlay();
+  ctx.fillStyle = theme;
+  ctx.beginPath(); ctx.arc(margin + 6, 468, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.font = fontStack(28, '500'); ctx.fillStyle = '#A8A8B0';
+  ctx.fillText(coverDateText, margin + 22, 478);
+
+  let fontSize = 108;
+  testCtx.font = fontStack(fontSize, '900');
+  while (testCtx.measureText(t1 + ' ' + t2).width > maxW && fontSize > 52) {
+    fontSize -= 4;
+    testCtx.font = fontStack(fontSize, '900');
+  }
+  ctx.font = fontStack(fontSize, '900');
+  ctx.fillStyle = '#FFF';
+  ctx.fillText(t1, margin, 600);
+  const t1W = ctx.measureText(t1).width;
+  const gap = Math.max(18, fontSize * 0.18);
+  ctx.fillStyle = theme;
+  ctx.fillText(t2, margin + t1W + gap, 600);
+
+  const lineGrad = ctx.createLinearGradient(margin, 0, margin + 240, 0);
+  lineGrad.addColorStop(0, theme);
+  lineGrad.addColorStop(1, 'rgba(255,130,40,0)');
+  ctx.strokeStyle = lineGrad;
+  ctx.lineWidth = 6;
+  ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(margin, 648); ctx.lineTo(margin + 220, 648); ctx.stroke();
+  ctx.lineCap = 'butt';
+
+  for (let i = 1; i <= 3; i++) {
+    const show = document.getElementById('coverWmShow' + i)?.checked !== false;
+    const text = (document.getElementById('coverWmText' + i)?.value || '').trim();
+    if (!show || !text) continue;
+    const pos = document.getElementById('coverWmPos' + i)?.value || 'tr';
+    ctx.font = fontStack(22, '500');
+    const pw = ctx.measureText(text).width + 64;
+    const ph = 48;
+    const pad = 88;
+    let wx, wy;
+    if (pos === 'tr') { wx = W - pad - pw; wy = pad; }
+    else if (pos === 'br') { wx = W - pad - pw; wy = W - pad - ph; }
+    else if (pos === 'tl') { wx = pad; wy = pad; }
+    else if (pos === 'bl') { wx = pad; wy = W - pad - ph; }
+    else if (pos === 'tm') { wx = (W - pw) / 2; wy = pad; }
+    else if (pos === 'bm') { wx = (W - pw) / 2; wy = W - pad - ph; }
+    else { wx = W - pad - pw; wy = pad; }
+    drawPill(ctx, wx, wy, text, theme);
+  }
+
+  drawFrame(ctx, W, W, document.getElementById('coverFrame').value, theme);
+  if (!skipGuide && document.getElementById('coverSafeGuide').checked) {
+    drawSafeGuide(ctx, W, W);
+  }
+}
+
+async function updateCard(id, opts = {}) {
+  const skipGuide = !!opts.skipGuide;
+  const cardData = cards.find(c => String(c.id) === String(id));
+  const canvas = document.getElementById(`canvas-${id}`);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const d = collectCardData(id);
+  d.theme = document.getElementById('themeColor').value;
+  d.pill = document.getElementById('pillTag').value;
+
+  let img = cardData?.imgData ? await loadImage(cardData.imgData) : null;
+  updateCardMetaUI(id, d, !!img);
+  const layout = d.layout;
+
+  ctx.clearRect(0,0,canvas.width, canvas.height);
+
+  if (layout === 'standard') await renderStandard(ctx, canvas, img, d, skipGuide);
+  else if (layout === 'video') await renderVideoList(ctx, canvas, img, d, d.showGuide && !skipGuide);
+  else await renderFull(ctx, canvas, img, d, skipGuide);
+
+  saveData();
+}
+
+function getColorMap(d) {
+  return {
+    a: d.highlightColorA || d.theme || '#FF8228',
+    b: d.highlightColorB || '#FFD166',
+    c: d.highlightColorC || '#5B8DEF'
+  };
+}
+
+async function renderStandard(ctx, canvas, img, d, skipGuide) {
+  canvas.height = STANDARD_H;
+  const margin = 64;
+  const BOTTOM_RESERVE = 120;
+  const topPad = img ? 56 : 130;
+  const topH = img ? Math.min(img.height * (W / img.width), 500) : 0;
+
+  const runsHead = parseMarkup(d.head), runsSub = parseQuoteMarkup(d.subhead), runsBody = parseMarkup(d.body);
+  const {timestampText} = getDates();
+  const hlHead = d.highlightStyleHead || 'both';
+  const hlSub = d.highlightStyleSub || 'both';
+  const hlBody = d.highlightStyleBody || 'both';
+  const textAlign = d.align || 'left';
+  const fcHead = d.fontColorHead || '#FFFFFF';
+  const fcSub = d.fontColorSub || QUOTE_NORMAL_COLOR;
+  const fcBody = d.fontColorBody || '#C4C4CA';
+  const colorMap = getColorMap(d);
+  const hasQuote = !!(d.subhead && d.subhead.trim());
+  const hasSubtitle = !!(d.subtitle && d.subtitle.trim());
+  const hasSublabel = !!(d.sublabel && d.sublabel.trim());
+
+  const availH = STANDARD_H - topH - topPad - BOTTOM_RESERVE;
+
+  function measureContentHeight(k) {
+    let cy = 104 * k;
+    cy = drawRichText(testCtx, runsHead, 0, cy, W - margin * 2, 50 * k, fcHead, d.theme, 18 * k, hlHead, textAlign, colorMap);
+    if (hasSubtitle) cy += 36 * k;
+    if (hasSublabel) cy += 52 * k;
+    if (hasQuote) {
+      cy += 72 * k;
+      cy = drawRichText(testCtx, runsSub, 0, cy, W - margin * 2 - 36, 42 * k, fcSub, d.theme, 16 * k, hlSub, textAlign, colorMap);
+      cy += 44 * k;
+    } else cy += 36 * k;
+    cy = drawRichText(testCtx, runsBody, 0, cy, W - margin * 2, 34 * k, fcBody, d.theme, 16 * k, hlBody, textAlign, colorMap);
+    cy += 72 * k;
+    return cy;
+  }
+
+  let k = 1.0;
+  while (k > 0.55 && measureContentHeight(k) > availH) k -= 0.02;
+  k = Math.round(k * 100) / 100;
+
+  ctx.fillStyle = '#0A0A0C';
+  ctx.fillRect(0, 0, W, STANDARD_H);
+
+  if (img) {
+    const zoom = d.scale / 100;
+    const sw = img.width / zoom;
+    const sh = sw * (topH / W);
+    ctx.drawImage(img, (img.width - sw) / 2, (img.height - sh) * (d.yOffset / 100), sw, sh, 0, 0, W, topH);
+    if (d.vignette) applyVignette(ctx, 0, 0, W, topH);
+    const fade = ctx.createLinearGradient(0, topH - 90, 0, topH);
+    fade.addColorStop(0, 'rgba(10,10,12,0)');
+    fade.addColorStop(1, '#0A0A0C');
+    ctx.fillStyle = fade;
+    ctx.fillRect(0, topH - 90, W, 90);
+  }
+
+  if (d.grain) applyGrain(ctx, W, STANDARD_H, d.grainAmt || 20);
+
+  let dy = topH + topPad;
+
+  ctx.font = fontStack(22, '800');
+  const catLabel = (d.cat || 'NEWS').toUpperCase();
+  const catW = ctx.measureText(catLabel).width;
+  const badgePadX = 16, badgeH = 36;
+  ctx.fillStyle = d.theme;
+  ctx.beginPath();
+  ctx.roundRect(margin, dy, catW + badgePadX * 2, badgeH, 8);
+  ctx.fill();
+  ctx.fillStyle = '#0A0A0C';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(catLabel, margin + badgePadX, dy + badgeH / 2 + 1);
+  ctx.textBaseline = 'alphabetic';
+
+  dy += 104 * k;
+  dy = drawRichText(ctx, runsHead, margin, dy, W - margin * 2, 50 * k, fcHead, d.theme, 18 * k, hlHead, textAlign, colorMap);
+
+  if (hasSubtitle) {
+    dy += 28 * k;
+    const subSize = Math.max(22, 28 * k);
+    ctx.font = fontStack(subSize, '400');
+    ctx.fillStyle = 'rgba(244,244,242,0.72)';
+    ctx.fillText(d.subtitle.trim(), margin, dy);
+    dy += subSize * 0.4;
+  }
+
+  if (hasSublabel) {
+    dy += 40 * k;
+    ctx.font = fontStack(22 * k, '500');
+    ctx.fillStyle = '#8E8E96';
+    ctx.fillText(d.sublabel, margin, dy);
+  }
+
+  if (hasQuote) {
+    dy += 64 * k;
+    const quoteStartY = dy;
+    const quoteX = margin + 28;
+    dy = drawRichText(ctx, runsSub, quoteX, dy, W - margin * 2 - 36, 42 * k, fcSub, d.theme, 16 * k, hlSub, textAlign, colorMap);
+    const quoteEndY = dy;
+    ctx.fillStyle = d.theme;
+    ctx.beginPath();
+    ctx.roundRect(margin, quoteStartY - 4, 5, Math.max(24, quoteEndY - quoteStartY - 8), 3);
+    ctx.fill();
+  }
+
+  dy += 36 * k;
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(margin, dy);
+  ctx.lineTo(W - margin, dy);
+  ctx.stroke();
+  ctx.strokeStyle = d.theme;
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(margin, dy);
+  ctx.lineTo(margin + 48, dy);
+  ctx.stroke();
+
+  dy += 40 * k;
+  dy = drawRichText(ctx, runsBody, margin, dy, W - margin * 2, 34 * k, fcBody, d.theme, 16 * k, hlBody, textAlign, colorMap);
+
+  ctx.font = fontStack(18, '400');
+  ctx.fillStyle = '#5A5A62';
+  ctx.fillText(timestampText + '  ·  ' + d.src, margin, Math.min(dy + 64, STANDARD_H - 88));
+  drawPill(ctx, W - margin - 200, STANDARD_H - margin - 52, d.pill, d.theme);
+
+  drawFrame(ctx, W, STANDARD_H, d.frameStyle, d.theme);
+  if (!skipGuide && d.showSafeGuide) drawSafeGuide(ctx, W, STANDARD_H);
+}
+
+async function renderFull(ctx, canvas, img, d, skipGuide) {
+  const BASE_H = 1350;
+  const MAX_H = 2000;
+  const margin = 80;
+  const maxW = W - margin * 2;
+  const {timestampText} = getDates();
+  const FOOTER_RESERVE = 140;
+  const TOP_MIN = 100;
+
+  const runsHead = parseMarkup(d.head), runsSub = parseQuoteMarkup(d.subhead), runsBody = parseMarkup(d.body);
+  const hlHead = d.highlightStyleHead || 'both';
+  const hlSub = d.highlightStyleSub || 'both';
+  const hlBody = d.highlightStyleBody || 'both';
+  const textAlign = d.align || 'left';
+  const fcHead = d.fontColorHead || '#FFFFFF';
+  const fcSub = d.fontColorSub || QUOTE_NORMAL_COLOR;
+  const fcBody = d.fontColorBody || '#E6E6EA';
+  const colorMap = getColorMap(d);
+  const hasQuote = !!(d.subhead && d.subhead.trim());
+  const hasSubtitle = !!(d.subtitle && d.subtitle.trim());
+  const hasSublabel = !!(d.sublabel && d.sublabel.trim());
+
+  function measureHeight(k) {
+    let ty = 0;
+    ty += 40 * k;
+    ty = drawRichText(testCtx, runsHead, 0, ty, maxW, 52 * k, fcHead, d.theme, 16 * k, hlHead, textAlign, colorMap);
+    if (hasSubtitle) ty += 34 * k;
+    if (hasSublabel) ty += 32 * k;
+    if (hasQuote) { ty += 18 * k; ty = drawRichText(testCtx, runsSub, 0, ty, maxW - 30, 34 * k, fcSub, d.theme, 14 * k, hlSub, textAlign, colorMap); }
+    ty += 36 * k;
+    ty = drawRichText(testCtx, runsBody, 0, ty, maxW, 36 * k, fcBody, d.theme, 16 * k, hlBody, textAlign, colorMap);
+    return ty;
+  }
+
+  let k = 1.0;
+  const preferredMax = 900;
+  while (k > 0.78 && measureHeight(k) > preferredMax) k -= 0.03;
+  k = Math.round(k * 100) / 100;
+
+  const boxPadding = 48 * k;
+  let totalContentH = measureHeight(k);
+  let boxHeight = totalContentH + boxPadding * 2;
+
+  let FULL_H = BASE_H;
+  const neededH = TOP_MIN + boxHeight + FOOTER_RESERVE;
+  if (neededH > BASE_H) FULL_H = Math.min(MAX_H, Math.ceil(neededH));
+  if (TOP_MIN + boxHeight + FOOTER_RESERVE > FULL_H) {
+    while (k > 0.65 && measureHeight(k) + boxPadding * 2 + TOP_MIN + FOOTER_RESERVE > FULL_H) k -= 0.02;
+    k = Math.round(k * 100) / 100;
+    totalContentH = measureHeight(k);
+    boxHeight = totalContentH + boxPadding * 2;
+  }
+
+  canvas.height = FULL_H;
+  ctx.fillStyle = "#0C0C0E";
+  ctx.fillRect(0, 0, W, FULL_H);
+
+  if (img) {
+    const zoom = d.scale / 100;
+    const scaleFactor = Math.max(W / img.width, FULL_H / img.height) * zoom;
+    const drawW = img.width * scaleFactor;
+    const drawH = img.height * scaleFactor;
+    const drawX = (W - drawW) / 2;
+    const drawY = (FULL_H - drawH) * (d.yOffset / 100);
+    ctx.drawImage(img, drawX, drawY, drawW, drawH);
+    if (d.vignette) applyVignette(ctx, 0, 0, W, FULL_H);
+    ctx.fillStyle = "rgba(0,0,0,0.5)";
+    ctx.fillRect(0, 0, W, FULL_H);
+  } else {
+    ctx.fillStyle = "#16161A";
+    ctx.fillRect(0, 0, W, FULL_H);
+  }
+
+  if (d.grain) applyGrain(ctx, W, FULL_H, d.grainAmt || 20);
+
+  const freeSpace = FULL_H - boxHeight - FOOTER_RESERVE;
+  const boxTop = freeSpace > TOP_MIN * 2
+    ? Math.max(TOP_MIN, (FULL_H - boxHeight - FOOTER_RESERVE) / 2)
+    : TOP_MIN;
+
+  const boxX = margin - 28;
+  const boxW = maxW + 56;
+  const safeRadius = Math.min(20, Math.floor(boxHeight / 2));
+
+  ctx.save();
+  ctx.fillStyle = 'rgba(0,0,0,0.35)';
+  ctx.beginPath();
+  ctx.roundRect(boxX + 6, boxTop + 8, boxW, boxHeight, safeRadius);
+  ctx.fill();
+  ctx.restore();
+
+  ctx.save();
+  ctx.fillStyle = 'rgba(14, 14, 18, 0.90)';
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(boxX, boxTop, boxW, boxHeight, safeRadius);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = d.theme;
+  ctx.beginPath();
+  ctx.roundRect(boxX, boxTop + 16, 5, boxHeight - 32, 3);
+  ctx.fill();
+  ctx.restore();
+
+  let cy = boxTop + boxPadding;
+  ctx.textBaseline = 'top';
+
+  ctx.font = fontStack(18 * k, '800');
+  const catText = (d.cat || 'NEWS').toUpperCase();
+  const catTw = ctx.measureText(catText).width;
+  const bPad = 12 * k, bH = 28 * k;
+  ctx.fillStyle = d.theme;
+  ctx.beginPath();
+  ctx.roundRect(margin, cy, catTw + bPad * 2, bH, 6);
+  ctx.fill();
+  ctx.fillStyle = '#0A0A0C';
+  ctx.fillText(catText, margin + bPad, cy + 5 * k);
+
+  ctx.font = fontStack(16 * k, '400');
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  const metaText = `${timestampText}${d.src ? '  ·  ' + d.src : ''}`;
+  ctx.fillText(metaText, margin + catTw + bPad * 2 + 14 * k, cy + 6 * k);
+
+  cy += 42 * k;
+  cy = drawRichText(ctx, runsHead, margin, cy, maxW, 50 * k, fcHead, d.theme, 15 * k, hlHead, textAlign, colorMap);
+
+  if (hasSubtitle) {
+    cy += 14 * k;
+    const subSize = Math.max(18, 22 * k);
+    ctx.font = fontStack(subSize, '400');
+    ctx.fillStyle = 'rgba(244,244,242,0.75)';
+    ctx.fillText(d.subtitle.trim(), margin, cy);
+    cy += subSize + 8 * k;
+  }
+  if (hasSublabel) {
+    cy += 12 * k;
+    ctx.font = fontStack(18 * k, '500');
+    ctx.fillStyle = '#9A9AA2';
+    ctx.fillText(d.sublabel, margin, cy);
+    cy += 30 * k;
+  }
+  if (hasQuote) {
+    cy += 16 * k;
+    const qStart = cy;
+    cy = drawRichText(ctx, runsSub, margin + 22, cy, maxW - 28, 32 * k, fcSub, d.theme, 13 * k, hlSub, textAlign, colorMap);
+    ctx.fillStyle = d.theme;
+    ctx.beginPath();
+    ctx.roundRect(margin, qStart, 4, Math.max(20, cy - qStart - 6), 2);
+    ctx.fill();
+  }
+  cy += 16 * k;
+  ctx.fillStyle = d.theme;
+  ctx.fillRect(margin, cy, 48 * k, 3 * k);
+  cy += 28 * k;
+  drawRichText(ctx, runsBody, margin, cy, maxW, 36 * k, fcBody, d.theme, 16 * k, hlBody, textAlign, colorMap);
+
+  ctx.textBaseline = 'alphabetic';
+  drawPill(ctx, W - margin - 180, FULL_H - 110, d.pill, d.theme);
+
+  drawFrame(ctx, W, FULL_H, d.frameStyle, d.theme);
+  if (!skipGuide && d.showSafeGuide) drawSafeGuide(ctx, W, FULL_H);
+}
+
+async function renderVideoList(ctx, canvas, img, d, guide) {
+  canvas.height = 1080;
+  const vH = d.videoH;
+  const margin = 80;
+  const {timestampText} = getDates();
+  const colorMap = getColorMap(d);
+
+  ctx.fillStyle='#000'; ctx.fillRect(0, vH, W, 1080 - vH);
+  const grad = ctx.createLinearGradient(0, vH - 100, 0, vH);
+  grad.addColorStop(0, "rgba(0,0,0,0)");
+  grad.addColorStop(1, "rgba(0,0,0,1)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, vH - 100, W, 100);
+
+  if (img) {
+    const s = Math.max(W/img.width, vH/img.height)*(d.scale/100);
+    ctx.save(); ctx.beginPath(); ctx.rect(0,0,W,vH); ctx.clip();
+    ctx.drawImage(img, (W-img.width*s)/2, (vH-img.height*s)*(d.yOffset/100), img.width*s, img.height*s);
+    ctx.restore();
+  }
+
+  if (d.grain) applyGrain(ctx, W, 1080, d.grainAmt || 20);
+
+  if (guide) { ctx.strokeStyle='rgba(255,255,255,0.3)'; ctx.setLineDash([5,5]); ctx.strokeRect(10,10,W-20,vH-20); ctx.setLineDash([]); }
+
+  let cy = vH + 70;
+  ctx.font = fontStack(22, '700'); ctx.fillStyle = d.theme;
+  ctx.fillText(d.cat + " | " + timestampText + " | " + d.src, margin, cy);
+  cy += 70;
+  cy = drawRichText(ctx, parseMarkup(d.head), margin, cy, W - margin*2, 42, '#FFF', d.theme, 10, 'both', 'left', colorMap) + 20;
+
+  if (d.subtitle && d.subtitle.trim()) {
+    ctx.font = fontStack(24, '400');
+    ctx.fillStyle = 'rgba(244,244,242,0.75)';
+    ctx.fillText(d.subtitle.trim(), margin, cy);
+    cy += 36;
+  }
+
+  const items = d.body.split('\n').filter(t=>t.trim());
+  items.forEach((it, i) => {
+    ctx.fillStyle = d.theme; ctx.beginPath(); ctx.arc(margin + 15, cy + 12, 18, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#000'; ctx.font = fontStack(20,'800'); ctx.textAlign='center'; ctx.fillText(i+1, margin + 15, cy + 20);
+    ctx.textAlign='left';
+    cy = drawRichText(ctx, parseMarkup(it), margin + 50, cy, W - margin*2 - 50, 30, '#DDD', d.theme, 12, 'both', 'left', colorMap) + 15;
   });
 
-  populateFonts();
-  renderBoxInputs();
-  updatePreviewSize();
+  drawPill(ctx, W-margin-140, 1080-margin-40, d.pill, d.theme);
+  drawFrame(ctx, W, 1080, d.frameStyle, d.theme);
+  if (d.showSafeGuide) drawSafeGuide(ctx, W, 1080);
+}
 
-  ['b-main-title', 'b-main-subtitle', 'f-title', 'f-subtitle', 'f-body', 'f-source', 'f-date'].forEach(id => {
-    const el = document.getElementById(id);
-    if(el) {
-      el.addEventListener('input', updatePreview);
-      el.addEventListener('focus', () => { lastFocusedInput = el; });
+function applyVignette(ctx, x, y, w, h) {
+  const g = ctx.createRadialGradient(w/2, h/2, h*0.3, w/2, h/2, h);
+  g.addColorStop(0, 'transparent'); g.addColorStop(1, 'rgba(0,0,0,0.8)');
+  ctx.fillStyle = g; ctx.fillRect(x,y,w,h);
+}
+function fontStack(s, w){
+  const fontSelect = document.getElementById('activeFont');
+  const f = fontSelect ? fontSelect.value : 'default';
+  return `${w} ${s}px "${f === 'default' ? 'Noto Serif KR' : f}", serif`;
+}
+const QUOTE_NORMAL_COLOR = '#D8D5D0';
+
+function parseHighlightToken(raw) {
+  const m = (raw || '').match(/^(?:(1a|1b|1c|1|2)\s*)?(.*)$/i);
+  if (!m) return { text: raw || '', highlight: true, style: null, colorKey: null };
+  const prefix = (m[1] || '').toLowerCase();
+  let style = null;
+  let colorKey = null;
+  if (prefix === '1' || prefix === '1a') { style = 'color'; colorKey = 'a'; }
+  else if (prefix === '1b') { style = 'color'; colorKey = 'b'; }
+  else if (prefix === '1c') { style = 'color'; colorKey = 'c'; }
+  else if (prefix === '2') { style = 'underline'; colorKey = null; }
+  return { text: m[2] ?? '', highlight: true, style, colorKey };
+}
+function parseMarkup(t) {
+  return (t || '').split('\\n').join('\n').split('\n').map(line => {
+    const parts = line.split('**');
+    return parts.map((s, i) => {
+      if (i % 2 === 0) return { text: s, highlight: false, style: null, colorKey: null };
+      return parseHighlightToken(s);
+    });
+  });
+}
+function parseQuoteMarkup(t) {
+  return (t || '').split('\\n').join('\n').split('\n').map(l => [{
+    text: l, highlight: true, style: null, colorKey: null
+  }]);
+}
+function resolveHlColor(colorKey, colorMap, fallback) {
+  if (!colorKey || !colorMap) return fallback;
+  if (colorKey === 'a') return colorMap.a || fallback;
+  if (colorKey === 'b') return colorMap.b || fallback;
+  if (colorKey === 'c') return colorMap.c || fallback;
+  return fallback;
+}
+function drawRichText(ctx, lr, x, y, mw, fs, cn, ch, lg, style, align, colorMap) {
+  style = style || 'both';
+  align = align || 'left';
+  colorMap = colorMap || null;
+  const underlineColor = '#E53E3E';
+  const tb = ctx.textBaseline || 'alphabetic';
+  function underlineY(cy) {
+    if (tb === 'top' || tb === 'hanging') return cy + fs + Math.max(2, fs * 0.1);
+    if (tb === 'middle') return cy + fs * 0.55;
+    return cy + Math.max(3, fs * 0.14);
+  }
+  const lh = fs + lg;
+  const visualLines = [];
+  lr.forEach(r => {
+    let curSegs = [];
+    let curSeg = null;
+    let curW = 0;
+    r.forEach(u => {
+      const isHL = !!u.highlight;
+      const segStyle = (isHL && u.style) ? u.style : style;
+      const useColor = isHL && (segStyle === 'color' || segStyle === 'both');
+      const useUnderline = isHL && (segStyle === 'underline' || segStyle === 'both');
+      const fillCol = useColor ? resolveHlColor(u.colorKey, colorMap, ch) : cn;
+      ctx.font = fontStack(fs, useColor ? '900' : '400');
+      for (const c of u.text) {
+        const w = ctx.measureText(c).width;
+        if (curW + w > mw) {
+          if (curSeg) curSegs.push(curSeg);
+          visualLines.push({ segs: curSegs, width: curW });
+          curSegs = []; curSeg = null; curW = 0;
+        }
+        const same = curSeg &&
+          curSeg.useColor === useColor &&
+          curSeg.useUnderline === useUnderline &&
+          curSeg.fillCol === fillCol;
+        if (!same) {
+          if (curSeg) curSegs.push(curSeg);
+          curSeg = { text: '', useColor, useUnderline, fillCol, width: 0 };
+        }
+        curSeg.text += c;
+        curSeg.width += w;
+        curW += w;
+      }
+    });
+    if (curSeg) curSegs.push(curSeg);
+    visualLines.push({ segs: curSegs, width: curW });
+  });
+  let cy = y;
+  visualLines.forEach(vl => {
+    let cx = x;
+    if (align === 'center') cx = x + Math.max(0, (mw - vl.width) / 2);
+    vl.segs.forEach(seg => {
+      ctx.font = fontStack(fs, seg.useColor ? '900' : '400');
+      ctx.fillStyle = seg.fillCol;
+      ctx.fillText(seg.text, cx, cy);
+      if (seg.useUnderline) {
+        ctx.strokeStyle = underlineColor;
+        ctx.lineWidth = Math.max(2, fs * 0.07);
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(cx, underlineY(cy));
+        ctx.lineTo(cx + seg.width, underlineY(cy));
+        ctx.stroke();
+      }
+      cx += seg.width;
+    });
+    cy += lh;
+  });
+  return cy;
+}
+function drawPill(ctx, x, y, t, c){
+  ctx.font = fontStack(22, '500');
+  const pw = ctx.measureText(t).width + 64;
+  const ph = 48;
+  ctx.fillStyle = 'rgba(20,20,26,0.95)';
+  ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(x, y, pw, ph, ph / 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = c;
+  ctx.beginPath();
+  ctx.arc(x + 22, y + ph / 2, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#FFFFFF';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(t, x + 38, y + ph / 2 + 1);
+  ctx.textBaseline = 'alphabetic';
+}
+function getDates(){
+  const n = new Date();
+  const krDate = `${n.getFullYear()}년 ${n.getMonth()+1}월 ${n.getDate()}일`;
+  const krShort = `${n.getFullYear()}.${n.getMonth()+1}.${n.getDate()}`;
+  const usDate = n.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  const usTime = n.toLocaleString('en-US', {
+    year: 'numeric', month: 'short', day: 'numeric',
+    hour: 'numeric', minute: '2-digit', hour12: true,
+    timeZone: 'America/New_York'
+  });
+  return {
+    coverDateText: `${krShort} (${usDate})`,
+    timestampText: `${krDate} (${usTime} ET)`
+  };
+}
+function loadImage(s){ return new Promise(res => { if(!s) return res(null); const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = s; }); }
+
+function isIOS() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+function saveCanvasImage(canvas, filename) {
+  if (!canvas) return;
+  canvas.toBlob((blob) => {
+    if (!blob) { alert('이미지 생성에 실패했습니다. 다시 시도해주세요.'); return; }
+    const url = URL.createObjectURL(blob);
+    if (isIOS()) {
+      const w = window.open(url, '_blank');
+      if (!w) location.href = url;
+      else setTimeout(() => alert('이미지를 길게 누른 뒤 "이미지 저장"을 선택하세요.'), 300);
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    } else {
+      const a = document.createElement('a');
+      a.download = filename;
+      a.href = url;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
-  });
+  }, 'image/png');
+}
+
+/* ===== 체크리스트 ===== */
+function requestDownload(type, id) {
+  pendingDownload = { type, id };
+  ['ck1','ck2','ck3','ck4'].forEach(cid => { document.getElementById(cid).checked = false; });
+  updateChecklistBtn();
+  const desc = document.getElementById('checklistDesc');
+  if (type === 'cover') desc.textContent = '커버 이미지를 저장하기 전에 확인하세요.';
+  else if (type === 'zip') desc.textContent = 'ZIP(또는 일괄 저장) 전에 확인하세요.';
+  else desc.textContent = '카드 이미지를 저장하기 전에 확인하세요.';
+  document.getElementById('checklistModal').classList.add('show');
+}
+function closeChecklist() {
+  document.getElementById('checklistModal').classList.remove('show');
+  pendingDownload = null;
+}
+function updateChecklistBtn() {
+  const all = ['ck1','ck2','ck3','ck4'].every(id => document.getElementById(id).checked);
+  document.getElementById('checklistSaveBtn').disabled = !all;
+}
+async function confirmChecklistDownload() {
+  const job = pendingDownload;
+  closeChecklist();
+  if (!job) return;
+  if (job.type === 'cover') await downloadCover();
+  else if (job.type === 'card') await downloadCardImage(job.id);
+  else if (job.type === 'zip') await downloadAllAsZip();
+}
+async function downloadCover() {
+  await renderCover({ skipGuide: true });
+  saveCanvasImage(document.getElementById('coverCanvas'), 'cover.png');
+  renderCover();
+}
+async function downloadCardImage(id) {
+  await updateCard(id, { skipGuide: true });
+  saveCanvasImage(document.getElementById(`canvas-${id}`), `card_${id}.png`);
+  await updateCard(id);
+}
+async function downloadAllAsZip(){
+  if (isIOS()) {
+    const ok = confirm(`아이폰에서는 ZIP 대신 이미지를 하나씩 저장합니다.\n총 ${cards.length + 1}장 (커버 + 카드)\n계속할까요?`);
+    if (!ok) return;
+    await renderCover({ skipGuide: true });
+    saveCanvasImage(document.getElementById('coverCanvas'), 'cover.png');
+    for (let i = 0; i < cards.length; i++) {
+      await updateCard(cards[i].id, { skipGuide: true });
+      await new Promise(r => setTimeout(r, 600));
+      saveCanvasImage(document.getElementById(`canvas-${cards[i].id}`), `card_${i+1}.png`);
+    }
+    await renderCover();
+    for (const c of cards) await updateCard(c.id);
+    return;
+  }
+  const z = new JSZip();
+  const slug = getDates().coverDateText.replace(/[^\d.]/g, '') || 'news';
+  await renderCover({ skipGuide: true });
+  z.file(`cover.png`, await new Promise(r => document.getElementById('coverCanvas').toBlob(r)));
+  for (let i = 0; i < cards.length; i++) {
+    await updateCard(cards[i].id, { skipGuide: true });
+    const canv = document.getElementById(`canvas-${cards[i].id}`);
+    if (canv) z.file(`card_${i+1}.png`, await new Promise(r => canv.toBlob(r)));
+  }
+  z.generateAsync({type:"blob"}).then(c => saveAs(c, `news_${slug}.zip`));
+  await renderCover();
+  for (const c of cards) await updateCard(c.id);
+}
+async function exportJSON() {
+  const base = JSON.parse(localStorage.getItem('card_news_data') || '{}');
+  base.coverImgData = coverImgData || await loadImageFromDB('cover');
+  if (base.cards) {
+    for (const c of base.cards) {
+      const mem = cards.find(x => String(x.id) === String(c.id));
+      c.imgData = mem?.imgData || await loadImageFromDB(`card_${c.id}`) || null;
+    }
+  }
+  saveAs(new Blob([JSON.stringify(base)], {type: "application/json"}), `backup.json`);
+}
+function importJSON(e) {
+  const r = new FileReader();
+  r.onload = async (ev) => {
+    try {
+      const parsed = JSON.parse(ev.target.result);
+      if (parsed.coverImgData) {
+        await openDB();
+        await saveImageToDB('cover', parsed.coverImgData);
+        coverImgData = parsed.coverImgData;
+        delete parsed.coverImgData;
+      }
+      if (parsed.cards) {
+        await openDB();
+        for (const c of parsed.cards) {
+          if (c.imgData) {
+            await saveImageToDB(`card_${c.id}`, c.imgData);
+            delete c.imgData;
+          }
+        }
+      }
+      localStorage.setItem('card_news_data', JSON.stringify(parsed));
+      location.reload();
+    } catch (err) {
+      alert('불러오기 실패: ' + err.message);
+    }
+  };
+  r.readAsText(e.target.files[0]);
+}
+async function clearAllData() {
+  if (!confirm('모든 데이터가 삭제됩니다.')) return;
+  localStorage.removeItem('card_news_data');
+  if (db && db.objectStoreNames.contains('images')) {
+    const tx = db.transaction('images', 'readwrite');
+    tx.objectStore('images').clear();
+    await new Promise(r => { tx.oncomplete = r; tx.onerror = r; });
+  }
+  location.reload();
+}
 </script>
 </body>
 </html>
