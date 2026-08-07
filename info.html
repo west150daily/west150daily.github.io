@@ -40,21 +40,44 @@
     font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
     background: var(--bg);
     color: var(--text);
-    padding: 20px;
+    padding: 0;
     transition: background 0.3s;
     min-height: 100vh;
   }
 
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px 20px;
+    background: var(--card-bg);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--card-border);
+  }
+  .topbar-brand h1 { font-size: 17px; font-weight: 800; letter-spacing: -0.4px; margin: 0; }
+  .topbar-brand .subtitle { color: var(--text-secondary); font-size: 12px; margin: 2px 0 0; }
+  .topbar-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end; }
+  .topbar-actions .icon-btn {
+    height: 36px; padding: 0 12px; border-radius: 10px;
+    background: rgba(120,120,128,0.12); font-size: 13px; font-weight: 600;
+  }
+  .topbar-actions .icon-btn.primary { background: var(--accent); color: #fff; }
+
   .container {
-    max-width: 1600px;
+    max-width: 1200px;
     margin: 0 auto;
+    padding: 24px 18px 100px;
     display: grid;
-    grid-template-columns: 420px 1fr;
-    gap: 28px;
+    grid-template-columns: minmax(300px, 400px) 1fr;
+    gap: 24px;
   }
 
-  h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.6px; margin-bottom: 4px; }
-  .subtitle { color: var(--text-secondary); font-size: 14px; margin-bottom: 22px; }
+  .workspace-hero {
+    grid-column: 1 / -1;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  .workspace-hero h2 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+  .workspace-hero p { color: var(--text-secondary); font-size: 14px; margin-top: 6px; }
 
   .panel {
     background: var(--card-bg);
@@ -62,19 +85,60 @@
     -webkit-backdrop-filter: blur(var(--glass-blur));
     border: 1px solid var(--card-border);
     border-radius: 24px;
-    padding: 22px;
+    padding: 18px;
     box-shadow: var(--shadow);
     height: fit-content;
-    position: sticky;
-    top: 20px;
-    max-height: calc(100vh - 40px);
-    overflow-y: auto;
   }
 
-  .section { margin-bottom: 20px; }
+  .section { margin-bottom: 16px; }
   .section-title {
     font-size: 12px; font-weight: 600; color: var(--text-secondary);
     text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 9px;
+  }
+
+  .sec {
+    background: rgba(120,120,128,0.06);
+    border: 1px solid rgba(120,120,128,0.12);
+    border-radius: 14px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .sec-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 14px; cursor: pointer; user-select: none;
+    font-size: 12px; font-weight: 700; color: var(--accent);
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .sec-head .chev { font-size: 10px; opacity: 0.55; transition: transform 0.2s; color: var(--text-secondary); }
+  .sec.collapsed .sec-body { display: none; }
+  .sec.collapsed .chev { transform: rotate(-90deg); }
+  .sec-body { padding: 4px 14px 14px; }
+
+  .drawer-backdrop {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(8px); z-index: 200;
+  }
+  .drawer-backdrop.show { display: block; }
+  .drawer {
+    position: fixed; top: 0; right: 0; width: min(400px, 92vw); height: 100%;
+    background: var(--bg); border-left: 1px solid var(--card-border);
+    padding: 20px 18px 80px; overflow-y: auto; z-index: 210;
+    transform: translateX(105%); transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    box-shadow: -12px 0 40px rgba(0,0,0,0.2);
+  }
+  body.dark .drawer { background: #111; }
+  .drawer.open { transform: translateX(0); }
+  .drawer-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .drawer-head h2 { font-size: 18px; font-weight: 800; }
+
+  .scroll-fab {
+    position: fixed; right: 16px; bottom: 20px; z-index: 90;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .scroll-fab button {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    box-shadow: var(--shadow); font-weight: 700; font-size: 16px;
   }
 
   .btn-group { display: flex; flex-wrap: wrap; gap: 7px; }
@@ -350,17 +414,105 @@
   }
 
   @media (max-width: 1100px) {
-    .container { grid-template-columns: 1fr; }
+    .container { grid-template-columns: 1fr; padding: 16px 14px 100px; }
     .panel { position: static; max-height: none; }
   }
 </style>
 </head>
 <body>
-  <div class="container">
-    <div class="panel">
-      <h1>카드 생성기</h1>
-      <p class="subtitle">개인용 · 고퀄리티 인포그래픽 (최종 완성판)</p>
+  <div class="scroll-fab">
+    <button type="button" title="맨 위" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+    <button type="button" title="맨 아래" onclick="window.scrollTo({top:document.documentElement.scrollHeight,behavior:'smooth'})">↓</button>
+  </div>
 
+  <header class="topbar">
+    <div class="topbar-brand">
+      <h1>인포그래픽 카드</h1>
+      <p class="subtitle">개인용 · 미리보기 중심</p>
+    </div>
+    <div class="topbar-actions">
+      <button type="button" class="icon-btn active" id="theme-light">라이트</button>
+      <button type="button" class="icon-btn" id="theme-dark">다크</button>
+      <input type="color" id="accent-color" value="#007AFF" title="포인트 컬러" style="width:36px;height:36px;border:none;border-radius:10px;padding:0;background:none;">
+      <button type="button" class="icon-btn" onclick="openDrawer()">설정</button>
+      <button type="button" class="icon-btn primary" onclick="smartSave()">저장</button>
+    </div>
+  </header>
+
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
+  <aside class="drawer" id="settingsDrawer">
+    <div class="drawer-head">
+      <h2>디자인 설정</h2>
+      <button type="button" class="icon-btn" onclick="closeDrawer()" style="padding:8px 12px;border-radius:10px;background:rgba(120,120,128,0.12);border:none;">닫기</button>
+    </div>
+
+    <div class="section">
+      <div class="section-title">디자인 스타일 · 모서리</div>
+      <div class="btn-group" id="style-btns" style="margin-bottom:10px;">
+        <button class="active" data-style="apple">Apple</button>
+        <button data-style="modern">Modern</button>
+        <button data-style="bold">Bold</button>
+        <button data-style="warm">Warm</button>
+        <button data-style="editorial">Editorial</button>
+      </div>
+      <div class="slider-row" style="background:rgba(120,120,128,0.06); padding:10px 12px; border-radius:12px;">
+        <span>모서리 둥글기</span>
+        <input type="range" id="card-radius-slider" min="0" max="60" value="28">
+        <span id="card-radius-label">28px</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">배경 텍스처</div>
+      <div class="btn-group" id="texture-btns">
+        <button class="active" data-texture="none">없음</button>
+        <button data-texture="noise">필름 노이즈</button>
+        <button data-texture="grid">모눈종이</button>
+        <button data-texture="paper">종이 질감</button>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">글꼴</div>
+      <div style="margin-bottom:6px; font-size:12px; color:var(--text-secondary);">제목 / 소제목</div>
+      <select id="font-title-select"></select>
+      <div style="margin-bottom:6px; font-size:12px; color:var(--text-secondary);">본문</div>
+      <select id="font-body-select"></select>
+    </div>
+    <div class="section">
+      <div class="section-title">글꼴 크기</div>
+      <div class="btn-group" style="margin-bottom:8px;">
+        <button class="active" id="font-auto">자동 맞춤</button>
+        <button id="font-manual">수동 조절</button>
+      </div>
+      <div id="font-slider-wrap" style="display:none; background:rgba(120,120,128,0.06); padding:12px; border-radius:12px;">
+        <div class="slider-row">
+          <span>소제목 크기</span>
+          <input type="range" id="sub-font-size" min="12" max="50" value="20">
+          <span id="sub-font-size-label">20px</span>
+        </div>
+        <div class="slider-row">
+          <span>본문 크기</span>
+          <input type="range" id="body-font-size" min="12" max="50" value="16">
+          <span id="font-size-label">16px</span>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">텍스트 강조</div>
+      <div class="color-row">
+        <input type="color" id="highlight-color" value="#FFF176">
+        <button onclick="insertHighlight()">🖍 형광펜</button>
+        <button onclick="insertUnderline()">빨간 밑줄</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="container">
+    <div class="workspace-hero">
+      <h2>카드 스튜디오</h2>
+      <p>콘텐츠는 왼쪽, 미리보기는 오른쪽. 디자인·글꼴은 「설정」에서 엽니다.</p>
+    </div>
+
+    <div class="panel">
       <div class="section">
         <div class="section-title">사이즈</div>
         <div class="btn-group" id="size-btns">
@@ -377,71 +529,53 @@
       </div>
 
       <div class="section">
-        <div class="section-title">템플릿 유형</div>
+        <div class="section-title">템플릿</div>
         <div class="btn-group" id="template-btns">
-          <button class="active" data-template="boxes">다단 쌓기 (소제목+본문)</button>
-          <button data-template="news">일반 텍스트형</button>
+          <button class="active" data-template="boxes">다단 쌓기</button>
+          <button data-template="news">일반 텍스트</button>
         </div>
       </div>
 
-      <div class="section" id="column-setting-section">
-        <div class="section-title">다단(섹션) 분할 개수</div>
-        <div class="btn-group" id="column-btns" style="margin-bottom: 10px;">
-          <button data-cols="1">1단</button>
-          <button class="active" data-cols="2">2단 (기본)</button>
-          <button data-cols="3">3단</button>
+      <div class="sec collapsed" id="column-setting-section">
+        <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span>다단 · 연결선</span><span class="chev">▼</span>
         </div>
-        <div class="section-title">단락 간 연결선 (Flow Line)</div>
-        <div class="btn-group" id="flow-line-btns">
-          <button class="active" data-line="none">없음</button>
-          <button data-line="solid">실선</button>
-          <button data-line="dashed">점선</button>
-          <button data-line="arrow">화살표</button>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">글꼴 크기 조절</div>
-        <div class="btn-group" style="margin-bottom:8px;">
-          <button class="active" id="font-auto">자동 맞춤</button>
-          <button id="font-manual">수동 조절</button>
-        </div>
-        <div id="font-slider-wrap" style="display:none; background:rgba(120,120,128,0.06); padding:12px; border-radius:12px;">
-          <div class="slider-row">
-            <span>소제목 크기</span>
-            <input type="range" id="sub-font-size" min="12" max="50" value="20">
-            <span id="sub-font-size-label">20px</span>
+        <div class="sec-body">
+          <div class="section-title">다단 개수</div>
+          <div class="btn-group" id="column-btns" style="margin-bottom: 10px;">
+            <button data-cols="1">1단</button>
+            <button class="active" data-cols="2">2단</button>
+            <button data-cols="3">3단</button>
           </div>
-          <div class="slider-row">
-            <span>본문 크기</span>
-            <input type="range" id="body-font-size" min="12" max="50" value="16">
-            <span id="font-size-label">16px</span>
+          <div class="section-title">연결선</div>
+          <div class="btn-group" id="flow-line-btns">
+            <button class="active" data-line="none">없음</button>
+            <button data-line="solid">실선</button>
+            <button data-line="dashed">점선</button>
+            <button data-line="arrow">화살표</button>
           </div>
         </div>
       </div>
 
       <div class="section" id="box-builder-section">
-        <div class="section-title">카드 전체 제목 (선택)</div>
+        <div class="section-title">카드 제목</div>
         <input type="text" id="b-main-title" placeholder="전체 메인 제목">
         <input type="text" id="b-main-subtitle" placeholder="전체 부제목" style="margin-bottom:12px;">
-
-        <div class="section-title">단락 추가 및 순서 조정 (드래그 또는 ▲▼)</div>
+        <div class="section-title">단락 (드래그 · ▲▼)</div>
         <div id="boxes-input-container"></div>
-        <button class="btn-secondary" style="width:100%; border: 1.5px dashed var(--accent); color:var(--accent); font-weight:600;" onclick="addNewBoxField()">+ 똑같은 [칸] 계속 추가하기</button>
+        <button class="btn-secondary" style="width:100%; border: 1.5px dashed var(--accent); color:var(--accent); font-weight:600;" onclick="addNewBoxField()">+ 단락 추가</button>
       </div>
 
       <div class="section" id="standard-text-section" style="display:none;">
-        <div class="section-title">일반 텍스트 입력</div>
+        <div class="section-title">일반 텍스트</div>
         <div class="mode-toggle">
-          <button class="active" id="mode-bulk">단순 붙여넣기</button>
-          <button id="mode-fields">필드별 입력</button>
+          <button class="active" id="mode-bulk">붙여넣기</button>
+          <button id="mode-fields">필드 입력</button>
         </div>
-
         <div id="bulk-input" class="field-group active">
           <textarea id="bulk-text" placeholder="제목&#10;부제목&#10;본문 내용...&#10;출처 | 2026.08.06"></textarea>
           <button class="btn-primary" style="margin-top:6px;" onclick="parseBulk()">자동 채우기</button>
         </div>
-
         <div id="fields-input" class="field-group">
           <input type="text" id="f-title" placeholder="제목">
           <input type="text" id="f-subtitle" placeholder="부제목 / 설명">
@@ -450,104 +584,52 @@
       </div>
 
       <div class="section">
-        <div class="section-title">출처 및 날짜 (하단)</div>
-        <input type="text" id="f-source" placeholder="출처 (예: OO뉴스)">
-        <input type="text" id="f-date" placeholder="날짜 (예: 2026. 08. 06)">
+        <div class="section-title">출처 · 날짜</div>
+        <input type="text" id="f-source" placeholder="출처">
+        <input type="text" id="f-date" placeholder="날짜">
       </div>
 
-      <div class="section">
-        <div class="section-title">로고 / 워터마크</div>
-        <input type="file" id="logo-input" accept="image/*" style="margin-bottom:6px;">
-        <input type="text" id="f-watermark-text" placeholder="인스타 계정명 (예: @my_brand)">
-      </div>
-
-      <div class="section">
-        <div class="section-title">디자인 스타일 및 모서리 곡률</div>
-        <div class="btn-group" id="style-btns" style="margin-bottom:10px;">
-          <button class="active" data-style="apple">Apple</button>
-          <button data-style="modern">Modern</button>
-          <button data-style="bold">Bold</button>
-          <button data-style="warm">Warm</button>
-          <button data-style="editorial">Editorial</button>
+      <div class="sec collapsed">
+        <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span>로고 · 워터마크</span><span class="chev">▼</span>
         </div>
-        <div class="slider-row" style="background:rgba(120,120,128,0.06); padding:10px 12px; border-radius:12px;">
-          <span>모서리 둥글기</span>
-          <input type="range" id="card-radius-slider" min="0" max="60" value="28">
-          <span id="card-radius-label">28px</span>
+        <div class="sec-body">
+          <input type="file" id="logo-input" accept="image/*" style="margin-bottom:6px;">
+          <input type="text" id="f-watermark-text" placeholder="@계정명">
         </div>
       </div>
 
-      <div class="section">
-        <div class="section-title">배경 텍스처 (질감 효과)</div>
-        <div class="btn-group" id="texture-btns">
-          <button class="active" data-texture="none">없음 (기본)</button>
-          <button data-texture="noise">필름 노이즈</button>
-          <button data-texture="grid">모눈종이</button>
-          <button data-texture="paper">종이 질감</button>
+      <div class="sec collapsed">
+        <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span>대표 사진</span><span class="chev">▼</span>
         </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">테마 및 포인트 컬러</div>
-        <div class="btn-group" style="margin-bottom:10px;">
-          <button id="theme-light" class="active">라이트</button>
-          <button id="theme-dark">다크</button>
-        </div>
-        <div class="color-row">
-          <input type="color" id="accent-color" value="#007AFF">
-          <span style="font-size:13px; font-weight:600;">컬러 변경</span>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">글꼴 (무료 17종)</div>
-        <div style="margin-bottom:6px; font-size:12px; color:var(--text-secondary);">제목 / 소제목</div>
-        <select id="font-title-select"></select>
-        <div style="margin-bottom:6px; font-size:12px; color:var(--text-secondary);">본문 / 내용</div>
-        <select id="font-body-select"></select>
-      </div>
-
-      <div class="section">
-        <div class="section-title">텍스트 강조 (드래그 후 클릭)</div>
-        <div class="color-row">
-          <input type="color" id="highlight-color" value="#FFF176">
-          <button onclick="insertHighlight()">🖍 형광펜</button>
-          <button onclick="insertUnderline()">빨간 밑줄</button>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">대표 사진 업로드 및 위치 선택</div>
-        <input type="file" id="image-input" accept="image/*">
-        
-        <div style="margin-top:8px; margin-bottom:6px; font-size:12px; color:var(--text-secondary);">대표 사진 배치 방식</div>
-        <div class="btn-group" id="photo-pos-btns" style="margin-bottom:10px;">
-          <button class="active" data-pos="top">상단 (기본)</button>
-          <button data-pos="background">전체 배경형</button>
-          <button data-pos="bottom">하단 배치형</button>
-        </div>
-
-        <div id="rep-photo-height-wrap" style="background:rgba(120,120,128,0.06); padding:10px 12px; border-radius:12px; margin-bottom:10px;">
-          <div class="slider-row" style="margin:0;">
-            <span style="min-width:70px;">사진 높이</span>
-            <input type="range" id="rep-photo-height" min="8" max="45" value="22">
-            <span id="rep-photo-height-label">22%</span>
+        <div class="sec-body">
+          <input type="file" id="image-input" accept="image/*">
+          <div style="margin-top:8px; margin-bottom:6px; font-size:12px; color:var(--text-secondary);">배치</div>
+          <div class="btn-group" id="photo-pos-btns" style="margin-bottom:10px;">
+            <button class="active" data-pos="top">상단</button>
+            <button data-pos="background">배경</button>
+            <button data-pos="bottom">하단</button>
           </div>
-          <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">상단/하단 배치 시 카드 높이 대비 비율 (배경형은 무시)</div>
+          <div id="rep-photo-height-wrap" style="background:rgba(120,120,128,0.06); padding:10px 12px; border-radius:12px; margin-bottom:10px;">
+            <div class="slider-row" style="margin:0;">
+              <span style="min-width:70px;">사진 높이</span>
+              <input type="range" id="rep-photo-height" min="8" max="45" value="22">
+              <span id="rep-photo-height-label">22%</span>
+            </div>
+          </div>
+          <div class="btn-group" id="photo-effect-btns">
+            <button class="active" data-effect="none">원본</button>
+            <button data-effect="vignette">비네팅</button>
+            <button data-effect="film">필름</button>
+          </div>
+          <button class="btn-secondary" style="margin-top:10px;" onclick="removeImage()">사진 제거</button>
         </div>
-
-        <div style="margin-bottom:6px; font-size:12px; color:var(--text-secondary);">사진 필터 효과</div>
-        <div class="btn-group" id="photo-effect-btns">
-          <button class="active" data-effect="none">원본</button>
-          <button data-effect="vignette">비네팅 효과</button>
-          <button data-effect="film">필름 효과</button>
-        </div>
-        <button class="btn-secondary" style="margin-top:10px;" onclick="removeImage()">대표 사진 제거</button>
       </div>
 
       <div class="actions">
-        <button class="btn-primary" onclick="downloadAllPages()">고화질 PNG 저장하기</button>
-        <button class="btn-secondary" onclick="showSavePreview()">아이폰용 · 이미지 보기 (길게 눌러 저장)</button>
+        <button class="btn-primary" onclick="smartSave()">고화질 PNG 저장</button>
+        <button class="btn-secondary" onclick="showSavePreview()">이미지 크게 보기 (길게 눌러 저장)</button>
       </div>
     </div>
 
@@ -1458,7 +1540,59 @@
     }
   }
 
-  // 일반 다운로드 (Blob)
+  function isIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  }
+
+  function openDrawer() {
+    document.getElementById('settingsDrawer')?.classList.add('open');
+    document.getElementById('drawerBackdrop')?.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDrawer() {
+    document.getElementById('settingsDrawer')?.classList.remove('open');
+    document.getElementById('drawerBackdrop')?.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  async function saveBlobSmart(blob, filename) {
+    if (!blob) return false;
+    const file = new File([blob], filename, { type: 'image/png' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: filename });
+        return true;
+      } catch (err) {
+        if (err && err.name === 'AbortError') return true;
+      }
+    }
+    const url = URL.createObjectURL(blob);
+    if (isIOS()) {
+      const w = window.open(url, '_blank');
+      if (!w) {
+        const reader = new FileReader();
+        reader.onload = () => { location.href = reader.result; };
+        reader.readAsDataURL(blob);
+      } else {
+        setTimeout(() => alert('이미지를 길게 누른 뒤 「사진에 추가」또는 「이미지 저장」을 선택하세요.'), 300);
+      }
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      return true;
+    }
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }, 400);
+    return true;
+  }
+
   async function downloadAllPages() {
     const previews = document.querySelectorAll('.card-preview');
     if (!previews.length) return;
@@ -1467,34 +1601,20 @@
       try {
         const canvas = await generateCanvas(previews[i]);
         if (!canvas) continue;
-
         const pageSuffix = previews.length > 1 ? `_p${i + 1}` : '';
         const filename = `Infographic_Card_${currentSize.w}x${currentSize.h}${pageSuffix}.png`;
-
-        canvas.toBlob(function(blob) {
-          if (!blob) {
-            const dataUrl = canvas.toDataURL('image/png');
-            const link = document.createElement('a');
-            link.download = filename;
-            link.href = dataUrl;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            return;
-          }
-          const url = URL.createObjectURL(blob);
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 1.0));
+        if (!blob) {
+          const dataUrl = canvas.toDataURL('image/png');
           const link = document.createElement('a');
-          link.href = url;
           link.download = filename;
-          link.style.display = 'none';
+          link.href = dataUrl;
           document.body.appendChild(link);
           link.click();
-          setTimeout(() => {
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-          }, 300);
-        }, 'image/png', 1.0);
-
+          document.body.removeChild(link);
+        } else {
+          await saveBlobSmart(blob, filename);
+        }
         if (i < previews.length - 1) await new Promise(r => setTimeout(r, 700));
       } catch (err) {
         console.error(err);
@@ -1503,23 +1623,39 @@
     }
   }
 
-  // 아이폰용: 이미지 크게 보여주기 (길게 눌러 저장)
+  async function smartSave() {
+    if (isIOS() || (navigator.canShare && true)) {
+      await downloadAllPages();
+      return;
+    }
+    await downloadAllPages();
+  }
+
   async function showSavePreview() {
     const previews = document.querySelectorAll('.card-preview');
     if (!previews.length) return;
-
-    // 첫 페이지만 우선 표시 (여러 페이지면 순서대로)
     const canvas = await generateCanvas(previews[0]);
     if (!canvas) return;
+
+    // 가능하면 공유 시트 먼저
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 1.0));
+    if (blob) {
+      const file = new File([blob], `Infographic_Card.png`, { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: '인포그래픽 카드' });
+          return;
+        } catch (err) {
+          if (err && err.name === 'AbortError') return;
+        }
+      }
+    }
 
     const dataUrl = canvas.toDataURL('image/png');
     const img = document.getElementById('save-preview-img');
     img.src = dataUrl;
-
     const overlay = document.getElementById('save-overlay');
     overlay.classList.add('active');
-
-    // 여러 페이지가 있으면 안내
     if (previews.length > 1) {
       const guide = overlay.querySelector('.save-guide');
       guide.innerHTML = `<strong>이미지를 길게 눌러서 저장</strong>하세요<br>(현재 1/${previews.length} 페이지 · 사진 앱에 저장됩니다)`;
@@ -1530,9 +1666,11 @@
     document.getElementById('save-overlay').classList.remove('active');
   }
 
-  // 오버레이 배경 클릭 시 닫기
   document.getElementById('save-overlay').addEventListener('click', (e) => {
     if (e.target.id === 'save-overlay') closeSaveOverlay();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeDrawer();
   });
 
   populateFonts();
