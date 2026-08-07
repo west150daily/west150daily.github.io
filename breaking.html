@@ -6,7 +6,7 @@
 <title>브레이킹 카드뉴스 생성기</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200;600;900&family=Noto+Sans+KR:wght@300;400;600;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200;400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;600;700;900&family=Nanum+Myeongjo:wght@400;700;800&family=Black+Han+Sans&family=Do+Hyeon&family=Gowun+Batang:wght@400;700&family=Jua&display=swap" rel="stylesheet">
 <style>
   :root {
     --crimson: #8D1F24;
@@ -93,7 +93,6 @@
     }
   }
 
-  /* Side panel */
   .side-panel {
     background: var(--ui-panel);
     border-right: 1px solid var(--ui-border);
@@ -134,7 +133,6 @@
   }
   .icon-btn:hover { border-color: var(--crimson); }
 
-  /* Sections */
   .sec {
     background: var(--ui-input-bg);
     border: 1px solid var(--ui-border);
@@ -329,6 +327,32 @@
   }
   .warn-box.show { display: block; }
 
+  .preset-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .preset-btn {
+    padding: 10px 8px;
+    border-radius: 10px;
+    border: 1px solid var(--ui-border);
+    background: var(--ui-panel);
+    color: var(--ui-btn-text);
+    font-size: 12px !important;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.2s var(--ease);
+    cursor: pointer;
+  }
+  .preset-btn:hover, .preset-btn.active {
+    border-color: var(--crimson);
+    color: var(--ui-text);
+  }
+  .preset-btn.active {
+    background: var(--accent-soft);
+    color: var(--crimson-bright);
+  }
+
   .side-actions { margin-top: 16px; }
   .save-btn {
     width: 100%;
@@ -345,7 +369,6 @@
   .save-btn:hover { background: var(--crimson-bright); color: #fff; }
   .save-btn:active { transform: scale(0.98); }
 
-  /* Main preview */
   .main-area {
     padding: 36px 40px 80px;
     display: flex;
@@ -378,7 +401,6 @@
     background: #000;
   }
 
-  /* Modal */
   .modal-backdrop {
     display: none;
     position: fixed;
@@ -433,10 +455,36 @@
   .modal-ok { background: var(--crimson); color: #fff; border-color: var(--crimson); }
   .modal-ok:disabled { opacity: 0.4; cursor: not-allowed; }
 
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ui-panel);
+    color: var(--ui-text);
+    border: 1px solid var(--ui-border);
+    padding: 14px 22px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: var(--shadow);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s var(--ease);
+    z-index: 10001;
+    max-width: 90vw;
+    text-align: center;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
   @media (max-width: 767px) {
     .main-area { padding: 20px 16px max(80px, env(safe-area-inset-bottom) + 60px); }
     .sec-grid { grid-template-columns: 1fr; }
     .side-panel { padding: 20px 16px 32px; }
+    .preset-grid { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
@@ -464,6 +512,8 @@
     </div>
   </div>
 </div>
+
+<div id="toast" class="toast"></div>
 
 <div id="main-content" class="app">
 
@@ -503,6 +553,11 @@
             <input type="text" id="customH" value="1080" oninput="onCustomSizeInput()">
           </label>
         </div>
+
+        <label class="field">컬러 프리셋
+          <div class="preset-grid" id="colorPresetGrid" style="margin-top:4px;"></div>
+        </label>
+
         <div class="sec-grid">
           <label class="field">배경 색상
             <input type="color" id="bgColor" value="#1A1A1A" oninput="draw()">
@@ -575,6 +630,50 @@
         </label>
         <label class="checkbox-row">
           <input type="checkbox" id="safeGuide" onchange="draw()"> 안전 영역 가이드 (미리보기만)
+        </label>
+      </div>
+    </div>
+
+    <!-- 글꼴 · 크기 -->
+    <div class="sec">
+      <div class="sec-head" onclick="this.parentElement.classList.toggle('collapsed')">
+        <span>글꼴 · 크기</span><span class="chev">▼</span>
+      </div>
+      <div class="sec-body">
+        <label class="field">헤드라인 글꼴
+          <select id="fontFamily" onchange="draw()">
+            <option value="Noto Serif KR">Noto Serif KR (명조)</option>
+            <option value="Nanum Myeongjo">나눔명조</option>
+            <option value="Gowun Batang">고운바탕</option>
+            <option value="Noto Sans KR">Noto Sans KR (고딕)</option>
+            <option value="Black Han Sans">Black Han Sans</option>
+            <option value="Do Hyeon">도현체</option>
+            <option value="Jua">주아체</option>
+          </select>
+        </label>
+        <label class="field">본문/UI 글꼴
+          <select id="uiFontFamily" onchange="draw()">
+            <option value="Noto Sans KR">Noto Sans KR</option>
+            <option value="Noto Serif KR">Noto Serif KR</option>
+            <option value="Nanum Myeongjo">나눔명조</option>
+            <option value="Gowun Batang">고운바탕</option>
+          </select>
+        </label>
+
+        <label class="field">헤드라인 크기 배율 <span id="headScaleVal" style="color:var(--ui-text)">100%</span>
+          <input type="range" id="headScale" min="60" max="140" value="100" oninput="document.getElementById('headScaleVal').textContent = this.value + '%'; draw();">
+        </label>
+        <label class="field">이브로우 크기 <span id="subSizeVal" style="color:var(--ui-text)">22</span>
+          <input type="range" id="subSize" min="14" max="36" value="22" oninput="document.getElementById('subSizeVal').textContent = this.value; draw();">
+        </label>
+        <label class="field">부제 크기 배율 <span id="subheadScaleVal" style="color:var(--ui-text)">100%</span>
+          <input type="range" id="subheadScale" min="70" max="140" value="100" oninput="document.getElementById('subheadScaleVal').textContent = this.value + '%'; draw();">
+        </label>
+        <label class="field">인용구 크기 배율 <span id="quoteScaleVal" style="color:var(--ui-text)">100%</span>
+          <input type="range" id="quoteScale" min="70" max="140" value="100" oninput="document.getElementById('quoteScaleVal').textContent = this.value + '%'; draw();">
+        </label>
+        <label class="field">브랜드/날짜 크기 <span id="tagSizeVal" style="color:var(--ui-text)">20</span>
+          <input type="range" id="tagSize" min="12" max="28" value="20" oninput="document.getElementById('tagSizeVal').textContent = this.value; draw();">
         </label>
       </div>
     </div>
@@ -654,640 +753,853 @@ let bgImage = null;
 let posMode = 'auto';
 let grainCanvasCache = null;
 let grainCacheKey = '';
+let currentPreset = 'crimson';
 
 const PW_KEY = 'breaking_card_pw_hash';
 const THEME_KEY = 'breaking_card_theme';
 
+const COLOR_PRESETS = {
+  crimson: {
+    name: '크림슨',
+    bg: '#1A1A1A', accent: '#8D1F24',
+    normal: '#B8B8B5', bold: '#FFFFFF', underline: '#C23F45'
+  },
+  midnight: {
+    name: '미드나잇',
+    bg: '#0B1220', accent: '#3B82F6',
+    normal: '#A8B4C8', bold: '#F0F6FF', underline: '#60A5FA'
+  },
+  emerald: {
+    name: '에메랄드',
+    bg: '#0C1410', accent: '#059669',
+    normal: '#A8C0B0', bold: '#ECFDF5', underline: '#34D399'
+  },
+  gold: {
+    name: '골드',
+    bg: '#1A1610', accent: '#D4A017',
+    normal: '#C8B89A', bold: '#FFF8E7', underline: '#E8B923'
+  },
+  mono: {
+    name: '모노',
+    bg: '#111111', accent: '#FFFFFF',
+    normal: '#9A9A9A', bold: '#FFFFFF', underline: '#FFFFFF'
+  },
+  rose: {
+    name: '로즈',
+    bg: '#1A1214', accent: '#E11D48',
+    normal: '#C8A8B0', bold: '#FFF1F2', underline: '#FB7185'
+  },
+  violet: {
+    name: '바이올렛',
+    bg: '#120F1A', accent: '#7C3AED',
+    normal: '#B8A8D0', bold: '#F5F3FF', underline: '#A78BFA'
+  },
+  ocean: {
+    name: '오션',
+    bg: '#0A1620', accent: '#0EA5E9',
+    normal: '#A0B8C8', bold: '#F0F9FF', underline: '#38BDF8'
+  }
+};
+
+function buildColorPresets() {
+  const grid = document.getElementById('colorPresetGrid');
+  grid.innerHTML = '';
+  Object.keys(COLOR_PRESETS).forEach(key => {
+    const p = COLOR_PRESETS[key];
+    const btn = document.createElement('button');
+    btn.className = 'preset-btn' + (key === currentPreset ? ' active' : '');
+    btn.textContent = p.name;
+    btn.onclick = () => applyColorPreset(key);
+    grid.appendChild(btn);
+  });
+}
+
+function applyColorPreset(key) {
+  const p = COLOR_PRESETS[key];
+  if (!p) return;
+  currentPreset = key;
+  document.getElementById('bgColor').value = p.bg;
+  document.getElementById('accentColor').value = p.accent;
+  document.getElementById('normalColor').value = p.normal;
+  document.getElementById('boldColor').value = p.bold;
+  document.getElementById('underlineColor').value = p.underline;
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  const btns = document.querySelectorAll('.preset-btn');
+  Object.keys(COLOR_PRESETS).forEach((k, i) => {
+    if (k === key && btns[i]) btns[i].classList.add('active');
+  });
+  draw();
+}
+
 async function sha256(text) {
-    const enc = new TextEncoder().encode(text);
-    const buf = await crypto.subtle.digest('SHA-256', enc);
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  const enc = new TextEncoder().encode(text);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+/* localStorage가 샌드박스/제한 환경에서 막힐 수 있음 → 안전하게 래핑 */
+const _memStore = {};
+function storageAvailable() {
+  try {
+    const k = '__storage_test__';
+    localStorage.setItem(k, '1');
+    localStorage.removeItem(k);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+const canUseStorage = storageAvailable();
+
+function safeGet(key) {
+  if (canUseStorage) {
+    try { return localStorage.getItem(key); } catch (e) { return _memStore[key] || null; }
+  }
+  return _memStore[key] || null;
+}
+function safeSet(key, value) {
+  if (canUseStorage) {
+    try { localStorage.setItem(key, value); return; } catch (e) {}
+  }
+  _memStore[key] = value;
+}
+function safeRemove(key) {
+  if (canUseStorage) {
+    try { localStorage.removeItem(key); return; } catch (e) {}
+  }
+  delete _memStore[key];
 }
 
 function checkLock() {
-    const hash = localStorage.getItem(PW_KEY);
-    if(!hash) return;
-    document.getElementById('lockScreen').style.display = 'flex';
-    document.getElementById('main-content').style.display = 'none';
-    setTimeout(() => document.getElementById('lockInput')?.focus(), 50);
+  const hash = safeGet(PW_KEY);
+  if (!hash) return;
+  document.getElementById('lockScreen').style.display = 'flex';
+  document.getElementById('main-content').style.display = 'none';
+  setTimeout(() => document.getElementById('lockInput')?.focus(), 50);
 }
 
 async function tryUnlock() {
-    const input = document.getElementById('lockInput').value;
-    const hash = localStorage.getItem(PW_KEY);
-    const inputHash = await sha256(input);
-    if(inputHash === hash) {
-        document.getElementById('lockScreen').style.display = 'none';
-        document.getElementById('main-content').style.display = '';
-        document.getElementById('main-content').classList.add('app');
-    } else {
-        document.getElementById('lockError').textContent = '비밀번호가 틀렸습니다.';
-        document.getElementById('lockInput').value = '';
-        document.getElementById('lockInput').focus();
-    }
+  const input = document.getElementById('lockInput').value;
+  const hash = safeGet(PW_KEY);
+  const inputHash = await sha256(input);
+  if (inputHash === hash) {
+    document.getElementById('lockScreen').style.display = 'none';
+    document.getElementById('main-content').style.display = '';
+    document.getElementById('main-content').classList.add('app');
+  } else {
+    document.getElementById('lockError').textContent = '비밀번호가 틀렸습니다.';
+    document.getElementById('lockInput').value = '';
+    document.getElementById('lockInput').focus();
+  }
 }
 
 async function managePassword() {
-    const hasPw = !!localStorage.getItem(PW_KEY);
-    if(hasPw) {
-        const wantsChange = confirm('비밀번호를 변경하려면 확인, 삭제하려면 취소를 눌러주세요.');
-        const cur = prompt('현재 비밀번호를 입력하세요:');
-        if(cur === null) return;
-        if(await sha256(cur) !== localStorage.getItem(PW_KEY)) { alert('현재 비밀번호가 일치하지 않습니다.'); return; }
-        if(wantsChange) {
-            const np = prompt('새 비밀번호를 입력하세요:');
-            if(!np) return;
-            localStorage.setItem(PW_KEY, await sha256(np));
-            alert('비밀번호가 변경되었습니다.');
-        } else {
-            localStorage.removeItem(PW_KEY);
-            alert('비밀번호 잠금이 해제되었습니다.');
-        }
+  if (!canUseStorage) {
+    alert('현재 환경에서는 비밀번호 저장이 지원되지 않습니다.\n(샌드박스 또는 제한된 브라우저 환경)');
+    return;
+  }
+  const hasPw = !!safeGet(PW_KEY);
+  if (hasPw) {
+    const wantsChange = confirm('비밀번호를 변경하려면 확인, 삭제하려면 취소를 눌러주세요.');
+    const cur = prompt('현재 비밀번호를 입력하세요:');
+    if (cur === null) return;
+    if (await sha256(cur) !== safeGet(PW_KEY)) { alert('현재 비밀번호가 일치하지 않습니다.'); return; }
+    if (wantsChange) {
+      const np = prompt('새 비밀번호를 입력하세요:');
+      if (!np) return;
+      safeSet(PW_KEY, await sha256(np));
+      alert('비밀번호가 변경되었습니다.');
     } else {
-        const np = prompt('설정할 비밀번호를 입력하세요:');
-        if(!np) return;
-        const confirmPw = prompt('확인을 위해 한 번 더 입력해주세요:');
-        if(np !== confirmPw) { alert('비밀번호가 서로 다릅니다. 다시 시도해주세요.'); return; }
-        localStorage.setItem(PW_KEY, await sha256(np));
-        alert('비밀번호가 설정되었습니다. 다음 접속부터 잠금이 적용됩니다.\n(주의: 브라우저 개발자도구를 사용하면 우회될 수 있는 간단한 보호 기능입니다.)');
+      safeRemove(PW_KEY);
+      alert('비밀번호 잠금이 해제되었습니다.');
     }
+  } else {
+    const np = prompt('설정할 비밀번호를 입력하세요:');
+    if (!np) return;
+    const confirmPw = prompt('확인을 위해 한 번 더 입력해주세요:');
+    if (np !== confirmPw) { alert('비밀번호가 서로 다릅니다. 다시 시도해주세요.'); return; }
+    safeSet(PW_KEY, await sha256(np));
+    alert('비밀번호가 설정되었습니다. 다음 접속부터 잠금이 적용됩니다.\n(주의: 브라우저 개발자도구를 사용하면 우회될 수 있는 간단한 보호 기능입니다.)');
+  }
 }
 
 function applyTheme(mode) {
-    const isLight = mode === 'light';
-    document.body.classList.toggle('light', isLight);
-    document.getElementById('themeBtn').textContent = isLight ? '🌙 다크 UI' : '☀️ 라이트 UI';
-    localStorage.setItem(THEME_KEY, isLight ? 'light' : 'dark');
+  const isLight = mode === 'light';
+  document.body.classList.toggle('light', isLight);
+  document.getElementById('themeBtn').textContent = isLight ? '🌙 다크 UI' : '☀️ 라이트 UI';
+  safeSet(THEME_KEY, isLight ? 'light' : 'dark');
 }
 function toggleTheme() {
-    applyTheme(document.body.classList.contains('light') ? 'dark' : 'light');
+  applyTheme(document.body.classList.contains('light') ? 'dark' : 'light');
 }
 function initTheme() {
-    applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+  applyTheme(safeGet(THEME_KEY) || 'dark');
+}
+
+function showToast(msg, duration = 2800) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), duration);
 }
 
 checkLock();
 initTheme();
+buildColorPresets();
 
 document.getElementById('grain').addEventListener('change', () => {
-    document.getElementById('grainField').style.display = document.getElementById('grain').checked ? 'block' : 'none';
-    draw();
+  document.getElementById('grainField').style.display = document.getElementById('grain').checked ? 'block' : 'none';
+  draw();
 });
 
 function setPosMode(p, el) {
-    posMode = p;
-    document.querySelectorAll('#p1,#p2').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
-    document.getElementById('manualPosField').style.display = (p === 'manual') ? 'block' : 'none';
-    draw();
+  posMode = p;
+  document.querySelectorAll('#p1,#p2').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('manualPosField').style.display = (p === 'manual') ? 'block' : 'none';
+  draw();
 }
 
 function applyCanvasSize(w, h) {
-    const canvas = document.getElementById('cv');
-    canvas.width = w;
-    canvas.height = h;
-    document.getElementById('sizeInfo').textContent = `${w}×${h}`;
-    grainCanvasCache = null;
-    draw();
+  const canvas = document.getElementById('cv');
+  canvas.width = w;
+  canvas.height = h;
+  document.getElementById('sizeInfo').textContent = `${w}×${h}`;
+  grainCanvasCache = null;
+  draw();
 }
 
 function onSizePresetChange() {
-    const val = document.getElementById('sizePreset').value;
-    const customFields = document.getElementById('customSizeFields');
-    if (val === 'custom') {
-        customFields.style.display = 'grid';
-        onCustomSizeInput();
-        return;
-    }
-    customFields.style.display = 'none';
-    const clean = val.replace(/[A-Za-z]+$/, '');
-    const [w, h] = clean.split('x').map(Number);
-    applyCanvasSize(w, h);
+  const val = document.getElementById('sizePreset').value;
+  const customFields = document.getElementById('customSizeFields');
+  if (val === 'custom') {
+    customFields.style.display = 'grid';
+    onCustomSizeInput();
+    return;
+  }
+  customFields.style.display = 'none';
+  const clean = val.replace(/[A-Za-z]+$/, '');
+  const [w, h] = clean.split('x').map(Number);
+  applyCanvasSize(w, h);
 }
 
 function onCustomSizeInput() {
-    const wRaw = parseInt(document.getElementById('customW').value, 10);
-    const hRaw = parseInt(document.getElementById('customH').value, 10);
-    const w = Math.max(200, Math.min(3000, isNaN(wRaw) ? 1080 : wRaw));
-    const h = Math.max(200, Math.min(3000, isNaN(hRaw) ? 1080 : hRaw));
-    applyCanvasSize(w, h);
+  const wRaw = parseInt(document.getElementById('customW').value, 10);
+  const hRaw = parseInt(document.getElementById('customH').value, 10);
+  const w = Math.max(200, Math.min(3000, isNaN(wRaw) ? 1080 : wRaw));
+  const h = Math.max(200, Math.min(3000, isNaN(hRaw) ? 1080 : hRaw));
+  applyCanvasSize(w, h);
 }
 
 function loadBgImage(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => { bgImage = img; draw(); };
-        img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => { bgImage = img; draw(); };
+    img.onerror = () => showToast('이미지를 불러오지 못했습니다.');
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
 }
 
 function clearBgImage() {
-    bgImage = null;
-    document.getElementById('bgFile').value = '';
-    draw();
+  bgImage = null;
+  document.getElementById('bgFile').value = '';
+  draw();
 }
 
 function parseMarkupChars(paragraph) {
-    const parts = paragraph.split('**');
-    const chars = [];
-    parts.forEach((p, i) => {
-        const bold = i % 2 !== 0;
-        for (const ch of p) chars.push({ ch, bold });
-    });
-    return chars;
+  const parts = paragraph.split('**');
+  const chars = [];
+  parts.forEach((p, i) => {
+    const bold = i % 2 !== 0;
+    for (const ch of p) chars.push({ ch, bold });
+  });
+  return chars;
 }
 
 function mergeRuns(lineChars) {
-    const runs = [];
-    lineChars.forEach(c => {
-        const last = runs[runs.length - 1];
-        if (last && last.bold === c.bold) last.text += c.ch;
-        else runs.push({ text: c.ch, bold: c.bold });
-    });
-    return runs;
+  const runs = [];
+  lineChars.forEach(c => {
+    const last = runs[runs.length - 1];
+    if (last && last.bold === c.bold) last.text += c.ch;
+    else runs.push({ text: c.ch, bold: c.bold });
+  });
+  return runs;
 }
 
-function wrapMarkup(ctx, text, maxWidth, fontSize) {
-    const paragraphs = text.split('\n');
-    const allLines = [];
-    paragraphs.forEach(p => {
-        if (p.trim() === '') { allLines.push([]); return; }
-        const chars = parseMarkupChars(p);
-        let current = [];
-        let currentWidth = 0;
-        chars.forEach(c => {
-            ctx.font = `${c.bold ? '900' : '200'} ${fontSize}px "Noto Serif KR"`;
-            const w = ctx.measureText(c.ch).width;
-            if (currentWidth + w > maxWidth && current.length > 0 && c.ch !== ' ') {
-                allLines.push(mergeRuns(current));
-                current = [];
-                currentWidth = 0;
-            }
-            current.push(c);
-            currentWidth += w;
-        });
-        if (current.length) allLines.push(mergeRuns(current));
+function wrapMarkup(ctx, text, maxWidth, fontSize, fontFamily) {
+  const paragraphs = text.split('\n');
+  const allLines = [];
+  paragraphs.forEach(p => {
+    if (p.trim() === '') { allLines.push([]); return; }
+    const chars = parseMarkupChars(p);
+    let current = [];
+    let currentWidth = 0;
+    chars.forEach(c => {
+      ctx.font = `${c.bold ? '900' : '200'} ${fontSize}px "${fontFamily}"`;
+      const w = ctx.measureText(c.ch).width;
+      if (currentWidth + w > maxWidth && current.length > 0 && c.ch !== ' ') {
+        allLines.push(mergeRuns(current));
+        current = [];
+        currentWidth = 0;
+      }
+      current.push(c);
+      currentWidth += w;
     });
-    return allLines;
+    if (current.length) allLines.push(mergeRuns(current));
+  });
+  return allLines;
 }
 
 function wrapPlain(ctx, text, maxWidth, fontSpec) {
-    ctx.font = fontSpec;
-    const words = text.split('');
-    const lines = [];
-    let cur = '';
-    for (const ch of words) {
-        const test = cur + ch;
-        if (ctx.measureText(test).width > maxWidth && cur) {
-            lines.push(cur);
-            cur = ch;
-        } else {
-            cur = test;
-        }
+  ctx.font = fontSpec;
+  const words = text.split('');
+  const lines = [];
+  let cur = '';
+  for (const ch of words) {
+    const test = cur + ch;
+    if (ctx.measureText(test).width > maxWidth && cur) {
+      lines.push(cur);
+      cur = ch;
+    } else {
+      cur = test;
     }
-    if (cur) lines.push(cur);
-    return lines;
+  }
+  if (cur) lines.push(cur);
+  return lines;
 }
 
 function drawCoverImage(ctx, img, CW, CH, posXPct, posYPct, zoomPct) {
-    const imgRatio = img.width / img.height;
-    const canvasRatio = CW / CH;
-    let dw, dh;
-    if (imgRatio > canvasRatio) { dh = CH; dw = CH * imgRatio; }
-    else { dw = CW; dh = CW / imgRatio; }
-    const zoom = (zoomPct || 100) / 100;
-    dw *= zoom; dh *= zoom;
-    const px = (posXPct !== undefined) ? posXPct / 100 : 0.5;
-    const py = (posYPct !== undefined) ? posYPct / 100 : 0.5;
-    const dx = (CW - dw) * px;
-    const dy = (CH - dh) * py;
-    ctx.drawImage(img, dx, dy, dw, dh);
+  const imgRatio = img.width / img.height;
+  const canvasRatio = CW / CH;
+  let dw, dh;
+  if (imgRatio > canvasRatio) { dh = CH; dw = CH * imgRatio; }
+  else { dw = CW; dh = CW / imgRatio; }
+  const zoom = (zoomPct || 100) / 100;
+  dw *= zoom; dh *= zoom;
+  const px = (posXPct !== undefined) ? posXPct / 100 : 0.5;
+  const py = (posYPct !== undefined) ? posYPct / 100 : 0.5;
+  const dx = (CW - dw) * px;
+  const dy = (CH - dh) * py;
+  ctx.drawImage(img, dx, dy, dw, dh);
 }
 
 function hexToRgb(hex) {
-    const h = hex.replace('#', '');
-    const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
-    const n = parseInt(full, 16);
-    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+  const h = hex.replace('#', '');
+  const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
+  const n = parseInt(full, 16);
+  return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
 }
 function relLuminance({ r, g, b }) {
-    const srgb = [r, g, b].map(v => {
-        const c = v / 255;
-        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-    });
-    return 0.2126 * srgb[0] + 0.7152 * srgb[1] + 0.0722 * srgb[2];
+  const srgb = [r, g, b].map(v => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * srgb[0] + 0.7152 * srgb[1] + 0.0722 * srgb[2];
 }
 function contrastRatio(hex1, hex2) {
-    const L1 = relLuminance(hexToRgb(hex1));
-    const L2 = relLuminance(hexToRgb(hex2));
-    const lighter = Math.max(L1, L2);
-    const darker = Math.min(L1, L2);
-    return (lighter + 0.05) / (darker + 0.05);
+  const L1 = relLuminance(hexToRgb(hex1));
+  const L2 = relLuminance(hexToRgb(hex2));
+  const lighter = Math.max(L1, L2);
+  const darker = Math.min(L1, L2);
+  return (lighter + 0.05) / (darker + 0.05);
 }
 
 function updateReadabilityWarning() {
-    const box = document.getElementById('readabilityWarn');
-    const bg = document.getElementById('bgColor').value;
-    const normal = document.getElementById('normalColor').value;
-    const bold = document.getElementById('boldColor').value;
-    const msgs = [];
-    if (bgImage) {
-        msgs.push('배경 이미지가 있어 일부 구간에서 글자 대비가 낮을 수 있습니다. 패널·비네트를 활용해 보세요.');
-    } else {
-        const cN = contrastRatio(normal, bg);
-        const cB = contrastRatio(bold, bg);
-        if (cN < 3) msgs.push(`일반 글자 대비가 낮습니다 (${cN.toFixed(1)}:1).`);
-        if (cB < 3) msgs.push(`강조 글자 대비가 낮습니다 (${cB.toFixed(1)}:1).`);
-        if (cN >= 3 && cB >= 3 && cN < 4.5) msgs.push(`가독성은 보통 수준입니다 (일반 ${cN.toFixed(1)}:1).`);
-    }
-    if (msgs.length) {
-        box.textContent = '⚠ ' + msgs.join(' ');
-        box.classList.add('show');
-    } else {
-        box.classList.remove('show');
-        box.textContent = '';
-    }
+  const box = document.getElementById('readabilityWarn');
+  const bg = document.getElementById('bgColor').value;
+  const normal = document.getElementById('normalColor').value;
+  const bold = document.getElementById('boldColor').value;
+  const msgs = [];
+  if (bgImage) {
+    msgs.push('배경 이미지가 있어 일부 구간에서 글자 대비가 낮을 수 있습니다. 패널·비네트를 활용해 보세요.');
+  } else {
+    const cN = contrastRatio(normal, bg);
+    const cB = contrastRatio(bold, bg);
+    if (cN < 3) msgs.push(`일반 글자 대비가 낮습니다 (${cN.toFixed(1)}:1).`);
+    if (cB < 3) msgs.push(`강조 글자 대비가 낮습니다 (${cB.toFixed(1)}:1).`);
+    if (cN >= 3 && cB >= 3 && cN < 4.5) msgs.push(`가독성은 보통 수준입니다 (일반 ${cN.toFixed(1)}:1).`);
+  }
+  if (msgs.length) {
+    box.textContent = '⚠ ' + msgs.join(' ');
+    box.classList.add('show');
+  } else {
+    box.classList.remove('show');
+    box.textContent = '';
+  }
 }
 
 function updateTextStats(lines, rawText) {
-    const plain = rawText.replace(/\*\*/g, '');
-    const chars = [...plain].filter(ch => ch !== '\n').length;
-    const lineCount = lines.length;
-    let tip = '';
-    if (lineCount > 6) tip = ' · 줄이 많아 글자가 작아질 수 있음';
-    else if (lineCount >= 4) tip = ' · 권장 범위';
-    document.getElementById('textStats').textContent = `글자 ${chars} · 줄 ${lineCount}${tip}`;
+  const plain = rawText.replace(/\*\*/g, '');
+  const chars = [...plain].filter(ch => ch !== '\n').length;
+  const lineCount = lines.length;
+  let tip = '';
+  if (lineCount > 6) tip = ' · 줄이 많아 글자가 작아질 수 있음';
+  else if (lineCount >= 4) tip = ' · 권장 범위';
+  document.getElementById('textStats').textContent = `글자 ${chars} · 줄 ${lineCount}${tip}`;
 }
 
 function onHeadInput() { draw(); }
 
 function getGrainPattern(ctx, CW, CH, amount) {
-    const key = `${CW}x${CH}_${amount}`;
-    if (grainCanvasCache && grainCacheKey === key) return grainCanvasCache;
-    const g = document.createElement('canvas');
-    const gw = Math.max(160, Math.floor(CW / 4));
-    const gh = Math.max(160, Math.floor(CH / 4));
-    g.width = gw; g.height = gh;
-    const gctx = g.getContext('2d');
-    const imgData = gctx.createImageData(gw, gh);
-    const data = imgData.data;
-    const strength = amount / 100;
-    for (let i = 0; i < data.length; i += 4) {
-        const v = Math.random() * 255;
-        data[i] = data[i + 1] = data[i + 2] = v;
-        data[i + 3] = Math.floor(40 + strength * 120);
-    }
-    gctx.putImageData(imgData, 0, 0);
-    grainCanvasCache = g;
-    grainCacheKey = key;
-    return g;
+  const key = `${CW}x${CH}_${amount}`;
+  if (grainCanvasCache && grainCacheKey === key) return grainCanvasCache;
+  const g = document.createElement('canvas');
+  const gw = Math.max(160, Math.floor(CW / 4));
+  const gh = Math.max(160, Math.floor(CH / 4));
+  g.width = gw; g.height = gh;
+  const gctx = g.getContext('2d');
+  const imgData = gctx.createImageData(gw, gh);
+  const data = imgData.data;
+  const strength = amount / 100;
+  for (let i = 0; i < data.length; i += 4) {
+    const v = Math.random() * 255;
+    data[i] = data[i + 1] = data[i + 2] = v;
+    data[i + 3] = Math.floor(40 + strength * 120);
+  }
+  gctx.putImageData(imgData, 0, 0);
+  grainCanvasCache = g;
+  grainCacheKey = key;
+  return g;
 }
 
 function drawFrame(ctx, CW, CH, style, accent) {
-    if (style === 'none') return;
-    const inset = Math.max(12, Math.round(Math.min(CW, CH) * 0.018));
-    ctx.save();
-    if (style === 'thin') {
-        ctx.strokeStyle = 'rgba(244,244,242,0.55)';
-        ctx.lineWidth = Math.max(2, Math.round(Math.min(CW, CH) * 0.003));
-        ctx.strokeRect(inset * 0.5, inset * 0.5, CW - inset, CH - inset);
-    } else if (style === 'thick') {
-        ctx.strokeStyle = 'rgba(244,244,242,0.7)';
-        ctx.lineWidth = Math.max(6, Math.round(Math.min(CW, CH) * 0.01));
-        ctx.strokeRect(inset, inset, CW - inset * 2, CH - inset * 2);
-    } else if (style === 'double') {
-        ctx.strokeStyle = 'rgba(244,244,242,0.65)';
-        ctx.lineWidth = Math.max(2, Math.round(Math.min(CW, CH) * 0.003));
-        ctx.strokeRect(inset * 0.6, inset * 0.6, CW - inset * 1.2, CH - inset * 1.2);
-        ctx.strokeRect(inset * 1.4, inset * 1.4, CW - inset * 2.8, CH - inset * 2.8);
-        ctx.strokeStyle = accent;
-        ctx.lineWidth = Math.max(2, Math.round(Math.min(CW, CH) * 0.0025));
-        ctx.strokeRect(inset, inset, CW - inset * 2, CH - inset * 2);
-    }
-    ctx.restore();
+  if (style === 'none') return;
+  const inset = Math.max(12, Math.round(Math.min(CW, CH) * 0.018));
+  ctx.save();
+  if (style === 'thin') {
+    ctx.strokeStyle = 'rgba(244,244,242,0.55)';
+    ctx.lineWidth = Math.max(2, Math.round(Math.min(CW, CH) * 0.003));
+    ctx.strokeRect(inset * 0.5, inset * 0.5, CW - inset, CH - inset);
+  } else if (style === 'thick') {
+    ctx.strokeStyle = 'rgba(244,244,242,0.7)';
+    ctx.lineWidth = Math.max(6, Math.round(Math.min(CW, CH) * 0.01));
+    ctx.strokeRect(inset, inset, CW - inset * 2, CH - inset * 2);
+  } else if (style === 'double') {
+    ctx.strokeStyle = 'rgba(244,244,242,0.65)';
+    ctx.lineWidth = Math.max(2, Math.round(Math.min(CW, CH) * 0.003));
+    ctx.strokeRect(inset * 0.6, inset * 0.6, CW - inset * 1.2, CH - inset * 1.2);
+    ctx.strokeRect(inset * 1.4, inset * 1.4, CW - inset * 2.8, CH - inset * 2.8);
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = Math.max(2, Math.round(Math.min(CW, CH) * 0.0025));
+    ctx.strokeRect(inset, inset, CW - inset * 2, CH - inset * 2);
+  }
+  ctx.restore();
 
-    if (style === 'inset') {
-        ctx.save();
-        ctx.strokeStyle = 'rgba(244,244,242,0.5)';
-        ctx.lineWidth = Math.max(2, Math.round(Math.min(CW, CH) * 0.003));
-        const m = inset * 1.8;
-        ctx.strokeRect(m, m, CW - m * 2, CH - m * 2);
-        ctx.strokeStyle = accent;
-        ctx.lineWidth = Math.max(3, Math.round(Math.min(CW, CH) * 0.004));
-        ctx.beginPath();
-        ctx.moveTo(m, m + 28);
-        ctx.lineTo(m, m);
-        ctx.lineTo(m + 28, m);
-        ctx.moveTo(CW - m - 28, m);
-        ctx.lineTo(CW - m, m);
-        ctx.lineTo(CW - m, m + 28);
-        ctx.moveTo(CW - m, CH - m - 28);
-        ctx.lineTo(CW - m, CH - m);
-        ctx.lineTo(CW - m - 28, CH - m);
-        ctx.moveTo(m + 28, CH - m);
-        ctx.lineTo(m, CH - m);
-        ctx.lineTo(m, CH - m - 28);
-        ctx.stroke();
-        ctx.restore();
-    }
+  if (style === 'inset') {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(244,244,242,0.5)';
+    ctx.lineWidth = Math.max(2, Math.round(Math.min(CW, CH) * 0.003));
+    const m = inset * 1.8;
+    ctx.strokeRect(m, m, CW - m * 2, CH - m * 2);
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = Math.max(3, Math.round(Math.min(CW, CH) * 0.004));
+    ctx.beginPath();
+    ctx.moveTo(m, m + 28);
+    ctx.lineTo(m, m);
+    ctx.lineTo(m + 28, m);
+    ctx.moveTo(CW - m - 28, m);
+    ctx.lineTo(CW - m, m);
+    ctx.lineTo(CW - m, m + 28);
+    ctx.moveTo(CW - m, CH - m - 28);
+    ctx.lineTo(CW - m, CH - m);
+    ctx.lineTo(CW - m - 28, CH - m);
+    ctx.moveTo(m + 28, CH - m);
+    ctx.lineTo(m, CH - m);
+    ctx.lineTo(m, CH - m - 28);
+    ctx.stroke();
+    ctx.restore();
+  }
 }
 
 function drawSafeGuide(ctx, CW, CH) {
-    const topH = CH * 0.12;
-    const bottomH = CH * 0.14;
-    ctx.save();
-    ctx.fillStyle = 'rgba(194, 63, 69, 0.18)';
-    ctx.fillRect(0, 0, CW, topH);
-    ctx.fillRect(0, CH - bottomH, CW, bottomH);
-    ctx.setLineDash([10, 8]);
-    ctx.strokeStyle = 'rgba(194, 63, 69, 0.85)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(0, topH); ctx.lineTo(CW, topH);
-    ctx.moveTo(0, CH - bottomH); ctx.lineTo(CW, CH - bottomH);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.font = '600 22px "Noto Sans KR"';
-    ctx.fillStyle = 'rgba(255, 180, 180, 0.95)';
-    ctx.textAlign = 'center';
-    ctx.fillText('SAFE · 상단 UI 영역', CW / 2, topH * 0.55);
-    ctx.fillText('SAFE · 하단 UI 영역', CW / 2, CH - bottomH * 0.4);
-    ctx.restore();
+  const topH = CH * 0.12;
+  const bottomH = CH * 0.14;
+  ctx.save();
+  ctx.fillStyle = 'rgba(194, 63, 69, 0.18)';
+  ctx.fillRect(0, 0, CW, topH);
+  ctx.fillRect(0, CH - bottomH, CW, bottomH);
+  ctx.setLineDash([10, 8]);
+  ctx.strokeStyle = 'rgba(194, 63, 69, 0.85)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(0, topH); ctx.lineTo(CW, topH);
+  ctx.moveTo(0, CH - bottomH); ctx.lineTo(CW, CH - bottomH);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font = '600 22px "Noto Sans KR"';
+  ctx.fillStyle = 'rgba(255, 180, 180, 0.95)';
+  ctx.textAlign = 'center';
+  ctx.fillText('SAFE · 상단 UI 영역', CW / 2, topH * 0.55);
+  ctx.fillText('SAFE · 하단 UI 영역', CW / 2, CH - bottomH * 0.4);
+  ctx.restore();
 }
 
 function draw(options = {}) {
-    const skipGuide = !!options.skipGuide;
-    const canvas = document.getElementById('cv');
-    const ctx = canvas.getContext('2d');
-    const CW = canvas.width;
-    const CH = canvas.height;
-    const isWide = CW / CH >= 0.85;
-    const marginX = CW * 0.065;
-    const marginTop = CH * (isWide ? 0.06 : 0.045);
-    const marginBottom = CH * (isWide ? 0.06 : 0.045);
+  const skipGuide = !!options.skipGuide;
+  const canvas = document.getElementById('cv');
+  const ctx = canvas.getContext('2d');
+  const CW = canvas.width;
+  const CH = canvas.height;
+  const isWide = CW / CH >= 0.85;
+  const marginX = CW * 0.065;
+  const marginTop = CH * (isWide ? 0.06 : 0.045);
+  const marginBottom = CH * (isWide ? 0.06 : 0.045);
 
-    const bg = document.getElementById('bgColor').value;
-    const accent = document.getElementById('accentColor').value;
-    const normalColor = document.getElementById('normalColor').value;
-    const boldColor = document.getElementById('boldColor').value;
-    const underlineColor = document.getElementById('underlineColor').value;
-    const highlightStyle = document.getElementById('highlightStyle').value;
-    const useColorHL = highlightStyle === 'color' || highlightStyle === 'both';
-    const useUnderlineHL = highlightStyle === 'underline' || highlightStyle === 'both';
+  const bg = document.getElementById('bgColor').value;
+  const accent = document.getElementById('accentColor').value;
+  const normalColor = document.getElementById('normalColor').value;
+  const boldColor = document.getElementById('boldColor').value;
+  const underlineColor = document.getElementById('underlineColor').value;
+  const highlightStyle = document.getElementById('highlightStyle').value;
+  const useColorHL = highlightStyle === 'color' || highlightStyle === 'both';
+  const useUnderlineHL = highlightStyle === 'underline' || highlightStyle === 'both';
 
-    if (bgImage) {
-        const blurAmount = parseInt(document.getElementById('blurAmount').value, 10);
-        const zoomPct = parseInt(document.getElementById('imgZoom').value, 10);
-        const posX = posMode === 'manual' ? parseInt(document.getElementById('posX').value, 10) : 50;
-        const posY = posMode === 'manual' ? parseInt(document.getElementById('posY').value, 10) : 50;
-        if (blurAmount > 0) {
-            ctx.save();
-            ctx.filter = `blur(${blurAmount}px)`;
-            const scale = 1 + blurAmount / 100;
-            ctx.translate(CW / 2, CH / 2);
-            ctx.scale(scale, scale);
-            ctx.translate(-CW / 2, -CH / 2);
-            drawCoverImage(ctx, bgImage, CW, CH, posX, posY, zoomPct);
-            ctx.restore();
-        } else {
-            drawCoverImage(ctx, bgImage, CW, CH, posX, posY, zoomPct);
-        }
-        const grad = ctx.createLinearGradient(0, 0, 0, CH);
-        grad.addColorStop(0, 'rgba(10,10,10,0.35)');
-        grad.addColorStop(0.55, 'rgba(10,10,10,0.72)');
-        grad.addColorStop(1, 'rgba(10,10,10,0.9)');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, CW, CH);
+  const fontFamily = document.getElementById('fontFamily').value;
+  const uiFont = document.getElementById('uiFontFamily').value;
+  const headScale = parseInt(document.getElementById('headScale').value, 10) / 100;
+  const subSize = parseInt(document.getElementById('subSize').value, 10);
+  const subheadScale = parseInt(document.getElementById('subheadScale').value, 10) / 100;
+  const quoteScale = parseInt(document.getElementById('quoteScale').value, 10) / 100;
+  const tagSize = parseInt(document.getElementById('tagSize').value, 10);
 
-        if (document.getElementById('vignette').checked) {
-            const cx = CW / 2, cy = CH / 2;
-            const outerR = Math.sqrt(cx * cx + cy * cy);
-            const vignette = ctx.createRadialGradient(cx, cy, outerR * 0.45, cx, cy, outerR);
-            vignette.addColorStop(0, 'rgba(0,0,0,0)');
-            vignette.addColorStop(1, 'rgba(0,0,0,0.65)');
-            ctx.fillStyle = vignette;
-            ctx.fillRect(0, 0, CW, CH);
-        }
+  if (bgImage) {
+    const blurAmount = parseInt(document.getElementById('blurAmount').value, 10);
+    const zoomPct = parseInt(document.getElementById('imgZoom').value, 10);
+    const posX = posMode === 'manual' ? parseInt(document.getElementById('posX').value, 10) : 50;
+    const posY = posMode === 'manual' ? parseInt(document.getElementById('posY').value, 10) : 50;
+    if (blurAmount > 0) {
+      ctx.save();
+      ctx.filter = `blur(${blurAmount}px)`;
+      const scale = 1 + blurAmount / 100;
+      ctx.translate(CW / 2, CH / 2);
+      ctx.scale(scale, scale);
+      ctx.translate(-CW / 2, -CH / 2);
+      drawCoverImage(ctx, bgImage, CW, CH, posX, posY, zoomPct);
+      ctx.restore();
     } else {
-        ctx.fillStyle = bg;
-        ctx.fillRect(0, 0, CW, CH);
-        if (document.getElementById('vignette').checked) {
-            const cx = CW / 2, cy = CH / 2;
-            const outerR = Math.sqrt(cx * cx + cy * cy);
-            const vignette = ctx.createRadialGradient(cx, cy, outerR * 0.5, cx, cy, outerR);
-            vignette.addColorStop(0, 'rgba(0,0,0,0)');
-            vignette.addColorStop(1, 'rgba(0,0,0,0.35)');
-            ctx.fillStyle = vignette;
-            ctx.fillRect(0, 0, CW, CH);
-        }
+      drawCoverImage(ctx, bgImage, CW, CH, posX, posY, zoomPct);
     }
+    const grad = ctx.createLinearGradient(0, 0, 0, CH);
+    grad.addColorStop(0, 'rgba(10,10,10,0.35)');
+    grad.addColorStop(0.55, 'rgba(10,10,10,0.72)');
+    grad.addColorStop(1, 'rgba(10,10,10,0.9)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, CW, CH);
 
-    if (document.getElementById('grain').checked) {
-        const amount = parseInt(document.getElementById('grainAmount').value, 10);
-        const noise = getGrainPattern(ctx, CW, CH, amount);
-        ctx.save();
-        ctx.globalAlpha = 0.22 + (amount / 100) * 0.35;
-        ctx.drawImage(noise, 0, 0, CW, CH);
-        ctx.restore();
+    if (document.getElementById('vignette').checked) {
+      const cx = CW / 2, cy = CH / 2;
+      const outerR = Math.sqrt(cx * cx + cy * cy);
+      const vignette = ctx.createRadialGradient(cx, cy, outerR * 0.45, cx, cy, outerR);
+      vignette.addColorStop(0, 'rgba(0,0,0,0)');
+      vignette.addColorStop(1, 'rgba(0,0,0,0.65)');
+      ctx.fillStyle = vignette;
+      ctx.fillRect(0, 0, CW, CH);
     }
-
-    ctx.strokeStyle = accent;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(marginX, marginTop);
-    ctx.lineTo(marginX + 56, marginTop);
-    ctx.stroke();
-
-    const sub = document.getElementById('sub').value;
-    ctx.font = '600 22px "Noto Sans KR"';
-    ctx.fillStyle = accent;
-    ctx.textAlign = 'left';
-    ctx.letterSpacing = "3px";
-    ctx.fillText(sub.toUpperCase(), marginX, marginTop + 44);
-
-    const watermark = document.getElementById('watermark').value;
-    if (watermark.trim()) {
-        ctx.font = '400 20px "Noto Sans KR"';
-        ctx.fillStyle = 'rgba(244,244,242,0.55)';
-        ctx.textAlign = 'right';
-        ctx.letterSpacing = "0.5px";
-        ctx.fillText(watermark, CW - marginX, marginTop + 44);
+  } else {
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, CW, CH);
+    if (document.getElementById('vignette').checked) {
+      const cx = CW / 2, cy = CH / 2;
+      const outerR = Math.sqrt(cx * cx + cy * cy);
+      const vignette = ctx.createRadialGradient(cx, cy, outerR * 0.5, cx, cy, outerR);
+      vignette.addColorStop(0, 'rgba(0,0,0,0)');
+      vignette.addColorStop(1, 'rgba(0,0,0,0.35)');
+      ctx.fillStyle = vignette;
+      ctx.fillRect(0, 0, CW, CH);
     }
-    ctx.letterSpacing = "0px";
+  }
 
-    ctx.strokeStyle = 'rgba(244,244,242,0.14)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(marginX, marginTop + 68);
-    ctx.lineTo(CW - marginX, marginTop + 68);
-    ctx.stroke();
+  if (document.getElementById('grain').checked) {
+    const amount = parseInt(document.getElementById('grainAmount').value, 10);
+    const noise = getGrainPattern(ctx, CW, CH, amount);
+    ctx.save();
+    ctx.globalAlpha = 0.22 + (amount / 100) * 0.35;
+    ctx.drawImage(noise, 0, 0, CW, CH);
+    ctx.restore();
+  }
 
-    const bottomLineY = CH - marginBottom - 40;
-    const headlineTop = marginTop + 68 + 40;
-    const headlineBottom = bottomLineY - 40;
-    const availableHeight = headlineBottom - headlineTop;
-    const maxTextWidth = CW - marginX * 2;
+  ctx.strokeStyle = accent;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(marginX, marginTop);
+  ctx.lineTo(marginX + 56, marginTop);
+  ctx.stroke();
 
-    const text = document.getElementById('head').value;
-    const subhead = document.getElementById('subhead').value.trim();
-    const quote = document.getElementById('quote').value.trim();
-    const quoteSource = document.getElementById('quoteSource').value.trim();
+  const sub = document.getElementById('sub').value;
+  ctx.font = `600 ${subSize}px "${uiFont}"`;
+  ctx.fillStyle = accent;
+  ctx.textAlign = 'left';
+  if (ctx.letterSpacing !== undefined) ctx.letterSpacing = '3px';
+  ctx.fillText(sub.toUpperCase(), marginX, marginTop + subSize + 18);
+  if (ctx.letterSpacing !== undefined) ctx.letterSpacing = '0px';
 
-    const subheadSpace = subhead ? Math.max(36, CH * 0.035) : 0;
-    const quoteSpace = quote ? Math.max(90, CH * 0.12) : 0;
-    const contentAvailable = Math.max(80, availableHeight - subheadSpace - quoteSpace);
+  const watermark = document.getElementById('watermark').value;
+  if (watermark.trim()) {
+    ctx.font = `400 ${Math.max(14, tagSize - 2)}px "${uiFont}"`;
+    ctx.fillStyle = 'rgba(244,244,242,0.55)';
+    ctx.textAlign = 'right';
+    ctx.fillText(watermark, CW - marginX, marginTop + subSize + 18);
+  }
 
-    let fontSize = isWide ? 84 : 76;
-    let lineHeight, lines;
-    while (true) {
-        lineHeight = fontSize * 1.28;
-        lines = wrapMarkup(ctx, text, maxTextWidth, fontSize);
-        const totalH = lines.length * lineHeight;
-        if (totalH <= contentAvailable || fontSize <= 36) break;
-        fontSize -= 4;
-    }
+  ctx.strokeStyle = 'rgba(244,244,242,0.14)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(marginX, marginTop + subSize + 40);
+  ctx.lineTo(CW - marginX, marginTop + subSize + 40);
+  ctx.stroke();
 
-    updateTextStats(lines, text);
-    updateReadabilityWarning();
+  const bottomLineY = CH - marginBottom - 40;
+  const headlineTop = marginTop + subSize + 40 + 36;
+  const headlineBottom = bottomLineY - 40;
+  const availableHeight = headlineBottom - headlineTop;
+  const maxTextWidth = CW - marginX * 2;
 
+  const text = document.getElementById('head').value;
+  const subhead = document.getElementById('subhead').value.trim();
+  const quote = document.getElementById('quote').value.trim();
+  const quoteSource = document.getElementById('quoteSource').value.trim();
+
+  const subheadSpace = subhead ? Math.max(36, CH * 0.035) : 0;
+  const quoteSpace = quote ? Math.max(90, CH * 0.12) : 0;
+  const contentAvailable = Math.max(80, availableHeight - subheadSpace - quoteSpace);
+
+  let baseFontSize = isWide ? 84 : 76;
+  baseFontSize = Math.round(baseFontSize * headScale);
+  let fontSize = baseFontSize;
+  let lineHeight, lines;
+  while (true) {
+    lineHeight = fontSize * 1.28;
+    lines = wrapMarkup(ctx, text, maxTextWidth, fontSize, fontFamily);
     const totalH = lines.length * lineHeight;
-    const blockH = totalH + subheadSpace + quoteSpace;
-    let currentY = headlineTop + (availableHeight - blockH) / 2 + fontSize * 0.78;
+    if (totalH <= contentAvailable || fontSize <= 32) break;
+    fontSize -= 4;
+  }
 
-    if (document.getElementById('textPanel').checked) {
-        const panelPadY = fontSize * 0.35;
-        const panelTop = headlineTop + (availableHeight - blockH) / 2 - panelPadY;
-        const panelHeight = blockH + panelPadY * 2;
-        ctx.fillStyle = 'rgba(8,8,8,0.6)';
-        ctx.fillRect(marginX - 24, panelTop, maxTextWidth + 48, panelHeight);
-        ctx.fillStyle = accent;
-        ctx.fillRect(marginX - 24, panelTop, 4, panelHeight);
-    }
+  updateTextStats(lines, text);
+  updateReadabilityWarning();
 
-    lines.forEach((line) => {
-        let startX = marginX;
-        line.forEach(p => {
-            ctx.font = `${p.bold ? '900' : '200'} ${fontSize}px "Noto Serif KR"`;
-            ctx.fillStyle = (p.bold && useColorHL) ? boldColor : normalColor;
-            ctx.textAlign = 'left';
-            ctx.fillText(p.text, startX, currentY);
-            const w = ctx.measureText(p.text).width;
-            if (p.bold && useUnderlineHL) {
-                ctx.strokeStyle = underlineColor;
-                ctx.lineWidth = Math.max(2, fontSize * 0.035);
-                ctx.lineCap = 'round';
-                ctx.beginPath();
-                ctx.moveTo(startX, currentY + fontSize * 0.18);
-                ctx.lineTo(startX + w, currentY + fontSize * 0.18);
-                ctx.stroke();
-            }
-            startX += w;
-        });
-        currentY += lineHeight;
+  const totalH = lines.length * lineHeight;
+  const blockH = totalH + subheadSpace + quoteSpace;
+  let currentY = headlineTop + (availableHeight - blockH) / 2 + fontSize * 0.78;
+
+  if (document.getElementById('textPanel').checked) {
+    const panelPadY = fontSize * 0.35;
+    const panelTop = headlineTop + (availableHeight - blockH) / 2 - panelPadY;
+    const panelHeight = blockH + panelPadY * 2;
+    ctx.fillStyle = 'rgba(8,8,8,0.6)';
+    ctx.fillRect(marginX - 24, panelTop, maxTextWidth + 48, panelHeight);
+    ctx.fillStyle = accent;
+    ctx.fillRect(marginX - 24, panelTop, 4, panelHeight);
+  }
+
+  lines.forEach((line) => {
+    let startX = marginX;
+    line.forEach(p => {
+      const weight = p.bold ? '900' : '200';
+      // Black Han Sans / Do Hyeon / Jua 등은 weight 지원이 제한적일 수 있음
+      ctx.font = `${weight} ${fontSize}px "${fontFamily}"`;
+      ctx.fillStyle = (p.bold && useColorHL) ? boldColor : normalColor;
+      ctx.textAlign = 'left';
+      ctx.fillText(p.text, startX, currentY);
+      const w = ctx.measureText(p.text).width;
+      if (p.bold && useUnderlineHL) {
+        ctx.strokeStyle = underlineColor;
+        ctx.lineWidth = Math.max(2, fontSize * 0.035);
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(startX, currentY + fontSize * 0.18);
+        ctx.lineTo(startX + w, currentY + fontSize * 0.18);
+        ctx.stroke();
+      }
+      startX += w;
+    });
+    currentY += lineHeight;
+  });
+
+  if (subhead) {
+    currentY += fontSize * 0.15;
+    const subSize2 = Math.max(18, Math.round(fontSize * 0.38 * subheadScale));
+    ctx.font = `400 ${subSize2}px "${uiFont}"`;
+    ctx.fillStyle = 'rgba(244,244,242,0.72)';
+    ctx.textAlign = 'left';
+    const shLines = wrapPlain(ctx, subhead, maxTextWidth, ctx.font);
+    shLines.slice(0, 2).forEach((ln, i) => {
+      ctx.fillText(ln, marginX, currentY + i * (subSize2 * 1.35));
+    });
+    currentY += Math.min(shLines.length, 2) * (subSize2 * 1.35) + subSize2 * 0.4;
+  }
+
+  if (quote) {
+    currentY += Math.max(10, fontSize * 0.12);
+    const qSize = Math.max(20, Math.round(fontSize * 0.42 * quoteScale));
+    ctx.fillStyle = accent;
+    ctx.font = `900 ${Math.round(qSize * 1.6)}px "${fontFamily}"`;
+    ctx.textAlign = 'left';
+    ctx.fillText('“', marginX, currentY);
+
+    ctx.font = `300 ${qSize}px "${fontFamily}"`;
+    ctx.fillStyle = 'rgba(244,244,242,0.9)';
+    const qLines = wrapPlain(ctx, quote, maxTextWidth - 20, ctx.font);
+    let qY = currentY + qSize * 0.9;
+    qLines.slice(0, 4).forEach((ln) => {
+      ctx.fillText(ln, marginX + 8, qY);
+      qY += qSize * 1.35;
     });
 
-    if (subhead) {
-        currentY += fontSize * 0.15;
-        const subSize = Math.max(22, Math.round(fontSize * 0.38));
-        ctx.font = `400 ${subSize}px "Noto Sans KR"`;
-        ctx.fillStyle = 'rgba(244,244,242,0.72)';
-        ctx.textAlign = 'left';
-        const shLines = wrapPlain(ctx, subhead, maxTextWidth, ctx.font);
-        shLines.slice(0, 2).forEach((ln, i) => {
-            ctx.fillText(ln, marginX, currentY + i * (subSize * 1.35));
-        });
-        currentY += Math.min(shLines.length, 2) * (subSize * 1.35) + subSize * 0.4;
+    if (quoteSource) {
+      ctx.font = `400 ${Math.max(16, Math.round(qSize * 0.7))}px "${uiFont}"`;
+      ctx.fillStyle = 'rgba(244,244,242,0.55)';
+      ctx.fillText(quoteSource, marginX + 8, qY + 8);
     }
+  }
 
-    if (quote) {
-        currentY += Math.max(10, fontSize * 0.12);
-        const qSize = Math.max(24, Math.round(fontSize * 0.42));
-        ctx.fillStyle = accent;
-        ctx.font = `900 ${Math.round(qSize * 1.6)}px "Noto Serif KR"`;
-        ctx.textAlign = 'left';
-        ctx.fillText('“', marginX, currentY);
+  ctx.strokeStyle = 'rgba(244,244,242,0.14)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(marginX, bottomLineY);
+  ctx.lineTo(CW - marginX, bottomLineY);
+  ctx.stroke();
 
-        ctx.font = `300 ${qSize}px "Noto Serif KR"`;
-        ctx.fillStyle = 'rgba(244,244,242,0.9)';
-        const qLines = wrapPlain(ctx, quote, maxTextWidth - 20, ctx.font);
-        let qY = currentY + qSize * 0.9;
-        qLines.slice(0, 4).forEach((ln) => {
-            ctx.fillText(ln, marginX + 8, qY);
-            qY += qSize * 1.35;
-        });
+  const tag = document.getElementById('tag').value;
+  ctx.font = `600 ${tagSize}px "${uiFont}"`;
+  ctx.fillStyle = 'rgba(244,244,242,0.85)';
+  ctx.textAlign = 'left';
+  if (ctx.letterSpacing !== undefined) ctx.letterSpacing = '1.5px';
+  ctx.fillText(tag, marginX, bottomLineY + 34);
+  if (ctx.letterSpacing !== undefined) ctx.letterSpacing = '0px';
 
-        if (quoteSource) {
-            ctx.font = `400 ${Math.max(18, Math.round(qSize * 0.7))}px "Noto Sans KR"`;
-            ctx.fillStyle = 'rgba(244,244,242,0.55)';
-            ctx.fillText(quoteSource, marginX + 8, qY + 8);
-        }
-    }
+  ctx.font = `400 ${Math.max(14, tagSize - 2)}px "${uiFont}"`;
+  ctx.fillStyle = 'rgba(244,244,242,0.4)';
+  ctx.textAlign = 'right';
+  const today = new Date();
+  const dateStr = `${today.getFullYear()}.${String(today.getMonth()+1).padStart(2,'0')}.${String(today.getDate()).padStart(2,'0')}`;
+  ctx.fillText(dateStr, CW - marginX, bottomLineY + 34);
 
-    ctx.strokeStyle = 'rgba(244,244,242,0.14)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(marginX, bottomLineY);
-    ctx.lineTo(CW - marginX, bottomLineY);
-    ctx.stroke();
+  const frameStyle = document.getElementById('frameStyle').value;
+  drawFrame(ctx, CW, CH, frameStyle, accent);
 
-    const tag = document.getElementById('tag').value;
-    ctx.font = '600 20px "Noto Sans KR"';
-    ctx.fillStyle = 'rgba(244,244,242,0.85)';
-    ctx.textAlign = 'left';
-    ctx.letterSpacing = "1.5px";
-    ctx.fillText(tag, marginX, bottomLineY + 34);
-    ctx.letterSpacing = "0px";
-
-    ctx.font = '400 18px "Noto Sans KR"';
-    ctx.fillStyle = 'rgba(244,244,242,0.4)';
-    ctx.textAlign = 'right';
-    const today = new Date();
-    const dateStr = `${today.getFullYear()}.${String(today.getMonth()+1).padStart(2,'0')}.${String(today.getDate()).padStart(2,'0')}`;
-    ctx.fillText(dateStr, CW - marginX, bottomLineY + 34);
-
-    const frameStyle = document.getElementById('frameStyle').value;
-    drawFrame(ctx, CW, CH, frameStyle, accent);
-
-    if (!skipGuide && document.getElementById('safeGuide').checked) {
-        drawSafeGuide(ctx, CW, CH);
-    }
+  if (!skipGuide && document.getElementById('safeGuide').checked) {
+    drawSafeGuide(ctx, CW, CH);
+  }
 }
 
 function openChecklist() {
-    ['ckHead','ckSub','ckBrand','ckVisual','ckSafe'].forEach(id => {
-        document.getElementById(id).checked = false;
-    });
-    updateChecklistBtn();
-    document.getElementById('checklistModal').classList.add('show');
+  ['ckHead','ckSub','ckBrand','ckVisual','ckSafe'].forEach(id => {
+    document.getElementById(id).checked = false;
+  });
+  updateChecklistBtn();
+  document.getElementById('checklistModal').classList.add('show');
 }
 function closeChecklist() {
-    document.getElementById('checklistModal').classList.remove('show');
+  document.getElementById('checklistModal').classList.remove('show');
 }
 function updateChecklistBtn() {
-    const ids = ['ckHead','ckSub','ckBrand','ckVisual','ckSafe'];
-    const all = ids.every(id => document.getElementById(id).checked);
-    document.getElementById('checklistSaveBtn').disabled = !all;
+  const ids = ['ckHead','ckSub','ckBrand','ckVisual','ckSafe'];
+  const all = ids.every(id => document.getElementById(id).checked);
+  document.getElementById('checklistSaveBtn').disabled = !all;
 }
 function confirmDownload() {
-    closeChecklist();
-    download();
-}
-function download() {
-    draw({ skipGuide: true });
-    const canvas = document.getElementById('cv');
-    const dataUrl = canvas.toDataURL('image/png');
-    const link = document.createElement('a');
-    link.download = `cardnews_${Date.now()}.png`;
-    link.href = dataUrl;
-    link.click();
-    draw();
+  closeChecklist();
+  download();
 }
 
-document.fonts.ready.then(draw);
+function isIOS() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
+function forceDownload(href, filename) {
+  const link = document.createElement('a');
+  link.href = href;
+  link.download = filename;
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+async function download() {
+  draw({ skipGuide: true });
+  const canvas = document.getElementById('cv');
+  const filename = `cardnews_${Date.now()}.png`;
+
+  // toBlob 우선 (메모리·호환성)
+  if (!canvas.toBlob) {
+    // 구형 폴백
+    const dataUrl = canvas.toDataURL('image/png');
+    forceDownload(dataUrl, filename);
+    if (isIOS()) {
+      showToast('이미지를 길게 눌러 사진에 저장하세요');
+      window.open(dataUrl, '_blank');
+    } else {
+      showToast('이미지가 저장되었습니다');
+    }
+    draw();
+    return;
+  }
+
+  canvas.toBlob(async (blob) => {
+    if (!blob) {
+      showToast('이미지 생성에 실패했습니다');
+      draw();
+      return;
+    }
+
+    const file = new File([blob], filename, { type: 'image/png' });
+
+    // 1) Web Share API (iOS에서 가장 안정적 — 사진 앱/공유로 저장)
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: '브레이킹 카드뉴스'
+        });
+        showToast('공유/저장 완료');
+        draw();
+        return;
+      } catch (err) {
+        // 사용자가 취소한 경우 조용히 폴백
+        if (err && err.name === 'AbortError') {
+          draw();
+          return;
+        }
+      }
+    }
+
+    // 2) 일반 다운로드
+    const url = URL.createObjectURL(blob);
+    forceDownload(url, filename);
+
+    // 3) iOS에서 download 속성이 무시되는 경우 → 새 탭으로 열어 길게 누르기 안내
+    if (isIOS()) {
+      showToast('이미지가 열리면 길게 눌러 "사진에 추가"를 선택하세요', 4500);
+      // blob URL을 새 창에 이미지로 표시
+      const reader = new FileReader();
+      reader.onload = () => {
+        const w = window.open('');
+        if (w) {
+          w.document.write(`<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>${filename}</title></head><body style="margin:0;background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh;"><img src="${reader.result}" style="max-width:100%;height:auto;" alt="card"></body></html>`);
+          w.document.close();
+        }
+      };
+      reader.readAsDataURL(blob);
+    } else {
+      showToast('이미지가 저장되었습니다');
+    }
+
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+    draw();
+  }, 'image/png', 0.95);
+}
+
+document.fonts.ready.then(() => {
+  draw();
+});
 </script>
 </body>
 </html>
