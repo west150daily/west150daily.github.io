@@ -246,7 +246,12 @@
     border-color: rgba(0,0,0,0.1);
   }
 
-  .card-inner { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; z-index: 2; overflow: hidden; padding: 44px 40px; -webkit-transform: translateZ(0); }
+  .card-inner {
+    width: 100%; height: 100%; display: flex; flex-direction: column;
+    position: relative; z-index: 2; overflow: hidden; padding: 44px 40px;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
   .card-header { margin-bottom: 18px; }
 
   .title { font-family: var(--font-title, 'Pretendard Variable', sans-serif); font-weight: 700; line-height: 1.22; letter-spacing: -0.9px; margin-bottom: 6px; word-break: keep-all; }
@@ -1505,6 +1510,15 @@
     });
   }
 
+  // 스타일·테마에 맞는 불투명 배경 (html2canvas는 반투명/backdrop-filter를 제대로 못 그림)
+  function resolveCaptureBg(previewEl) {
+    const isDark = document.body.classList.contains('dark');
+    if (previewEl.classList.contains('style-editorial')) return isDark ? '#17160f' : '#F1EDE4';
+    if (previewEl.classList.contains('style-warm') && !isDark) return '#FFF8F0';
+    if (isDark) return '#1C1C1E';
+    return '#FFFFFF';
+  }
+
   // 공통 캔버스 생성 함수
   async function generateCanvas(previewEl) {
     const content = previewEl.querySelector('.card-inner');
@@ -1513,20 +1527,29 @@
     const originalTransform = content.style.transform;
     const originalW = previewEl.style.width;
     const originalH = previewEl.style.height;
+    const originalBg = previewEl.style.background;
+    const originalBackdrop = previewEl.style.backdropFilter;
+    const originalWebkitBackdrop = previewEl.style.webkitBackdropFilter;
+
+    const solidBg = resolveCaptureBg(previewEl);
 
     content.style.transform = 'scale(1)';
     previewEl.style.width = currentSize.w + 'px';
     previewEl.style.height = currentSize.h + 'px';
     content.style.width = currentSize.w + 'px';
     content.style.height = currentSize.h + 'px';
+    // 캡처용 불투명 배경 강제
+    previewEl.style.background = solidBg;
+    previewEl.style.backdropFilter = 'none';
+    previewEl.style.webkitBackdropFilter = 'none';
 
-    await new Promise(r => setTimeout(r, 160));
+    await new Promise(r => setTimeout(r, 180));
 
     try {
       const canvas = await html2canvas(previewEl, {
         scale: 2,
         useCORS: true,
-        backgroundColor: null,
+        backgroundColor: solidBg,
         width: currentSize.w,
         height: currentSize.h,
         logging: false,
@@ -1537,6 +1560,9 @@
       content.style.transform = originalTransform;
       previewEl.style.width = originalW;
       previewEl.style.height = originalH;
+      previewEl.style.background = originalBg;
+      previewEl.style.backdropFilter = originalBackdrop;
+      previewEl.style.webkitBackdropFilter = originalWebkitBackdrop;
     }
   }
 
