@@ -1325,13 +1325,13 @@
     let h = pad;
 
     if (box.title) {
-      const charsPerLineTitle = Math.max(6, Math.floor(colW / (fonts.subBoxSize * 0.95)));
+      const charsPerLineTitle = Math.max(6, Math.floor(colW / (fonts.subBoxSize * 0.8)));
       const titleLines = Math.max(1, Math.ceil(box.title.length / charsPerLineTitle) + (box.title.match(/\n/g) || []).length);
       h += titleLines * fonts.subBoxSize * 1.35 + 8;
     }
 
     if (box.body) {
-      const charsPerLine = Math.max(6, Math.floor(colW / (fonts.bodySize * 0.95)));
+      const charsPerLine = Math.max(6, Math.floor(colW / (fonts.bodySize * 0.8)));
       const lines = Math.max(1, Math.ceil(box.body.length / charsPerLine) + (box.body.match(/\n/g) || []).length);
       h += lines * fonts.bodySize * 1.65;
     }
