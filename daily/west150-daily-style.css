@@ -33,6 +33,33 @@ body.page-daily .logo-img {
   height: 34px;
 }
 
+.nav-clock {
+  display: flex;
+  gap: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: rgba(231, 233, 236, 0.55);
+}
+.nav-clock__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.nav-clock__flag { font-size: 13px; }
+.nav-clock__label {
+  color: rgba(231, 233, 236, 0.35);
+  letter-spacing: 1px;
+}
+.nav-clock #clockKST,
+.nav-clock #clockEST {
+  color: #ffffff;
+  font-weight: 500;
+  min-width: 42px;
+}
+@media (max-width: 640px) {
+  .nav-clock { display: none; }
+}
+
 /* Hero */
 body.page-daily .daily-hero {
   position: relative;
@@ -194,9 +221,163 @@ body.page-daily .feed-notice p {
   border-top: 1px dashed rgba(255, 255, 255, 0.1);
 }
 
-/* Footer tint to match cooler tone */
+/* Two-column layout: breaking-news sidebar + main feed */
+body.page-daily .daily-layout {
+  position: relative;
+  z-index: 1;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 20px 120px;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+body.page-daily .breaking-sidebar {
+  position: sticky;
+  top: 104px;
+  border: 1px solid rgba(255, 80, 80, 0.22);
+  border-radius: 14px;
+  background: rgba(255, 60, 60, 0.04);
+  padding: 16px;
+}
+body.page-daily .breaking-sidebar__head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #ff6b6b;
+  margin-bottom: 12px;
+}
+body.page-daily .breaking-sidebar__head .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #ff4d4d;
+  box-shadow: 0 0 8px #ff4d4d;
+  animation: breakingPulse 1.6s ease-in-out infinite;
+}
+@keyframes breakingPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+body.page-daily .breaking-item {
+  display: block;
+  padding: 10px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  text-decoration: none;
+  color: inherit;
+}
+body.page-daily .breaking-item:first-of-type { border-top: none; }
+body.page-daily .breaking-item__time {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  color: rgba(255, 107, 107, 0.75);
+  margin-bottom: 4px;
+}
+body.page-daily .breaking-item__text {
+  display: block;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: rgba(231, 233, 236, 0.85);
+  transition: color 0.25s ease;
+}
+body.page-daily .breaking-item:hover .breaking-item__text { color: #ffffff; }
+
+/* feed, when nested inside the two-column layout, no longer needs
+   its own centering/max-width — the grid parent handles that */
+body.page-daily .feed--in-layout {
+  max-width: none;
+  margin: 0;
+  padding: 8px 0 0;
+}
+
+@media (max-width: 880px) {
+  body.page-daily .daily-layout {
+    grid-template-columns: 1fr;
+  }
+  body.page-daily .breaking-sidebar {
+    position: static;
+  }
+}
+
 body.page-daily .footer {
   border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ---------- Multi-image carousel (Instagram-style swipe) ---------- */
+body.page-daily .feed-card__media--carousel {
+  position: relative;
+  padding: 0;
+}
+
+body.page-daily .carousel-track {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+body.page-daily .carousel-track::-webkit-scrollbar { display: none; }
+
+body.page-daily .carousel-slide {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
+body.page-daily .carousel-slide img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+body.page-daily .carousel-counter {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  pointer-events: none;
+}
+
+body.page-daily .carousel-dots {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+}
+body.page-daily .carousel-dots .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+body.page-daily .carousel-dots .dot.is-active {
+  background: #ffffff;
+  transform: scale(1.25);
 }
 
 @media (max-width: 480px) {
