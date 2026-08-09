@@ -50,6 +50,13 @@
       <div class="album-card__meta">EP · 4 TRACKS</div>
     </button>
 
+    <!-- 새로운 앨범 카드 추가 -->
+    <button class="album-card reveal js-open-music" data-album-id="anew" data-album-cover="../images/cover2.png">
+    <img src="../images/cover2.png" alt="ANEW" class="album-card__cover" draggable="false" oncontextmenu="return false">
+    <div class="album-card__title">ANEW</div>
+    <div class="album-card__meta">EP · 6 TRACK</div> <!-- 곡 수에 맞춰 수정 -->
+    </button>
+
   </div>
 </section>
 
@@ -137,18 +144,72 @@
             <span class="track-item__play">▶</span>
           </button>
 
-          <button class="track-item" data-src="../audio/REDEEMED.mp3" data-cover="../images/every-cover.png" data-title="REDEEMED" data-track-id="redeemed"
-            data-credit-label="AI와 협업 제작">
-            <span class="track-item__num">04</span>
-            <span class="track-item__title">REDEEMED</span>
-            <span class="track-item__credit">AI와 협업 제작</span>
-            <span class="track-item__play">▶</span>
-          </button>
-          
-        </div>
-      </div>
+         <!-- 새로운 앨범 시작 (ANEW) -->
+<div class="album" data-album-id="new-chapter"> 
+  <div class="album-header">
+    <img src="../images/cover2.png" alt="ANEW 앨범 커버" class="album-cover" draggable="false" oncontextmenu="return false">
+    <div class="album-title">ANEW</div>
+    <div class="album-meta">EP · 6 TRACKS</div>
+  </div>
 
-    </div>
+  <div class="album-tracks">
+    <!-- 01번 곡 -->
+    <button class="track-item" data-src="../audio/the-lights-is-comming.mp3" data-cover="../images/cover2.png" 
+            data-title="THE LIGHTS IS COMMING" data-track-id="song-01" data-credit-label="AI와 협업 제작">
+      <span class="track-item__num">01</span>
+      <span class="track-item__title">THE LIGHTS IS COMMING</span>
+      <span class="track-item__credit">AI와 협업 제작</span>
+      <span class="track-item__play">▶</span>
+    </button>
+
+    <!-- 02번 곡 -->
+    <button class="track-item" data-src="../audio/lord-im-lost.mp3" data-cover="../images/cover2.png" 
+            data-title="LORD I'M LOST" data-track-id="song-02" data-credit-label="AI와 협업 제작">
+      <span class="track-item__num">02</span>
+      <span class="track-item__title">LORD I'M LOST</span>
+      <span class="track-item__credit">AI와 협업 제작</span>
+      <span class="track-item__play">▶</span>
+    </button>
+
+    <!-- 03번 곡 -->
+    <button class="track-item" data-src="../audio/trouble-don't-last-always.mp3" data-cover="../images/cover2.png" 
+            data-title="TROUBLE DON'T LAST ALWAYS" data-track-id="song-03" data-credit-label="AI와 협업 제작">
+      <span class="track-item__num">03</span>
+      <span class="track-item__title">TROUBLE DON'T LAST ALWAYS</span>
+      <span class="track-item__credit">AI와 협업 제작</span>
+      <span class="track-item__play">▶</span>
+    </button>
+
+    <!-- 04번 곡 -->
+    <button class="track-item" data-src="../audio/it-is-well.mp3" data-cover="../images/cover2.png" 
+            data-title="IT IS WELL" data-track-id="song-04" data-credit-label="AI와 협업 제작">
+      <span class="track-item__num">04</span>
+      <span class="track-item__title">IT IS WELL</span>
+      <span class="track-item__credit">AI와 협업 제작</span>
+      <span class="track-item__play">▶</span>
+    </button>
+
+    <!-- 05번 곡 -->
+    <button class="track-item" data-src="../audio/mask.mp3" data-cover="../images/cover2.png" 
+            data-title="MASK" data-track-id="song-05" data-credit-label="AI와 협업 제작">
+      <span class="track-item__num">05</span>
+      <span class="track-item__title">MASK</span>
+      <span class="track-item__credit">AI와 협업 제작</span>
+      <span class="track-item__play">▶</span>
+    </button>
+
+    <!-- 06번 곡 (파일명 open-page.mp3로 수정됨) -->
+    <button class="track-item" data-src="../audio/open-page.mp3" data-cover="../images/cover2.png" 
+            data-title="OPEN PAGE" data-track-id="song-06" data-credit-label="AI와 협업 제작">
+      <span class="track-item__num">06</span>
+      <span class="track-item__title">OPEN PAGE</span>
+      <span class="track-item__credit">AI와 협업 제작</span>
+      <span class="track-item__play">▶</span>
+    </button>
+    
+  </div> <!-- album-tracks 끝 -->
+</div> <!-- album 끝 -->
+    
 
     <div class="now-playing" id="nowPlaying">
       <img src="../images/every-cover.png" alt="" class="now-playing__cover" id="npCover" draggable="false" oncontextmenu="return false">

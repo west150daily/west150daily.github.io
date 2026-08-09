@@ -478,4 +478,228 @@ Praise Him
 그분을 찬양하라
 Oh, I've been redeemed
 오, 난 구속받았네`,
-};
+
+
+// ==========================================
+  // ALBUM 02: ANEW
+  // ==========================================
+  "song-01": `[THE LIGHTS IS COMING]
+[Verse 1]
+I’ve been walking through the dark so long
+나는 너무나 오랫동안 어둠 속을 걸어왔었지
+Couldn't see which way was right or wrong
+어느 길이 맞고 그른지조차 분간할 수 없었어
+But there’s something on the edge of night
+하지만 이 어두운 밤의 가장자리 너머로 무언가가
+Something soft and golden coming into sight
+부드럽고 황금빛을 띤 무언가가 시야에 들어오고 있네
+
+[Pre-Chorus]
+Can you feel it getting closer?
+그것이 점점 더 가까워지는 게 느껴지니?
+Can you feel it drawing near?
+더욱 가까이 다가오고 있는 게 느껴져?
+
+[Chorus]
+The light is coming, coming for me
+빛이 오고 있어, 오직 나를 위해 다가오고 있어
+Breaking through the dark, setting me free
+어둠을 뚫고 나와, 나를 자유롭게 하네
+The light is coming closer every day
+그 빛은 매일매일 더 가까이 다가와
+Chasing every shadow, chasing it away
+그 모든 그림자들을 쫓아내고, 멀리 날려버리네
+
+[Verse 2]
+Used to run from morning, used to hide my face
+아침이 오는 것으로부터 도망치곤 했고, 내 얼굴을 숨기곤 했었지
+Now I’m standing open, standing in this place
+하지만 이제 나는 당당히 마음을 열고, 이 자리에 서 있네
+Every step I’m taking, every breath I take
+내가 내딛는 모든 걸음과, 내가 내쉬는 모든 숨결마다
+I can feel it shining, feel my heart awake
+
+[Bridge]
+No more hiding, no more fear!
+더 이상 숨는 것도, 그 어떤 두려움도 없어!
+I can see it, I can feel it here!
+내 눈으로 똑똑히 보고, 바로 여기 내 안에서 느껴지니까!
+The light is coming... And it’s already here!
+
+[Outro]
+Ah, yeah! I can see it!
+아, 그래요! 내 눈에 보여요!
+The light is here!
+그 빛이 바로 여기에 있습니다!`,
+
+  "song-02": `[LORD I'M LOST]
+[Verse 1]
+Walking through a maze I can't explain
+설명할 수 없는 거대한 미로 속을 헤매어 걷고 있네
+Every road I take just leaves me back again
+선택하는 모든 길마다 나를 그저 제자리로 되돌려 놓을 뿐인데
+Searching for a light that I can't seem to find
+아무리 찾아도 보이지 않는 한 줄기 빛을 찾아 헤매며
+Lost inside the corners of my mind
+
+[Pre-Chorus]
+Can't tell up from down no more
+이제는 어디가 위이고 아래인지 분간할 수 없고
+Don't even know what I'm looking for
+내가 무엇을 찾고 있는지조차 알지 못하겠네
+Lord, I'm lost!
+
+[Chorus]
+Completely lost without a clue
+아무런 실마리도 없이 완전히 미아가 되어버렸어요
+Somebody tell me what I'm supposed to do
+내가 이제 무엇을 해야 하는지 누군가 제발 말해줘요
+Feel the darkness closing in on me
+나를 향해 사방에서 숨 막히게 조여오는 이 어둠이 느껴지니
+Lord, where are you?
+
+[Verse 2]
+I used to know the way, I used to feel so sure
+예전에는 내가 갈 길을 잘 알고 있었고 확신을 가졌었는데
+Now every door I try just shows me more
+이제는 열어보려 애쓰는 문마다 나를 더 큰 혼란으로 이끄네
+
+[Outro]
+Hear that, yeah! Find me now!
+이 부르짖음을 들으소서, 지금 나를 찾아내소서!
+Lord, I'm lost...`,
+
+  "song-03": `[TROUBLE DON'T LAST ALWAYS]
+[Verse]
+I’ve been down so low, I thought I’d never rise
+나는 너무나 깊은 바닥까지 내려앉아 다시는 절대 일어서지 못할 줄 알았었지
+Seen so many tears fall from my eyes
+참으로 수많은 눈물들이 내 두 눈에서 흘러내리는 것을 보았네
+Carried burdens that nobody could see
+무거운 짐들을 짊어지고 있었지만 그 누구도 내 아픔을 알아보지 못했기에
+
+[Pre-Chorus]
+But trouble don't last always (No it don't)
+하지만 고통과 시련은 영원히 지속되지 않네
+Storm clouds gather but they always break
+비록 먹구름이 몰려올지라도 결국에는 언제나 흩어지기 마련이니
+
+[Chorus]
+Trouble don't last always (No it don't)
+고통과 시련은 영원히 지속되지 않네
+Joy is gonna come in the morning light
+찬란한 아침 햇살과 함께 기쁨이 찾아올 테니
+Trouble don't last always (No it don't)
+이 시련은 영원히 머물지 않네
+He’s gonna turn my dark into light
+
+[Bridge]
+Somebody here been through the fire like me!
+여기 나처럼 뜨거운 불길 같은 시련을 지나온 분이 있나요!
+He’s gonna see us through!
+그분께서 반드시 우리를 끝까지 돌보시고 이끌어 주실 테니!
+
+[Outro]
+Trouble don't last always!
+이 아픔은 영원히 머물지 않네!`,
+
+  "song-04": `[IT IS WELL]
+[Verse 1]
+Birds up in the sky, they don't worry about the fall
+하늘 높이 날아오르는 새들은 추락하는 것을 걱정하지 않네
+Stars up in the night, they don't question why at all
+밤하늘을 수놓은 별들은 왜 그 자리에 있는지 전혀 의문하지 않네
+I've been through the fire, I've been through the flood
+나는 거센 불길을 지나왔고, 휘몰아치는 홍수를 거쳐왔지만
+Standing here today, and I'm certain who I trust
+
+[Chorus]
+No more shaking, no more doubt in my soul
+내 영혼에 더 이상의 흔들림도, 더 이상의 의심도 없네
+For the first time in my life, I know, I know
+내 평생 처음으로, 나는 이제야 확실히 아네, 정말 아네
+It is well, it is well with my soul
+모든 것이 평안하네, 내 영혼은 참으로 평안하네
+I've got a peace that I've never known
+
+[Verse 2]
+Used to live in question, used to live in fear
+늘 끊임없는 의문 속에 살았고, 늘 두려움 속에 갇혀 살았었지
+Now I stand up different, now the sky is clear
+하지만 이제 난 완전히 다르게 서 있고, 이제 내 하늘은 맑게 갰네
+It's the One who holds me steady, holds me through the night
+
+[Outro]
+It is well, it is well, yeah it's well
+평안하네, 모든 것이 평안하네, 그래요 참 평안하네
+It is well with my soul
+내 영혼은 참으로 평안하네, 깊이 평안하네`,
+
+  "song-05": `[MASK]
+[Intro]
+Woo! Everybody wins something
+우! 누구나 무언가는 얻기 마련이지
+Woo! Everybody hides something
+우! 누구나 무언가는 숨기기 마련이고
+Let’s see who you really are
+당신이 진짜 어떤 사람인지 이제 한번 가려보자고
+
+[Verse 1 (Rap)]
+You quote the Bible but you never read it right
+성경 구절을 입에 달고 살지만 정작 제대로 읽어본 적은 없지
+Cherry-pick the verses that excuse the way you fight
+네가 부리는 성질과 싸움을 합리화해 줄 구절들만 쏙쏙 골라내니까
+You call it convictions when it’s really just your pride
+사실은 그저 네 오만함일 뿐이면서, 그걸 굳건한 '신념'이라 부르고
+You fast for likes, you pray for the applause
+사람들의 '좋아요'를 얻으려 금식하고, 박수갈채를 받으려 기도하네
+
+[Chorus]
+Take it off! (Take it off, take it off)
+다 벗어던져! 가식적인 척도, 위선적인 쇼도 이제 그만 멈춰
+Let it go! (Take it off, take it off)
+전부 놓아버려! 진짜 네 모습을 마침내 세상에 드러내란 말이야
+Take off the mask and we gonna be all right
+거짓된 가면을 벗어, 그럼 우린 비로소 온전해질 거야
+
+[Outro]
+He wants your soul, He wants your soul
+그분은 너의 진짜 영혼을 원하신단 말이야
+We gonna be all right
+우리는 진정 괜찮아질 거야`,
+
+  "song-06": `[OPEN PAGE]
+[Intro] 
+Go! 가자!
+
+[Verse 1]
+I’ve been taking pills that don't heal a thing
+아픔을 고치지도 못할 약들만 삼켜왔어
+Chasing every high that don't mean anything
+아무 의미도 없는 덧없는 짜릿함만 쫓으면서
+Bought the max from everybody selling lies
+거짓을 파는 자들의 말에 전부 속아 넘어갔고
+Followed every star that turned out to be a satellite
+
+[Chorus]
+Open the page! Face what’s true!
+책장을 펼쳐! 진실과 마주해!
+Open the page! It’s talking to you!
+책장을 펼쳐! 네게 말을 건네고 있잖아!
+No more running, no more disguise
+더는 도망치지도, 가면을 쓰지도 마
+Open the page and open your eyes!
+
+[Verse 2]
+Every chapter is a scalpel, every verse a stitch
+모든 장은 메스가 되어 째고, 모든 구절은 바늘이 되어 꿰매주네
+Cutting out the cancer, cutting out the itch
+내 안의 암 덩어리를 도려내고, 괴롭히던 갈증을 없애주지
+
+[Outro]
+Open the page! Face what’s true!
+책장을 펼쳐! 진실과 마주해!
+This the cure!
+이것이 바로 해답이야!`
+
+}; // 가사 끝`
