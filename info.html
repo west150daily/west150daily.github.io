@@ -347,7 +347,7 @@
   .img-wrapper.pos-bottom { margin-top: auto; margin-bottom: 16px; }
   .img-wrapper img.card-image { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-  mark { background: transparent; color: inherit; padding: 0 3px; border-radius: 3px; }
+  mark { background: transparent; color: inherit; padding: 0 3px; border-radius: 3px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
   .red-underline { text-decoration: underline; text-decoration-color: #FF3B30; text-decoration-thickness: 3px; text-underline-offset: 3px; }
 
   .actions { display: flex; flex-direction: column; gap: 9px; margin-top: 16px; }
@@ -1325,13 +1325,13 @@
     let h = pad;
 
     if (box.title) {
-      const charsPerLineTitle = Math.max(6, Math.floor(colW / (fonts.subBoxSize * 0.8)));
+      const charsPerLineTitle = Math.max(6, Math.floor(colW / (fonts.subBoxSize * 0.62)));
       const titleLines = Math.max(1, Math.ceil(box.title.length / charsPerLineTitle) + (box.title.match(/\n/g) || []).length);
       h += titleLines * fonts.subBoxSize * 1.35 + 8;
     }
 
     if (box.body) {
-      const charsPerLine = Math.max(6, Math.floor(colW / (fonts.bodySize * 0.8)));
+      const charsPerLine = Math.max(6, Math.floor(colW / (fonts.bodySize * 0.62)));
       const lines = Math.max(1, Math.ceil(box.body.length / charsPerLine) + (box.body.match(/\n/g) || []).length);
       h += lines * fonts.bodySize * 1.65;
     }
@@ -1346,7 +1346,7 @@
   // [수정됨] 한글 글자폭 보정 (0.55 → 0.95)
   function estimateParagraphHeight(paragraph, fonts, colW) {
     if (paragraph.length === 0) return fonts.bodySize * 1.65;
-    const charsPerLine = Math.max(6, Math.floor(colW / (fonts.bodySize * 0.95)));
+    const charsPerLine = Math.max(6, Math.floor(colW / (fonts.bodySize * 0.62)));
     const lines = Math.max(1, Math.ceil(paragraph.length / charsPerLine));
     return lines * fonts.bodySize * 1.65;
   }
@@ -1505,8 +1505,8 @@
         const heights = columnHeightsFor(candidate, fonts, colW, columnCount);
         const maxH = Math.max(...heights);
 
-        // [수정됨] 안전 마진을 0.98 → 0.92로 늘려 실측 오차에 대비
-        if (currentGroup.length > 0 && maxH > availableH * 0.92) {
+        // [수정됨] 글자폭 보정(0.62)이 실측에 더 가까워졌으므로 마진도 1.0으로 완화
+        if (currentGroup.length > 0 && maxH > availableH * 1.0) {
           groups.push(currentGroup);
           currentGroup = [box];
         } else {
@@ -1687,7 +1687,8 @@
     previewEl.style.backdropFilter = 'none';
     previewEl.style.webkitBackdropFilter = 'none';
 
-    await new Promise(r => setTimeout(r, 180));
+    await (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve());
+    await new Promise(r => setTimeout(r, 350));
 
     try {
       const canvas = await html2canvas(previewEl, {
