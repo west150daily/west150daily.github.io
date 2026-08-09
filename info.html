@@ -422,6 +422,16 @@
     font-size: 15px;
     font-weight: 600;
   }
+  #desktop-download-btn {
+    margin-top: 18px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 13px 26px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+  }
   #save-overlay-nav {
     display: none;
     gap: 16px;
@@ -693,7 +703,7 @@
     </div>
   </div>
 
-  <!-- iPhone 저장 오버레이 -->
+  <!-- 저장 오버레이 (아이폰: 길게 눌러 저장 / 데스크톱: 페이지별 다운로드 버튼) -->
   <div id="save-overlay">
     <img id="save-preview-img" alt="저장용 이미지">
     <div id="save-overlay-nav">
@@ -701,10 +711,11 @@
       <span id="save-page-label"></span>
       <button type="button" onclick="iosSaveNext()">다음 ›</button>
     </div>
-    <div class="save-guide">
+    <div class="save-guide" id="save-guide-text">
       <strong>이미지를 길게 눌러서 저장</strong>하세요<br>
       (사진 앱에 저장됩니다)
     </div>
+    <button type="button" id="desktop-download-btn" style="display:none;" onclick="desktopDownloadCurrent()">이 페이지 다운로드</button>
     <button class="close-btn" onclick="closeSaveOverlay()">닫기</button>
   </div>
 
@@ -1834,6 +1845,33 @@
     } else {
       nav.style.display = 'none';
     }
+    const guide = document.getElementById('save-guide-text');
+    const dlBtn = document.getElementById('desktop-download-btn');
+    if (isIOS()) {
+      guide.style.display = '';
+      dlBtn.style.display = 'none';
+    } else {
+      guide.style.display = 'none';
+      dlBtn.style.display = 'inline-block';
+      dlBtn.textContent = iosImages.length > 1 ? `이 페이지 다운로드 (${iosImageIndex + 1}/${iosImages.length})` : '이 이미지 다운로드';
+    }
+  }
+
+  // 데스크톱: 여러 페이지를 자동으로 연달아 다운로드하면 브라우저가
+  // "다중 자동 다운로드"로 인식해 일부(주로 뒤 페이지 이전 것들)를 조용히
+  // 막는 경우가 있어, 페이지마다 사용자가 직접 버튼을 눌러 한 장씩
+  // 다운로드하도록 함(클릭 = 정상적인 사용자 동작이라 절대 차단되지 않음).
+  function desktopDownloadCurrent() {
+    const dataUrl = iosImages[iosImageIndex];
+    if (!dataUrl) return;
+    const pageSuffix = iosImages.length > 1 ? `_p${iosImageIndex + 1}` : '';
+    const filename = `Infographic_Card_${currentSize.w}x${currentSize.h}${pageSuffix}.png`;
+    const link = document.createElement('a');
+    link.href = dataUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 
   function iosSavePrev() {
@@ -1849,7 +1887,9 @@
         alert('이미지 생성 라이브러리를 불러오지 못했습니다. 인터넷 연결 또는 광고 차단 확장 프로그램을 확인한 뒤 새로고침해 다시 시도해주세요.');
         return;
       }
-      if (isIOS()) {
+      const previews = document.querySelectorAll('.card-preview');
+      if (isIOS() || previews.length > 1) {
+        // 아이폰이거나, 페이지가 여러 장이면 오버레이를 열어 페이지별로 저장
         const images = await generateAllPageImages();
         if (!images.length) { alert('이미지 생성에 실패했습니다. 다시 시도해주세요.'); return; }
         openIosSaveOverlay(images);
