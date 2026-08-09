@@ -597,6 +597,42 @@ body.page-music::after{
   }
 }
 
+
+/* =========================================================
+   LYRICS VISIBILITY FIX
+   ========================================================= */
+.page-music #lyricsBox{
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  min-height:140px;
+  margin-top:28px !important;
+  padding:24px 26px !important;
+  background:rgba(15,17,22,.78) !important;
+  border:1px solid rgba(220,226,234,.12) !important;
+  border-radius:16px;
+}
+
+.page-music #lyricsText{
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  color:#DCE1E7 !important;
+  white-space:pre-line !important;
+  line-height:1.9 !important;
+  font-size:15px !important;
+  min-height:60px;
+  margin:12px 0 0 !important;
+}
+
+.page-music .lyrics-box__label{
+  display:block !important;
+  color:#9FA7B2 !important;
+  font-size:11px !important;
+  font-weight:600;
+  letter-spacing:.22em !important;
+}
+
 /* =========================================================
    BLACK & SILVER CINEMATIC OVERRIDES
    ========================================================= */
@@ -1058,6 +1094,16 @@ body.page-music::after{
   const first = data.albums?.[0]?.tracks?.[0];
 
   if(first){
+
+    /* 첫 곡의 가사를 페이지 하단에 즉시 표시 */
+    const firstLyricsId = first.lyricsId || first.id;
+    const lyricsEl = document.getElementById("lyricsText");
+
+    if(lyricsEl && typeof LYRICS !== "undefined" && LYRICS[firstLyricsId]){
+      lyricsEl.textContent = LYRICS[firstLyricsId];
+    } else if(lyricsEl){
+      lyricsEl.textContent = "트랙을 선택하면 가사가 표시됩니다.";
+    }
 
     document.getElementById("npAudio").src =
       first.audio;
