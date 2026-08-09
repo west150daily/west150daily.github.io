@@ -5,14 +5,26 @@
   var openers = document.querySelectorAll('.js-open-music');
   var closers = modal.querySelectorAll('[data-close-music]');
   var trackItems = modal.querySelectorAll('.track-item');
+  var albums = modal.querySelectorAll('.album');
+  var showAllBtn = document.getElementById('showAllAlbums');
   var npAudio = document.getElementById('npAudio');
   var npCover = document.getElementById('npCover');
   var npTitle = document.getElementById('npTitle');
   var npCredit = document.getElementById('npCredit');
   var lyricsText = document.getElementById('lyricsText');
 
+  function showAlbum(albumId) {
+    albums.forEach(function (album) {
+      var match = !albumId || album.getAttribute('data-album-id') === albumId;
+      album.style.display = match ? '' : 'none';
+    });
+    if (showAllBtn) showAllBtn.hidden = !albumId;
+  }
+
   function openModal(e) {
     if (e) e.preventDefault();
+    var albumId = (e && e.currentTarget) ? e.currentTarget.getAttribute('data-album-id') : null;
+    showAlbum(albumId);
     modal.classList.add('is-open');
     document.body.style.overflow = 'hidden';
   }
@@ -33,6 +45,12 @@
   closers.forEach(function (btn) {
     btn.addEventListener('click', closeModal);
   });
+
+  if (showAllBtn) {
+    showAllBtn.addEventListener('click', function () {
+      showAlbum(null);
+    });
+  }
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
