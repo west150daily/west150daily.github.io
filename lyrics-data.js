@@ -175,8 +175,6 @@ He ascended!
 그분이 올라가셨네!
 
 [Bridge / Climax]
-(웅장한 오케스트라와 피아노 연주 파트)
-
 Can you see the clouds departing way up high?
 저 높은 곳에서 구름이 걷히는 것이 보이나요?
 Watch the King of glory rising through the air
@@ -222,3 +220,142 @@ Praise Him!
 He has ascended!
 그분이 올라가셨네!`
 };
+
+"HE IS RIEN": `[Intro]
+They thought it was over
+그들은 모든 것이 끝났다고 생각했지
+But He is risen!
+하지만 그분이 살아나셨네!
+Hallelujah
+할렐루야
+
+[Verse 1]
+I stood at the tomb where they laid Him down
+그들이 그분을 뉘어 둔 무덤 앞에 내가 섰을 때
+Stone rolled away, nobody found
+돌문은 굴려져 있었고, 아무도 찾을 수 없었네
+Angels were shining, the morning broke clear
+천사들은 빛나고 있었고, 아침은 선명하게 밝아왔지
+Death lost its sting, and I felt no fear
+죽음은 그 독침을 잃었고, 내겐 아무런 두려움도 없었네
+
+[Verse 2]
+Now the grave is empty, the story's told
+이제 무덤은 비었고, 그 이야기가 전해지네
+He walked out victorious, unshaken and bold
+그분은 승리자로, 흔들림 없이 담대하게 걸어 나오셨네
+What they thought was over was just the start
+그들이 끝이라 생각했던 것은 단지 시작일 뿐이었고
+Life beyond dying, He healed my heart
+죽음을 넘어선 생명으로, 그분이 내 마음을 고치셨네
+
+[Chorus 1]
+He is risen! He is risen!
+그분이 살아나셨네! 그분이 살아나셨네!
+Hallelujah
+할렐루야
+Death could not hold Him
+죽음은 그분을 붙잡아둘 수 없었네
+He's alive today!
+그분은 오늘 살아 계시네!
+
+He is risen! He is risen!
+그분이 살아나셨네! 그분이 살아나셨네!
+Hallelujah
+할렐루야
+Rolled the stone away
+돌문을 굴려 열어젖히셨네
+He's alive today!
+그분은 오늘 살아 계시네!
+
+[Post-Chorus 1]
+Up from the grave! (He is risen)
+무덤에서 일어나셨네! (그분이 살아나셨네)
+Nothing's the same! (He is risen)
+모든 것이 달라졌네! (그분이 살아나셨네)
+Early in the morning, women ran to see
+이른 아침, 여인들이 보려고 달려갔었지
+Empty tomb was waiting, set my spirit free
+비어있는 무덤이 기다리고 있었고, 내 영혼을 자유케 했네
+
+Step by step, disciples couldn't believe their eyes
+한 걸음씩 다가오니, 제자들은 자신들의 눈을 믿을 수 없었지
+He appeared among them, He's alive!
+그분은 그들 가운데 나타나셨네, 그분은 살아 계시네!
+He is risen!
+그분이 살아나셨네!
+
+[Chorus 2]
+He is risen! He is risen!
+그분이 살아나셨네! 그분이 살아나셨네!
+Hallelujah
+할렐루야
+Death could not hold Him
+죽음은 그분을 붙잡아둘 수 없었네
+He's alive today!
+그분은 오늘 살아 계시네!
+
+He is risen! He is risen!
+그분이 살아나셨네! 그분이 살아나셨네!
+Hallelujah
+할렐루야
+Rolled the stone away
+돌문을 굴려 열어젖히셨네
+He's alive today!
+그분은 오늘 살아 계시네!
+
+[Post-Chorus 2]
+Up from the grave! (He is risen)
+무덤에서 일어나셨네! (그분이 살아나셨네)
+Nothing's the same! (He is risen)
+모든 것이 달라졌네! (그분이 살아나셨네)
+
+[Bridge / Climax]
+Can you feel the power breaking through the tomb?
+무덤을 뚫고 나오는 그 권능이 느껴지나요?
+(Yes, we feel the power)
+네, 우리는 그 권능을 느껴요
+Watch the darkness running from the empty room!
+비어있는 방에서 어둠이 도망치는 것을 보라!
+Hallelujah!
+할렐루야!
+Higher and higher, hear the angels sing
+더 높이, 더 높이, 천사들의 노래를 들으라
+We serve a risen King!
+우리는 부활하신 왕을 섬기네!
+
+[Outro - Final Chorus]
+He is risen! He is risen!
+그분이 살아나셨네! 그분이 살아나셨네!
+Hallelujah
+할렐루야
+Death could not hold Him
+죽음은 그분을 붙잡아둘 수 없었네
+He's alive today!
+그분은 오늘 살아 계시네!
+
+He is risen! He is risen!
+그분이 살아나셨네! 그분이 살아나셨네!
+Hallelujah
+할렐루야
+Rolled the stone away
+돌문을 굴려 열어젖히셨네
+He's alive today!
+그분은 오늘 살아 계시네!
+
+Up from the grave! (He is risen)
+무덤에서 일어나셨네! (그분이 살아나셨네)
+Nothing's the same! (He is risen)
+모든 것이 달라졌네! (그분이 살아나셨네)
+Up from the grave! (He is risen)
+무덤에서 일어나셨네! (그분이 살아나셨네)
+Shining in His glory, come on praise!
+그분의 영광 중에 빛나시니, 다 함께 찬양해!
+
+Praise Him!
+그분을 찬양하라!
+He is risen!
+그분이 살아나셨네!'
+};
+
+
