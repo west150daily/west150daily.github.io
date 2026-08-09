@@ -14,14 +14,14 @@
 <!-- MUSIC 전용 디자인 -->
 <style>
 :root{
-  --m-black:#080706;
-  --m-brown:#241912;
-  --m-warm:#8e6a4b;
-  --m-gold:#c9a982;
-  --m-cream:#eee4d5;
-  --m-muted:#9b9188;
-  --m-line:rgba(238,228,213,.13);
-  --m-line-soft:rgba(238,228,213,.07);
+  --m-black:#07080A;
+  --m-brown:#111318;
+  --m-warm:#7F8792;
+  --m-gold:#C4CAD2;
+  --m-cream:#F1F3F5;
+  --m-muted:#8B919A;
+  --m-line:rgba(220,226,234,.13);
+  --m-line-soft:rgba(220,226,234,.07);
 }
 
 /* =========================================================
@@ -40,22 +40,22 @@ body.page-music{
   color:var(--m-cream) !important;
   background:
     radial-gradient(
-      ellipse 65% 48% at 72% 4%,
-      rgba(211,164,113,.25) 0%,
-      rgba(143,99,61,.14) 22%,
-      transparent 62%
+      ellipse 70% 55% at 82% 0%,
+      rgba(180,195,215,.10) 0%,
+      rgba(110,125,145,.045) 28%,
+      transparent 64%
     ),
     radial-gradient(
-      ellipse 52% 42% at 18% 48%,
-      rgba(92,55,34,.23) 0%,
+      ellipse 60% 50% at 8% 45%,
+      rgba(95,110,130,.055) 0%,
       transparent 68%
     ),
     linear-gradient(
-      112deg,
-      #050504 0%,
-      #100c09 34%,
-      #1c120d 55%,
-      #0a0807 100%
+      118deg,
+      #050608 0%,
+      #090B0F 38%,
+      #101217 64%,
+      #060709 100%
     ) !important;
   font-family:"DM Sans",sans-serif !important;
   overflow-x:hidden;
@@ -85,8 +85,8 @@ body.page-music::after{
   pointer-events:none;
   background:linear-gradient(
     135deg,
-    rgba(255,231,194,.30),
-    rgba(190,139,91,.13) 28%,
+    rgba(235,241,248,.12),
+    rgba(155,170,190,.055) 28%,
     transparent 67%
   );
   filter:blur(32px);
@@ -596,6 +596,102 @@ body.page-music::after{
     transition:none !important;
   }
 }
+
+/* =========================================================
+   BLACK & SILVER CINEMATIC OVERRIDES
+   ========================================================= */
+.page-music .nav{
+  background:linear-gradient(
+    to bottom,
+    rgba(4,5,7,.94),
+    rgba(4,5,7,.30)
+  ) !important;
+  border-bottom:1px solid rgba(220,226,234,.08);
+}
+
+.page-music .nav a,
+.page-music .nav .logo,
+.page-music .nav .nav-link{
+  color:#DDE2E8 !important;
+}
+
+.page-music .nav a:hover,
+.page-music .nav .nav-link:hover{
+  color:#FFFFFF !important;
+}
+
+.page-music .album-card,
+.page-music .album,
+.page-music .lyrics-box,
+.page-music .now-playing{
+  background:rgba(15,17,22,.72) !important;
+  border-color:rgba(220,226,234,.10) !important;
+  box-shadow:0 20px 60px rgba(0,0,0,.28);
+}
+
+.page-music .album-card:hover{
+  border-color:rgba(220,226,234,.24) !important;
+  box-shadow:0 24px 70px rgba(0,0,0,.40);
+}
+
+.page-music .album-card__meta,
+.page-music .album-meta,
+.page-music .track-item__credit,
+.page-music .music-disclaimer{
+  color:#858C96 !important;
+}
+
+.page-music .album-card__title,
+.page-music .album-title,
+.page-music .track-item__title,
+.page-music .lyrics-box__text,
+.page-music .now-playing__title{
+  color:#F1F3F5 !important;
+}
+
+.page-music .track-item{
+  border-color:rgba(220,226,234,.075) !important;
+}
+
+.page-music .track-item:hover{
+  background:rgba(220,226,234,.055) !important;
+}
+
+.page-music .track-item__play{
+  color:#C4CAD2 !important;
+}
+
+.page-music .lyrics-box__label{
+  color:#9FA7B2 !important;
+  letter-spacing:.18em;
+}
+
+.page-music .now-playing__credit{
+  color:#8E96A1 !important;
+}
+
+.page-music .album-card__cover,
+.page-music .album-cover{
+  box-shadow:0 16px 40px rgba(0,0,0,.42);
+}
+
+.page-music ::selection{
+  background:rgba(210,218,228,.22);
+  color:#fff;
+}
+
+/* Reduce the warm/golden feel inherited from the orbital theme. */
+.page-music .btn,
+.page-music button{
+  -webkit-tap-highlight-color:transparent;
+}
+
+.page-music .reveal{
+  transition:
+    opacity .55s ease,
+    transform .55s cubic-bezier(.2,.7,.2,1);
+}
+
 </style>
 </head>
 
