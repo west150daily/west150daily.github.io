@@ -186,8 +186,12 @@
         </div>
       </div>
 
-      <label>이미지 주소 (여러 개면 줄바꿈)</label>
-      <textarea id="images" placeholder="https://...&#10;https://..." style="min-height:70px"></textarea>
+      <label>이미지 선택 (GitHub의 daily/image 폴더에 업로드한 파일)</label>
+      <input type="file" id="imageFiles" accept="image/*" multiple>
+      <p style="color:rgba(231,233,236,0.45); font-size:0.8rem; margin-top:8px;">
+        파일을 선택하면 자동으로 <code>image/파일명.jpg</code> 형식의 경로가 입력됩니다.
+      </p>
+      <textarea id="images" placeholder="image/news1.jpg&#10;image/news2.jpg" style="min-height:70px; margin-top:10px"></textarea>
 
       <label style="display:flex; align-items:center; gap:8px; margin-top:16px;">
         <input type="checkbox" id="breaking" style="width:auto">
@@ -237,6 +241,12 @@
 
   document.getElementById('passwordInput').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') checkPassword();
+  });
+
+  // 이미지 파일 선택 → daily/image 기준 상대경로 자동 생성
+  document.getElementById('imageFiles').addEventListener('change', function () {
+    const paths = Array.from(this.files).map(file => 'image/' + file.name);
+    document.getElementById('images').value = paths.join('\\n');
   });
 
   // 기존 data.json 불러오기
@@ -336,7 +346,7 @@
     document.getElementById('text').value = card.text;
     document.getElementById('source').value = card.source || '';
     document.getElementById('sourceUrl').value = card.sourceUrl || '';
-    document.getElementById('images').value = (card.images || []).join('\n');
+    document.getElementById('images').value = (card.images || []).join('\n');\n    document.getElementById('imageFiles').value = '';
     document.getElementById('breaking').checked = card.breaking || false;
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -353,7 +363,7 @@
     document.getElementById('text').value = '';
     document.getElementById('source').value = '';
     document.getElementById('sourceUrl').value = '';
-    document.getElementById('images').value = '';
+    document.getElementById('images').value = '';\n    document.getElementById('imageFiles').value = '';
     document.getElementById('breaking').checked = false;
   }
 
