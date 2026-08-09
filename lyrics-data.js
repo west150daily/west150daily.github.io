@@ -221,7 +221,7 @@ He has ascended!
 그분이 올라가셨네!`
 };
 
-"he-is-risen": `[Intro]
+  "he-is-risen": `[Intro]
 They thought it was over
 그들은 모든 것이 끝났다고 생각했지
 But He is risen!
@@ -355,11 +355,11 @@ Shining in His glory, come on praise!
 Praise Him!
 그분을 찬양하라!
 He is risen!
-그분이 살아나셨네!'
+그분이 살아나셨네!`,
 };
 
 
-"redeemd": '[Intro]
+  "redeemd": `[Intro]
 Oh...
 Yeah, I've been redeemed
 네, 난 구속(구원)받았네
@@ -476,6 +476,6 @@ Every single day, shining His glory from up above
 Praise Him
 그분을 찬양하라
 Oh, I've been redeemed
-오, 난 구속받았네'
+오, 난 구속받았네`,
 };
 
