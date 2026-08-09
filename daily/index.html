@@ -67,9 +67,12 @@
     </div>
     <div class="breaking-list">
       <a href="#card-1" class="breaking-item">
-        <span class="breaking-item__time">방금</span>
-        <span class="breaking-item__text">속보 예시 문구가 이 자리에 짧게 표시됩니다.</span>
-      </a>
+  <img class="breaking-item__thumb" src="../images/west150-daily-icon.png" alt="">
+  <div class="breaking-item__content">
+    <span class="breaking-item__time">방금</span>
+    <span class="breaking-item__text">속보 예시 문구가 이 자리에 짧게 표시됩니다.</span>
+  </div>
+</a>
       <a href="#card-2" class="breaking-item">
         <span class="breaking-item__time">12분 전</span>
         <span class="breaking-item__text">속보만 모아서 빠르게 훑어볼 수 있는 공간입니다.</span>
@@ -82,7 +85,16 @@
   </aside>
 
   <section class="feed feed--in-layout" id="mainFeed">
-
+<!-- 로딩 중일 때만 보이게 사용 -->
+<div class="skeleton-card">
+  <div class="skeleton-avatar"></div>
+  <div class="skeleton-lines">
+    <div class="skeleton-line short"></div>
+    <div class="skeleton-line medium"></div>
+    <div class="skeleton-line long"></div>
+  </div>
+</div>
+    
     <!-- 오늘 -->
     <div class="date-group" data-date="today">
       <div class="date-group__title">오늘</div>
@@ -94,7 +106,7 @@
             <span class="feed-card__name">WEST150 DAILY</span>
             <span class="feed-card__handle">@west150daily</span>
             <span class="feed-card__dot">·</span>
-            <span class="feed-card__time">1시간 전</span>
+            <span class="feed-card__time" data-time="2026-08-09T16:42:00+09:00">1시간 전</span>
           </div>
           <span class="feed-card__tag">정치</span>
           <p class="feed-card__text">이 자리에는 실제 X(트위터) 소식을 정리한 카드뉴스가 들어갈 예정입니다. 짧고 명확하게, 오늘 꼭 알아야 할 소식만 골라서 전합니다.</p>
