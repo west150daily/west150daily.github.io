@@ -11,6 +11,10 @@
    단, 가사 안에 백틱(`)이나 ${ } 는 사용하지 마세요.)
 */
 
+/*
+  WEST150 MUSIC — 가사 데이터
+*/
+
 const LYRICS = {
   "every": `[Verse 1]
 Woke up breathing, that's a reason right there
@@ -218,8 +222,7 @@ He's alive on high!
 Praise Him!
 그분을 찬양하라!
 He has ascended!
-그분이 올라가셨네!`
-};
+그분이 올라가셨네!`,
 
   "he-is-risen": `[Intro]
 They thought it was over
@@ -356,10 +359,8 @@ Praise Him!
 그분을 찬양하라!
 He is risen!
 그분이 살아나셨네!`,
-};
 
-
-  "redeemd": `[Intro]
+  "redeemed": `[Intro]
 Oh...
 Yeah, I've been redeemed
 네, 난 구속(구원)받았네
@@ -478,4 +479,3 @@ Praise Him
 Oh, I've been redeemed
 오, 난 구속받았네`,
 };
-
