@@ -18,18 +18,40 @@
 <div class="stars"></div>
 
 <nav class="nav">
-  <div class="logo"><a href="../" class="logo logo-img-badge"><img src="../images/west150-logo.png" alt="WEST150" class="logo-img"></a></div>
+  <div class="logo">
+    <a href="../" class="logo logo-img-badge">
+      <img src="../images/west150-logo.png" alt="WEST150" class="logo-img">
+    </a>
+  </div>
   <div class="nav-clock" id="navClock">
-    <span class="nav-clock__item"><span class="nav-clock__flag">🇰🇷</span><span class="nav-clock__label">KST</span><span id="clockKST">--:--</span></span>
-    <span class="nav-clock__item"><span class="nav-clock__flag">🇺🇸</span><span class="nav-clock__label">EST</span><span id="clockEST">--:--</span></span>
+    <span class="nav-clock__item">
+      <span class="nav-clock__flag">🇰🇷</span>
+      <span class="nav-clock__label">KST</span>
+      <span id="clockKST">--:--</span>
+    </span>
+    <span class="nav-clock__item">
+      <span class="nav-clock__flag">🇺🇸</span>
+      <span class="nav-clock__label">EST</span>
+      <span id="clockEST">--:--</span>
+    </span>
   </div>
 </nav>
 
 <header class="daily-hero">
   <div class="daily-hero__badge reveal"><span class="dot"></span>LIVE FEED</div>
   <h1 class="reveal">X에서 골라 전합니다</h1>
-  <p class="reveal">X(트위터)의 소식을 선별해 읽기 쉬운 카드뉴스로 정리해 전합니다. 아래는 피드가 어떻게 보일지 보여주는 샘플입니다.</p>
+  <p class="reveal">X(트위터)의 소식을 선별해 읽기 쉬운 카드뉴스로 정리해 전합니다.</p>
 </header>
+
+<!-- 카테고리 필터 -->
+<div class="category-filter reveal">
+  <button class="cat-btn is-active" data-cat="all">전체</button>
+  <button class="cat-btn" data-cat="정치">정치</button>
+  <button class="cat-btn" data-cat="경제">경제</button>
+  <button class="cat-btn" data-cat="테크">테크</button>
+  <button class="cat-btn" data-cat="해외">해외</button>
+  <button class="cat-btn" data-cat="사회">사회</button>
+</div>
 
 <div class="feed-notice reveal">
   <p>※ 아래 카드는 디자인 확인용 샘플입니다 — 실제 뉴스 콘텐츠는 곧 업데이트됩니다.</p>
@@ -37,92 +59,134 @@
 
 <div class="daily-layout">
 
-  <aside class="breaking-sidebar reveal">
-    <div class="breaking-sidebar__head"><span class="dot"></span>속보</div>
-
-    <a href="#" class="breaking-item">
-      <span class="breaking-item__time">방금</span>
-      <span class="breaking-item__text">속보 예시 문구가 이 자리에 짧게 표시됩니다.</span>
-    </a>
-    <a href="#" class="breaking-item">
-      <span class="breaking-item__time">12분 전</span>
-      <span class="breaking-item__text">속보만 모아서 빠르게 훑어볼 수 있는 공간입니다.</span>
-    </a>
-    <a href="#" class="breaking-item">
-      <span class="breaking-item__time">1시간 전</span>
-      <span class="breaking-item__text">중요한 소식은 아래 메인 피드보다 먼저 여기에 올라옵니다.</span>
-    </a>
+  <!-- 속보 -->
+  <aside class="breaking-sidebar reveal" id="breakingSidebar">
+    <div class="breaking-sidebar__head">
+      <span class="dot"></span>속보
+      <span class="breaking-new-badge">NEW</span>
+    </div>
+    <div class="breaking-list">
+      <a href="#card-1" class="breaking-item">
+        <span class="breaking-item__time">방금</span>
+        <span class="breaking-item__text">속보 예시 문구가 이 자리에 짧게 표시됩니다.</span>
+      </a>
+      <a href="#card-2" class="breaking-item">
+        <span class="breaking-item__time">12분 전</span>
+        <span class="breaking-item__text">속보만 모아서 빠르게 훑어볼 수 있는 공간입니다.</span>
+      </a>
+      <a href="#card-3" class="breaking-item">
+        <span class="breaking-item__time">1시간 전</span>
+        <span class="breaking-item__text">중요한 소식은 메인 피드보다 먼저 여기에 올라옵니다.</span>
+      </a>
+    </div>
   </aside>
 
-  <section class="feed feed--in-layout">
+  <section class="feed feed--in-layout" id="mainFeed">
 
-  <article class="feed-card reveal">
-    <div class="feed-card__avatar"><img src="../images/west150-daily-icon.png" alt=""></div>
-    <div class="feed-card__body">
-      <div class="feed-card__head">
-        <span class="feed-card__name">WEST150 DAILY</span>
-        <span class="feed-card__handle">@west150daily</span>
-        <span class="feed-card__dot">·</span>
-        <span class="feed-card__time">1시간 전</span>
-      </div>
-      <span class="feed-card__tag">SAMPLE · 예시 카드</span>
-      <p class="feed-card__text">이 자리에는 실제 X(트위터) 소식을 정리한 카드뉴스가 들어갈 예정입니다. 짧고 명확하게, 오늘 꼭 알아야 할 소식만 골라서 전합니다.</p>
-      <div class="feed-card__source">출처 예시 · <a href="#">원문 보기</a></div>
-    </div>
-  </article>
+    <!-- 오늘 -->
+    <div class="date-group" data-date="today">
+      <div class="date-group__title">오늘</div>
 
-  <article class="feed-card reveal">
-    <div class="feed-card__avatar"><img src="../images/west150-daily-icon.png" alt=""></div>
-    <div class="feed-card__body">
-      <div class="feed-card__head">
-        <span class="feed-card__name">WEST150 DAILY</span>
-        <span class="feed-card__handle">@west150daily</span>
-        <span class="feed-card__dot">·</span>
-        <span class="feed-card__time">3시간 전</span>
-      </div>
-      <span class="feed-card__tag">SAMPLE · 여러 장(캐러셀) 예시</span>
-      <p class="feed-card__text">카드뉴스처럼 순서가 있는 여러 장은 이렇게 옆으로 넘겨보는 캐러셀로 보여줄 수 있어요. 스와이프하거나 점을 눌러 다음 장으로 이동해보세요.</p>
-      <div class="feed-card__media feed-card__media--carousel">
-        <div class="carousel-track" data-carousel>
-          <div class="carousel-slide"><img src="../images/west150-daily-logo.png" alt="샘플 1"></div>
-          <div class="carousel-slide"><img src="../images/west150-music-logo.png" alt="샘플 2"></div>
-          <div class="carousel-slide"><img src="../images/west150-theology-logo.png" alt="샘플 3"></div>
+      <article class="feed-card reveal" id="card-1" data-category="정치" data-id="1">
+        <div class="feed-card__avatar"><img src="../images/west150-daily-icon.png" alt=""></div>
+        <div class="feed-card__body">
+          <div class="feed-card__head">
+            <span class="feed-card__name">WEST150 DAILY</span>
+            <span class="feed-card__handle">@west150daily</span>
+            <span class="feed-card__dot">·</span>
+            <span class="feed-card__time">1시간 전</span>
+          </div>
+          <span class="feed-card__tag">정치</span>
+          <p class="feed-card__text">이 자리에는 실제 X(트위터) 소식을 정리한 카드뉴스가 들어갈 예정입니다. 짧고 명확하게, 오늘 꼭 알아야 할 소식만 골라서 전합니다.</p>
+          <div class="feed-card__actions">
+            <button class="share-btn" data-action="copy">🔗 복사</button>
+            <button class="share-btn" data-action="x">𝕏 공유</button>
+          </div>
+          <div class="feed-card__source">출처 예시 · <a href="#">원문 보기</a></div>
         </div>
-        <div class="carousel-counter">1/3</div>
-        <div class="carousel-dots">
-          <button class="dot is-active" aria-label="1번째 이미지"></button>
-          <button class="dot" aria-label="2번째 이미지"></button>
-          <button class="dot" aria-label="3번째 이미지"></button>
-        </div>
-      </div>
-      <div class="feed-card__source">출처 예시 · <a href="#">원문 보기</a></div>
-    </div>
-  </article>
+      </article>
 
-  <article class="feed-card reveal">
-    <div class="feed-card__avatar"><img src="../images/west150-daily-icon.png" alt=""></div>
-    <div class="feed-card__body">
-      <div class="feed-card__head">
-        <span class="feed-card__name">WEST150 DAILY</span>
-        <span class="feed-card__handle">@west150daily</span>
-        <span class="feed-card__dot">·</span>
-        <span class="feed-card__time">어제</span>
-      </div>
-      <span class="feed-card__tag">SAMPLE · 예시 카드</span>
-      <p class="feed-card__text">피드는 최신순으로 계속 쌓이는 구조예요. 자료를 주시면 이 형태 그대로 실제 뉴스로 채워드릴게요.</p>
-      <div class="feed-card__source">출처 예시 · <a href="#">원문 보기</a></div>
+      <article class="feed-card reveal" id="card-2" data-category="테크" data-id="2">
+        <div class="feed-card__avatar"><img src="../images/west150-daily-icon.png" alt=""></div>
+        <div class="feed-card__body">
+          <div class="feed-card__head">
+            <span class="feed-card__name">WEST150 DAILY</span>
+            <span class="feed-card__handle">@west150daily</span>
+            <span class="feed-card__dot">·</span>
+            <span class="feed-card__time">3시간 전</span>
+          </div>
+          <span class="feed-card__tag">테크</span>
+          <p class="feed-card__text">카드뉴스처럼 순서가 있는 여러 장은 좌우 화살표나 스와이프로 넘겨볼 수 있습니다.</p>
+          
+          <div class="feed-card__media feed-card__media--carousel">
+            <button class="carousel-btn carousel-btn--prev" aria-label="이전">‹</button>
+            <button class="carousel-btn carousel-btn--next" aria-label="다음">›</button>
+            
+            <div class="carousel-track">
+              <div class="carousel-slide"><img src="../images/west150-daily-logo.png" alt="샘플 1"></div>
+              <div class="carousel-slide"><img src="../images/west150-music-logo.png" alt="샘플 2"></div>
+              <div class="carousel-slide"><img src="../images/west150-theology-logo.png" alt="샘플 3"></div>
+            </div>
+            <div class="carousel-counter">1/3</div>
+            <div class="carousel-dots">
+              <button class="dot is-active" aria-label="1번째"></button>
+              <button class="dot" aria-label="2번째"></button>
+              <button class="dot" aria-label="3번째"></button>
+            </div>
+          </div>
+
+          <div class="feed-card__actions">
+            <button class="share-btn" data-action="copy">🔗 복사</button>
+            <button class="share-btn" data-action="x">𝕏 공유</button>
+          </div>
+          <div class="feed-card__source">출처 예시 · <a href="#">원문 보기</a></div>
+        </div>
+      </article>
     </div>
-  </article>
+
+    <!-- 어제 -->
+    <div class="date-group" data-date="yesterday">
+      <div class="date-group__title">어제</div>
+
+      <article class="feed-card reveal" id="card-3" data-category="해외" data-id="3">
+        <div class="feed-card__avatar"><img src="../images/west150-daily-icon.png" alt=""></div>
+        <div class="feed-card__body">
+          <div class="feed-card__head">
+            <span class="feed-card__name">WEST150 DAILY</span>
+            <span class="feed-card__handle">@west150daily</span>
+            <span class="feed-card__dot">·</span>
+            <span class="feed-card__time">어제</span>
+          </div>
+          <span class="feed-card__tag">해외</span>
+          <p class="feed-card__text">피드는 최신순으로 계속 쌓이는 구조예요. 자료를 주시면 이 형태 그대로 실제 뉴스로 채워드릴게요.</p>
+          <div class="feed-card__actions">
+            <button class="share-btn" data-action="copy">🔗 복사</button>
+            <button class="share-btn" data-action="x">𝕏 공유</button>
+          </div>
+          <div class="feed-card__source">출처 예시 · <a href="#">원문 보기</a></div>
+        </div>
+      </article>
+    </div>
+
+    <div class="load-more-wrap">
+      <button class="load-more-btn" id="loadMoreBtn">더 보기</button>
+    </div>
+
   </section>
-
 </div>
 
-<footer class="footer">
-  <div class="logo"><a href="../" class="logo logo-img-badge"><img src="../images/west150-logo.png" alt="WEST150" class="logo-img"></a></div>
+<!-- 맨 위로 -->
+<button class="back-to-top" id="backToTop" aria-label="맨 위로">↑</button>
 
+<footer class="footer">
+  <div class="logo">
+    <a href="../" class="logo logo-img-badge">
+      <img src="../images/west150-logo.png" alt="WEST150" class="logo-img">
+    </a>
+  </div>
   <div class="footer-right">
     <div class="social-icons">
-      <a href="https://x.com/WEST150OFFICIAL" class="social-icon" rel="noopener" target="_blank" aria-label="X (Twitter)">
+      <a href="https://x.com/WEST150OFFICIAL" class="social-icon" rel="noopener" target="_blank" aria-label="X">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4L20 20M20 4L4 20"/></svg>
       </a>
       <a href="#" class="social-icon" rel="noopener" target="_blank" aria-label="Threads">
@@ -141,6 +205,5 @@
 
 <script src="../tooplate-2167-orbital-script.js"></script>
 <script src="west150-daily.js"></script>
-
 </body>
 </html>
