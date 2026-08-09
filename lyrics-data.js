@@ -11,10 +11,6 @@
    단, 가사 안에 백틱(`)이나 ${ } 는 사용하지 마세요.)
 */
 
-/*
-  WEST150 MUSIC — 가사 데이터
-*/
-
 const LYRICS = {
   "every": `[Verse 1]
 Woke up breathing, that's a reason right there
@@ -479,17 +475,13 @@ Praise Him
 Oh, I've been redeemed
 오, 난 구속받았네`,
 
-
-// ==========================================
-  // ALBUM 02: ANEW
-  // ==========================================
   "song-01": `[THE LIGHTS IS COMING]
 [Verse 1]
-I’ve been walking through the dark so long
+I've been walking through the dark so long
 나는 너무나 오랫동안 어둠 속을 걸어왔었지
 Couldn't see which way was right or wrong
 어느 길이 맞고 그른지조차 분간할 수 없었어
-But there’s something on the edge of night
+But there's something on the edge of night
 하지만 이 어두운 밤의 가장자리 너머로 무언가가
 Something soft and golden coming into sight
 부드럽고 황금빛을 띤 무언가가 시야에 들어오고 있네
@@ -513,18 +505,20 @@ Chasing every shadow, chasing it away
 [Verse 2]
 Used to run from morning, used to hide my face
 아침이 오는 것으로부터 도망치곤 했고, 내 얼굴을 숨기곤 했었지
-Now I’m standing open, standing in this place
+Now I'm standing open, standing in this place
 하지만 이제 나는 당당히 마음을 열고, 이 자리에 서 있네
-Every step I’m taking, every breath I take
+Every step I'm taking, every breath I take
 내가 내딛는 모든 걸음과, 내가 내쉬는 모든 숨결마다
 I can feel it shining, feel my heart awake
+내 안에서 빛나는 것이 느껴지고, 내 마음이 깨어나는 것이 느껴지네
 
 [Bridge]
 No more hiding, no more fear!
 더 이상 숨는 것도, 그 어떤 두려움도 없어!
 I can see it, I can feel it here!
 내 눈으로 똑똑히 보고, 바로 여기 내 안에서 느껴지니까!
-The light is coming... And it’s already here!
+The light is coming... And it's already here!
+그 빛이 오고 있어... 그리고 이미 여기에 있네!
 
 [Outro]
 Ah, yeah! I can see it!
@@ -541,6 +535,7 @@ Every road I take just leaves me back again
 Searching for a light that I can't seem to find
 아무리 찾아도 보이지 않는 한 줄기 빛을 찾아 헤매며
 Lost inside the corners of my mind
+내 마음 한구석에서 길을 잃었네
 
 [Pre-Chorus]
 Can't tell up from down no more
@@ -548,6 +543,7 @@ Can't tell up from down no more
 Don't even know what I'm looking for
 내가 무엇을 찾고 있는지조차 알지 못하겠네
 Lord, I'm lost!
+주님, 저는 길을 잃었습니다!
 
 [Chorus]
 Completely lost without a clue
@@ -557,6 +553,7 @@ Somebody tell me what I'm supposed to do
 Feel the darkness closing in on me
 나를 향해 사방에서 숨 막히게 조여오는 이 어둠이 느껴지니
 Lord, where are you?
+주님, 당신은 어디에 계신가요?
 
 [Verse 2]
 I used to know the way, I used to feel so sure
@@ -567,11 +564,12 @@ Now every door I try just shows me more
 [Outro]
 Hear that, yeah! Find me now!
 이 부르짖음을 들으소서, 지금 나를 찾아내소서!
-Lord, I'm lost...`,
+Lord, I'm lost...
+주님, 저는 길을 잃었습니다...`,
 
   "song-03": `[TROUBLE DON'T LAST ALWAYS]
 [Verse]
-I’ve been down so low, I thought I’d never rise
+I've been down so low, I thought I'd never rise
 나는 너무나 깊은 바닥까지 내려앉아 다시는 절대 일어서지 못할 줄 알았었지
 Seen so many tears fall from my eyes
 참으로 수많은 눈물들이 내 두 눈에서 흘러내리는 것을 보았네
@@ -591,12 +589,13 @@ Joy is gonna come in the morning light
 찬란한 아침 햇살과 함께 기쁨이 찾아올 테니
 Trouble don't last always (No it don't)
 이 시련은 영원히 머물지 않네
-He’s gonna turn my dark into light
+He's gonna turn my dark into light
+그분께서 내 어둠을 빛으로 바꾸어 주실 테니
 
 [Bridge]
 Somebody here been through the fire like me!
 여기 나처럼 뜨거운 불길 같은 시련을 지나온 분이 있나요!
-He’s gonna see us through!
+He's gonna see us through!
 그분께서 반드시 우리를 끝까지 돌보시고 이끌어 주실 테니!
 
 [Outro]
@@ -612,6 +611,7 @@ Stars up in the night, they don't question why at all
 I've been through the fire, I've been through the flood
 나는 거센 불길을 지나왔고, 휘몰아치는 홍수를 거쳐왔지만
 Standing here today, and I'm certain who I trust
+오늘 이 자리에 서서, 내가 누구를 신뢰하는지 확신하네
 
 [Chorus]
 No more shaking, no more doubt in my soul
@@ -621,6 +621,7 @@ For the first time in my life, I know, I know
 It is well, it is well with my soul
 모든 것이 평안하네, 내 영혼은 참으로 평안하네
 I've got a peace that I've never known
+전에는 알지 못했던 평안을 이제 얻었네
 
 [Verse 2]
 Used to live in question, used to live in fear
@@ -628,6 +629,7 @@ Used to live in question, used to live in fear
 Now I stand up different, now the sky is clear
 하지만 이제 난 완전히 다르게 서 있고, 이제 내 하늘은 맑게 갰네
 It's the One who holds me steady, holds me through the night
+나를 든든히 붙드시고, 밤새도록 나를 지켜주시는 그분 덕분이라네
 
 [Outro]
 It is well, it is well, yeah it's well
@@ -641,7 +643,7 @@ Woo! Everybody wins something
 우! 누구나 무언가는 얻기 마련이지
 Woo! Everybody hides something
 우! 누구나 무언가는 숨기기 마련이고
-Let’s see who you really are
+Let's see who you really are
 당신이 진짜 어떤 사람인지 이제 한번 가려보자고
 
 [Verse 1 (Rap)]
@@ -649,7 +651,7 @@ You quote the Bible but you never read it right
 성경 구절을 입에 달고 살지만 정작 제대로 읽어본 적은 없지
 Cherry-pick the verses that excuse the way you fight
 네가 부리는 성질과 싸움을 합리화해 줄 구절들만 쏙쏙 골라내니까
-You call it convictions when it’s really just your pride
+You call it convictions when it's really just your pride
 사실은 그저 네 오만함일 뿐이면서, 그걸 굳건한 '신념'이라 부르고
 You fast for likes, you pray for the applause
 사람들의 '좋아요'를 얻으려 금식하고, 박수갈채를 받으려 기도하네
@@ -669,26 +671,28 @@ We gonna be all right
 우리는 진정 괜찮아질 거야`,
 
   "song-06": `[OPEN PAGE]
-[Intro] 
+[Intro]
 Go! 가자!
 
 [Verse 1]
-I’ve been taking pills that don't heal a thing
+I've been taking pills that don't heal a thing
 아픔을 고치지도 못할 약들만 삼켜왔어
 Chasing every high that don't mean anything
 아무 의미도 없는 덧없는 짜릿함만 쫓으면서
 Bought the max from everybody selling lies
 거짓을 파는 자들의 말에 전부 속아 넘어갔고
 Followed every star that turned out to be a satellite
+결국 인공위성에 불과했던 온갖 별들을 따라다녔었지
 
 [Chorus]
-Open the page! Face what’s true!
+Open the page! Face what's true!
 책장을 펼쳐! 진실과 마주해!
-Open the page! It’s talking to you!
+Open the page! It's talking to you!
 책장을 펼쳐! 네게 말을 건네고 있잖아!
 No more running, no more disguise
 더는 도망치지도, 가면을 쓰지도 마
 Open the page and open your eyes!
+책장을 펼치고 네 두 눈을 떠!
 
 [Verse 2]
 Every chapter is a scalpel, every verse a stitch
@@ -697,9 +701,8 @@ Cutting out the cancer, cutting out the itch
 내 안의 암 덩어리를 도려내고, 괴롭히던 갈증을 없애주지
 
 [Outro]
-Open the page! Face what’s true!
+Open the page! Face what's true!
 책장을 펼쳐! 진실과 마주해!
 This the cure!
 이것이 바로 해답이야!`
-
-}; // 가사 끝`
+};
