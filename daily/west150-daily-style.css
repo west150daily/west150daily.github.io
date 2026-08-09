@@ -141,3 +141,106 @@ body.page-daily .breaking-sidebar.is-scrolled {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* ============================================================
+   아이폰/모바일 간격 수정
+   ============================================================ */
+
+/* 호버 효과는 터치 기기에서 비활성화 */
+@media (hover: none) {
+  body.page-daily .feed-card:hover {
+    transform: none;
+    box-shadow: none;
+    background: transparent;
+  }
+}
+
+/* 작은 화면 전체 패딩 조정 */
+@media (max-width: 880px) {
+  body.page-daily .daily-hero {
+    padding: 110px 16px 16px;
+  }
+
+  body.page-daily .category-filter,
+  body.page-daily .feed-notice,
+  body.page-daily .daily-layout {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  body.page-daily .daily-layout {
+    gap: 20px;
+    padding-bottom: 100px;
+  }
+
+  body.page-daily .feed-card {
+    padding: 16px 0;
+    gap: 12px;
+    border-radius: 0 10px 10px 0;
+  }
+}
+
+/* 아이폰 작은 화면 (SE ~ 일반) */
+@media (max-width: 480px) {
+  body.page-daily .daily-hero {
+    padding: 100px 14px 12px;
+  }
+
+  body.page-daily .daily-hero h1 {
+    font-size: 1.5rem;
+  }
+
+  body.page-daily .category-filter {
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .cat-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+
+  body.page-daily .feed-card {
+    padding: 14px 0;
+    gap: 10px;
+  }
+
+  body.page-daily .feed-card__avatar {
+    width: 38px;
+    height: 38px;
+  }
+
+  body.page-daily .feed-card__text {
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  body.page-daily .breaking-sidebar {
+    padding: 14px;
+  }
+
+  .breaking-item {
+    min-width: 200px;
+  }
+}
+
+/* 아이폰 안전 영역 (노치 / 홈바) */
+@supports (padding: max(0px)) {
+  body.page-daily .nav {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+
+  body.page-daily .daily-layout,
+  body.page-daily .daily-hero,
+  body.page-daily .category-filter,
+  body.page-daily .feed-notice {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+
+  .back-to-top {
+    right: max(16px, env(safe-area-inset-right));
+    bottom: max(24px, env(safe-area-inset-bottom));
+  }
+}
