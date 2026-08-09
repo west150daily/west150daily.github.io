@@ -221,7 +221,7 @@ He has ascended!
 그분이 올라가셨네!`
 };
 
-"HE IS RIEN": `[Intro]
+"he-is-risen": `[Intro]
 They thought it was over
 그들은 모든 것이 끝났다고 생각했지
 But He is risen!
