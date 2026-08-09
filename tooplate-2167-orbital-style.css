@@ -1086,3 +1086,418 @@ a { color: inherit; text-decoration: none; }
   color: var(--faint);
   text-align: center;
 }
+
+/* ============================================================
+   WEST150 — Theme system (Light / Dark) for subpages
+   ============================================================ */
+
+html[data-theme="light"] {
+  --void: #f5f5f7;
+  --violet: #c45e1a;
+  --cyan: #b8860b;
+  --white: #1d1d1f;
+  --dim: rgba(29, 29, 31, 0.72);
+  --faint: rgba(29, 29, 31, 0.45);
+  --card-bg: rgba(255, 255, 255, 0.72);
+  --card-border: rgba(0, 0, 0, 0.06);
+  --nav-bg: rgba(245, 245, 247, 0.82);
+  --mini-bg: rgba(255, 255, 255, 0.92);
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.14);
+}
+
+html[data-theme="dark"],
+html:not([data-theme]) {
+  --void: #000000;
+  --violet: #d97a3f;
+  --cyan: #e8b04b;
+  --white: #f5f5f7;
+  --dim: rgba(245, 245, 247, 0.68);
+  --faint: rgba(245, 245, 247, 0.4);
+  --card-bg: rgba(28, 28, 30, 0.9);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --nav-bg: rgba(0, 0, 0, 0.72);
+  --mini-bg: rgba(28, 28, 30, 0.94);
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+  --shadow-hover: 0 18px 50px rgba(0, 0, 0, 0.55);
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  color: var(--white);
+  cursor: pointer;
+  transition: background 0.35s var(--ease), transform 0.35s var(--ease), border-color 0.35s var(--ease);
+  flex-shrink: 0;
+}
+.theme-toggle:hover {
+  transform: scale(1.06);
+  border-color: var(--cyan);
+}
+.theme-toggle svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+.theme-toggle .icon-sun { display: none; }
+.theme-toggle .icon-moon { display: block; }
+html[data-theme="light"] .theme-toggle .icon-sun { display: block; }
+html[data-theme="light"] .theme-toggle .icon-moon { display: none; }
+
+.nav .theme-toggle {
+  margin-left: 12px;
+}
+
+/* ============================================================
+   Apple-style Music page
+   ============================================================ */
+
+body.page-music {
+  background: var(--void);
+  color: var(--white);
+  transition: background 0.45s var(--ease), color 0.45s var(--ease);
+}
+
+body.page-music .aura,
+body.page-music .stars {
+  opacity: 0.25;
+  animation: none;
+}
+
+html[data-theme="light"] body.page-music .aura,
+html[data-theme="light"] body.page-music .stars {
+  opacity: 0.12;
+}
+
+body.page-music .nav {
+  backdrop-filter: blur(16px) saturate(1.4);
+  background: var(--nav-bg);
+  border-bottom: 1px solid var(--card-border);
+}
+
+body.page-music .logo-img {
+  height: 56px;
+}
+
+/* Music hero — clean Apple style */
+.music-hero {
+  position: relative;
+  z-index: 2;
+  padding: 140px clamp(20px, 6vw, 64px) 48px;
+  max-width: 980px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.music-hero__logo {
+  height: 72px;
+  width: auto;
+  display: block;
+  margin: 0 auto 28px;
+  opacity: 0.95;
+}
+
+.music-hero__eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: var(--cyan);
+  margin-bottom: 14px;
+}
+
+.music-hero h1 {
+  font-size: clamp(1.9rem, 5vw, 2.8rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  color: var(--white);
+  margin-bottom: 18px;
+}
+
+.music-hero p {
+  font-size: clamp(0.98rem, 2vw, 1.12rem);
+  color: var(--dim);
+  line-height: 1.7;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* Album grid — Apple style */
+body.page-music .album-grid-section {
+  padding: 20px clamp(20px, 5vw, 56px) 140px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+body.page-music .album-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 36px 28px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+body.page-music .album-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 12px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  color: inherit;
+  transition: transform 0.45s var(--ease);
+}
+
+body.page-music .album-card:hover {
+  transform: scale(1.04) translateY(-4px);
+}
+
+body.page-music .album-card__cover {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.45s var(--ease), transform 0.45s var(--ease);
+}
+
+body.page-music .album-card:hover .album-card__cover {
+  box-shadow: var(--shadow-hover);
+}
+
+body.page-music .album-card__title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--white);
+}
+
+body.page-music .album-card__meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--faint);
+  margin-top: -6px;
+}
+
+/* Footer adjustments for music page */
+body.page-music .footer {
+  border-top-color: var(--card-border);
+  background: transparent;
+}
+
+body.page-music .footer .logo-img {
+  height: 44px;
+}
+
+/* ============================================================
+   Mini Player (fixed bottom)
+   ============================================================ */
+
+.mini-player {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 180;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 16px 12px;
+  background: var(--mini-bg);
+  backdrop-filter: blur(20px) saturate(1.5);
+  border-top: 1px solid var(--card-border);
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.18);
+  transform: translateY(110%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.45s var(--ease), opacity 0.35s var(--ease);
+}
+
+.mini-player.is-visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mini-player__cover {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.mini-player__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mini-player__title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mini-player__credit {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  color: var(--faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mini-player__controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.mini-player__btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: var(--white);
+  color: var(--void);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+}
+
+.mini-player__btn:hover {
+  transform: scale(1.08);
+}
+
+.mini-player__btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mini-player__btn .icon-pause { display: none; }
+.mini-player.is-playing .mini-player__btn .icon-play { display: none; }
+.mini-player.is-playing .mini-player__btn .icon-pause { display: block; }
+
+.mini-player__open {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--card-border);
+  background: transparent;
+  color: var(--dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.3s var(--ease), border-color 0.3s var(--ease);
+}
+
+.mini-player__open:hover {
+  color: var(--cyan);
+  border-color: var(--cyan);
+}
+
+.mini-player__open svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Space for mini-player when visible */
+body.has-mini-player {
+  padding-bottom: 72px;
+}
+
+/* Modal theme-aware tweaks for music page */
+body.page-music .music-modal__panel {
+  background: linear-gradient(180deg, var(--card-bg), var(--void));
+  border-color: var(--card-border);
+}
+
+body.page-music .music-modal__backdrop {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+html[data-theme="light"] body.page-music .music-modal__backdrop {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+/* Subpage (daily / theology) theme support */
+body.page-sub {
+  background: var(--void);
+  color: var(--white);
+  transition: background 0.45s var(--ease), color 0.45s var(--ease);
+}
+
+body.page-sub .nav {
+  backdrop-filter: blur(16px) saturate(1.4);
+  background: var(--nav-bg);
+  border-bottom: 1px solid var(--card-border);
+}
+
+body.page-sub .logo-img {
+  height: 56px;
+}
+
+body.page-sub .aura,
+body.page-sub .stars {
+  opacity: 0.3;
+}
+
+html[data-theme="light"] body.page-sub .aura,
+html[data-theme="light"] body.page-sub .stars {
+  opacity: 0.15;
+}
+
+body.page-sub .footer {
+  border-top-color: var(--card-border);
+}
+
+/* Responsive mini-player */
+@media (max-width: 480px) {
+  .mini-player {
+    padding: 10px 12px 12px;
+    gap: 10px;
+  }
+  .mini-player__cover {
+    width: 42px;
+    height: 42px;
+  }
+  .mini-player__open {
+    display: none;
+  }
+}
+
+/* Nav: keep theme toggle visible on mobile */
+@media (max-width: 720px) {
+  .nav {
+    gap: 10px;
+  }
+  .nav .theme-toggle {
+    margin-left: auto;
+    margin-right: 4px;
+  }
+}
