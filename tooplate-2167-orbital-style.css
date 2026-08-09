@@ -1501,3 +1501,55 @@ body.page-sub .footer {
     margin-right: 4px;
   }
 }
+
+/* Light mode: dark-theme logos become hard to see — invert/darken them */
+html[data-theme="light"] .logo-img,
+html[data-theme="light"] .music-hero__logo,
+html[data-theme="light"] .music-modal__logo,
+html[data-theme="light"] .feature .f-logo,
+html[data-theme="light"] .album-cover,
+html[data-theme="light"] .now-playing__cover {
+  /* keep album covers as-is; only brand logos */
+}
+
+html[data-theme="light"] .logo-img,
+html[data-theme="light"] .music-hero__logo,
+html[data-theme="light"] .music-modal__logo,
+html[data-theme="light"] .feature .f-logo {
+  filter: brightness(0) saturate(100%);
+  opacity: 0.88;
+}
+
+/* Mini player cover stays normal (album art) */
+html[data-theme="light"] .mini-player__cover {
+  filter: none;
+  opacity: 1;
+}
+
+/* Force dark-only on music & sub pages (light toggle removed) */
+body.page-music,
+body.page-sub {
+  --void: #000000;
+  --violet: #d97a3f;
+  --cyan: #e8b04b;
+  --white: #f5f5f7;
+  --dim: rgba(245, 245, 247, 0.68);
+  --faint: rgba(245, 245, 247, 0.4);
+  --card-bg: rgba(28, 28, 30, 0.9);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --nav-bg: rgba(0, 0, 0, 0.72);
+  --mini-bg: rgba(28, 28, 30, 0.94);
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+  --shadow-hover: 0 18px 50px rgba(0, 0, 0, 0.55);
+  background: #000000;
+  color: #f5f5f7;
+}
+
+/* Neutralize any leftover light-mode logo filters */
+html[data-theme="light"] .logo-img,
+html[data-theme="light"] .music-hero__logo,
+html[data-theme="light"] .music-modal__logo,
+html[data-theme="light"] .feature .f-logo {
+  filter: none;
+  opacity: 1;
+}
