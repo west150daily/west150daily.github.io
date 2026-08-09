@@ -1,209 +1,643 @@
+```javascript
 (function () {
-  /* ---------- Music modal + mini player ---------- */
-  var modal = document.getElementById('musicModal');
-  if (!modal) return;
+  function initMusicPlayer() {
+    var modal = document.getElementById('musicModal');
 
-  var openers = document.querySelectorAll('.js-open-music');
-  var closers = modal.querySelectorAll('[data-close-music]');
-  var trackItems = modal.querySelectorAll('.track-item');
-  var albums = modal.querySelectorAll('.album');
-  var showAllBtn = document.getElementById('showAllAlbums');
-  var playAllBtn = document.getElementById('playAllBtn');
-  var repeatBtn = document.getElementById('repeatBtn');
-  var npAudio = document.getElementById('npAudio');
-  var npCover = document.getElementById('npCover');
-  var npTitle = document.getElementById('npTitle');
-  var npCredit = document.getElementById('npCredit');
-  var lyricsText = document.getElementById('lyricsText');
+    if (!modal || modal.dataset.initialized === 'true') {
+      return;
+    }
 
-  var mini = document.getElementById('miniPlayer');
-  var miniCover = document.getElementById('miniCover');
-  var miniTitle = document.getElementById('miniTitle');
-  var miniCredit = document.getElementById('miniCredit');
-  var miniPlayBtn = document.getElementById('miniPlayBtn');
-  var miniOpenBtn = document.getElementById('miniOpenBtn');
+    var openers = document.querySelectorAll('.js-open-music');
+    var closers = modal.querySelectorAll('[data-close-music]');
+    var albums = modal.querySelectorAll('.album');
 
-  var isPlayAll = false;
-  var isRepeat = false;
+    var showAllBtn = document.getElementById('showAllAlbums');
+    var playAllBtn = document.getElementById('playAllBtn');
+    var repeatBtn = document.getElementById('repeatBtn');
 
-  function showAlbum(albumId) {
-    albums.forEach(function (album) {
-      var match = !albumId || album.getAttribute('data-album-id') === albumId;
-      album.style.display = match ? '' : 'none';
-    });
-    if (showAllBtn) showAllBtn.hidden = !albumId;
-  }
+    var npAudio = document.getElementById('npAudio');
+    var npCover = document.getElementById('npCover');
+    var npTitle = document.getElementById('npTitle');
+    var npCredit = document.getElementById('npCredit');
 
-  function openModal(e) {
-    if (e) e.preventDefault();
-    var albumId = (e && e.currentTarget) ? e.currentTarget.getAttribute('data-album-id') : null;
-    showAlbum(albumId);
-    modal.classList.add('is-open');
-    document.body.style.overflow = 'hidden';
-  }
+    var lyricsText = document.getElementById('lyricsText');
 
-  function closeModal() {
-    modal.classList.remove('is-open');
-    document.body.style.overflow = '';
-    /* keep audio playing — mini player takes over */
-  }
+    var mini = document.getElementById('miniPlayer');
+    var miniCover = document.getElementById('miniCover');
+    var miniTitle = document.getElementById('miniTitle');
+    var miniCredit = document.getElementById('miniCredit');
+    var miniPlayBtn = document.getElementById('miniPlayBtn');
+    var miniOpenBtn = document.getElementById('miniOpenBtn');
 
-  function showMini(cover, title, credit) {
-    if (!mini) return;
-    if (cover && miniCover) miniCover.src = cover;
-    if (title && miniTitle) miniTitle.textContent = title;
-    if (credit !== undefined && miniCredit) miniCredit.textContent = credit || '';
-    mini.classList.add('is-visible');
-    mini.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('has-mini-player');
-  }
+    var isPlayAll = false;
+    var isRepeat = false;
 
-  function updateMiniPlaying(isPlaying) {
-    if (!mini) return;
-    mini.classList.toggle('is-playing', !!isPlaying);
-  }
+    modal.dataset.initialized = 'true';
 
-  /* Returns the ordered list of track-item buttons belonging to the
-     album that is currently visible in the modal (i.e. not display:none). */
-  function getActiveAlbumTracks() {
-    var activeAlbum = null;
-    albums.forEach(function (album) {
-      if (!activeAlbum && album.style.display !== 'none') activeAlbum = album;
-    });
-    if (!activeAlbum) activeAlbum = albums[0];
-    if (!activeAlbum) return [];
-    return Array.prototype.slice.call(activeAlbum.querySelectorAll('.track-item'));
-  }
 
-  function playTrack(item) {
-    if (!item) return;
-    var src = item.getAttribute('data-src');
-    var cover = item.getAttribute('data-cover');
-    var title = item.getAttribute('data-title');
-    var trackId = item.getAttribute('data-track-id');
-    var lyrics = (typeof LYRICS !== 'undefined' && trackId && LYRICS[trackId])
-      || item.getAttribute('data-lyrics')
-      || '가사가 곧 추가될 예정입니다.';
-    var credit = item.getAttribute('data-credit-label') || '';
+    /* --------------------------------
+       기본 함수
+    -------------------------------- */
 
-    trackItems.forEach(function (t) { t.classList.remove('is-active'); });
-    item.classList.add('is-active');
+    function trackItems() {
+      return modal.querySelectorAll('.track-item');
+    }
 
-    npAudio.src = src;
-    npCover.src = cover;
-    npTitle.textContent = title;
-    if (npCredit) npCredit.textContent = credit;
-    lyricsText.textContent = lyrics;
 
-    showMini(cover, title, credit);
-    npAudio.play().catch(function () {});
-  }
+    function showAlbum(id) {
+      albums.forEach(function (album) {
+        if (!id) {
+          album.style.display = '';
+          return;
+        }
 
-  function scrollToLyrics() {
-    var lyricsBox = document.getElementById('lyricsBox');
-    var panel = modal.querySelector('.music-modal__panel');
-    if (lyricsBox && panel) {
+        album.style.display =
+          album.getAttribute('data-album-id') === id
+            ? ''
+            : 'none';
+      });
+
+      if (showAllBtn) {
+        showAllBtn.hidden = !id;
+      }
+    }
+
+
+    function openModal(event) {
+      if (event) {
+        event.preventDefault();
+      }
+
+      var id = null;
+
+      if (
+        event &&
+        event.currentTarget &&
+        event.currentTarget.getAttribute
+      ) {
+        id = event.currentTarget.getAttribute('data-album-id');
+      }
+
+      showAlbum(id);
+
+      modal.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    }
+
+
+    function closeModal() {
+      modal.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+
+
+    /* --------------------------------
+       미니 플레이어
+    -------------------------------- */
+
+    function showMini(cover, title, credit) {
+      if (!mini) {
+        return;
+      }
+
+      if (cover) {
+        miniCover.src = cover;
+      }
+
+      if (title) {
+        miniTitle.textContent = title;
+      }
+
+      if (credit !== undefined) {
+        miniCredit.textContent = credit || '';
+      }
+
+      mini.classList.add('is-visible');
+      mini.setAttribute('aria-hidden', 'false');
+
+      document.body.classList.add('has-mini-player');
+    }
+
+
+    function updateMiniPlaying(isPlaying) {
+      if (!mini) {
+        return;
+      }
+
+      mini.classList.toggle('is-playing', !!isPlaying);
+    }
+
+
+    /* --------------------------------
+       현재 선택된 앨범의 트랙
+    -------------------------------- */
+
+    function activeTracks() {
+      var activeAlbum = null;
+
+      albums.forEach(function (album) {
+        if (!activeAlbum && album.style.display !== 'none') {
+          activeAlbum = album;
+        }
+      });
+
+      if (!activeAlbum) {
+        activeAlbum = albums[0];
+      }
+
+      if (!activeAlbum) {
+        return [];
+      }
+
+      return Array.prototype.slice.call(
+        activeAlbum.querySelectorAll('.track-item')
+      );
+    }
+
+
+    /* --------------------------------
+       가사
+    -------------------------------- */
+
+    function getLyrics(item) {
+      var id = item.getAttribute('data-track-id');
+
+      /*
+       * 1순위:
+       * JSON에서 직접 입력한 lyrics
+       */
+      var jsonLyrics = item.getAttribute('data-lyrics');
+
+      if (jsonLyrics) {
+        return jsonLyrics;
+      }
+
+
+      /*
+       * 2순위:
+       * 기존 lyrics-data.js의 LYRICS
+       */
+      if (
+        typeof LYRICS !== 'undefined' &&
+        id &&
+        LYRICS[id]
+      ) {
+        return LYRICS[id];
+      }
+
+
+      /*
+       * 가사가 없을 경우
+       */
+      return '가사가 곧 추가될 예정입니다.';
+    }
+
+
+    /* --------------------------------
+       곡 재생
+    -------------------------------- */
+
+    function playTrack(item) {
+      if (!item) {
+        return;
+      }
+
+      var src = item.getAttribute('data-src');
+      var cover = item.getAttribute('data-cover');
+      var title = item.getAttribute('data-title');
+      var credit = item.getAttribute('data-credit-label');
+
+      if (!src) {
+        return;
+      }
+
+
+      /*
+       * 기존 active 제거
+       */
+      trackItems().forEach(function (track) {
+        track.classList.remove('is-active');
+      });
+
+      item.classList.add('is-active');
+
+
+      /*
+       * 오디오
+       */
+      npAudio.src = src;
+
+
+      /*
+       * 앨범 커버
+       */
+      if (cover) {
+        npCover.src = cover;
+      }
+
+
+      /*
+       * 제목
+       */
+      npTitle.textContent = title || '';
+
+
+      /*
+       * 크레딧
+       */
+      npCredit.textContent = credit || '';
+
+
+      /*
+       * 가사
+       */
+      lyricsText.textContent = getLyrics(item);
+
+
+      /*
+       * 미니 플레이어
+       */
+      showMini(
+        cover,
+        title,
+        credit
+      );
+
+
+      /*
+       * 재생
+       */
+      npAudio.play().catch(function () {
+        /*
+         * 브라우저 자동재생 제한으로
+         * 실패해도 오류를 표시하지 않음
+         */
+      });
+    }
+
+
+    /* --------------------------------
+       가사 위치로 이동
+    -------------------------------- */
+
+    function scrollLyrics() {
+      var box = document.getElementById('lyricsBox');
+      var panel = modal.querySelector('.music-modal__panel');
+
+      if (!box || !panel) {
+        return;
+      }
+
       setTimeout(function () {
-        var top = lyricsBox.offsetTop - 24;
-        panel.scrollTo({ top: top, behavior: 'smooth' });
+        panel.scrollTo({
+          top: box.offsetTop - 24,
+          behavior: 'smooth'
+        });
       }, 80);
     }
-  }
 
-  openers.forEach(function (btn) {
-    btn.addEventListener('click', openModal);
-    btn.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') openModal(e);
-    });
-  });
 
-  closers.forEach(function (btn) {
-    btn.addEventListener('click', closeModal);
-  });
+    /* --------------------------------
+       앨범 버튼
+    -------------------------------- */
 
-  if (showAllBtn) {
-    showAllBtn.addEventListener('click', function () {
-      showAlbum(null);
-    });
-  }
+    openers.forEach(function (button) {
 
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
-  });
-
-  trackItems.forEach(function (item) {
-    item.addEventListener('click', function () {
-      isPlayAll = false;
-      if (playAllBtn) playAllBtn.classList.remove('is-active');
-      playTrack(item);
-      scrollToLyrics();
-    });
-  });
-
-  /* ---------- 전체재생 ---------- */
-  if (playAllBtn) {
-    playAllBtn.addEventListener('click', function () {
-      var queue = getActiveAlbumTracks();
-      if (!queue.length) return;
-      isPlayAll = true;
-      playAllBtn.classList.add('is-active');
-      playTrack(queue[0]);
-      scrollToLyrics();
-    });
-  }
-
-  /* ---------- 반복재생 (현재 곡 반복) ---------- */
-  if (repeatBtn && npAudio) {
-    repeatBtn.addEventListener('click', function () {
-      isRepeat = !isRepeat;
-      npAudio.loop = isRepeat;
-      repeatBtn.classList.toggle('is-active', isRepeat);
-      repeatBtn.setAttribute('aria-pressed', isRepeat ? 'true' : 'false');
-    });
-  }
-
-  if (npAudio) {
-    npAudio.addEventListener('play', function () {
-      updateMiniPlaying(true);
-      showMini(
-        npCover ? npCover.src : null,
-        npTitle ? npTitle.textContent : null,
-        npCredit ? npCredit.textContent : ''
+      button.addEventListener(
+        'click',
+        openModal
       );
-    });
-    npAudio.addEventListener('pause', function () {
-      updateMiniPlaying(false);
-    });
-    npAudio.addEventListener('ended', function () {
-      updateMiniPlaying(false);
 
-      /* loop(반복재생)이 켜져있으면 브라우저가 알아서 같은 곡을 다시 재생하므로
-         ended 이벤트 자체가 발생하지 않음. 전체재생 중일 때만 다음 곡으로 진행 */
-      if (isPlayAll && !npAudio.loop) {
-        var queue = getActiveAlbumTracks();
-        var activeItem = null;
-        queue.forEach(function (t) { if (t.classList.contains('is-active')) activeItem = t; });
-        var idx = activeItem ? queue.indexOf(activeItem) : -1;
-        var next = queue[idx + 1] || queue[0]; /* 마지막 곡 다음엔 앨범 처음으로 */
-        if (next) playTrack(next);
+
+      button.addEventListener(
+        'keydown',
+        function (event) {
+
+          if (
+            event.key === 'Enter' ||
+            event.key === ' '
+          ) {
+            openModal(event);
+          }
+
+        }
+      );
+
+    });
+
+
+    /* --------------------------------
+       닫기
+    -------------------------------- */
+
+    closers.forEach(function (button) {
+
+      button.addEventListener(
+        'click',
+        closeModal
+      );
+
+    });
+
+
+    /* --------------------------------
+       전체 앨범 보기
+    -------------------------------- */
+
+    if (showAllBtn) {
+
+      showAllBtn.addEventListener(
+        'click',
+        function () {
+
+          showAlbum(null);
+
+        }
+      );
+
+    }
+
+
+    /* --------------------------------
+       ESC
+    -------------------------------- */
+
+    document.addEventListener(
+      'keydown',
+      function (event) {
+
+        if (
+          event.key === 'Escape' &&
+          modal.classList.contains('is-open')
+        ) {
+          closeModal();
+        }
+
       }
-    });
-  }
+    );
 
-  if (miniPlayBtn && npAudio) {
-    miniPlayBtn.addEventListener('click', function () {
-      if (npAudio.paused) {
-        npAudio.play().catch(function () {});
-      } else {
-        npAudio.pause();
+
+    /* --------------------------------
+       개별 트랙
+    -------------------------------- */
+
+    trackItems().forEach(function (item) {
+
+      item.addEventListener(
+        'click',
+        function () {
+
+          isPlayAll = false;
+
+          if (playAllBtn) {
+            playAllBtn.classList.remove('is-active');
+          }
+
+          playTrack(item);
+
+          scrollLyrics();
+
+        }
+      );
+
+    });
+
+
+    /* --------------------------------
+       전체 재생
+    -------------------------------- */
+
+    if (playAllBtn) {
+
+      playAllBtn.addEventListener(
+        'click',
+        function () {
+
+          var tracks = activeTracks();
+
+          if (!tracks.length) {
+            return;
+          }
+
+          isPlayAll = true;
+
+          playAllBtn.classList.add('is-active');
+
+          playTrack(tracks[0]);
+
+          scrollLyrics();
+
+        }
+      );
+
+    }
+
+
+    /* --------------------------------
+       반복 재생
+    -------------------------------- */
+
+    if (repeatBtn) {
+
+      repeatBtn.addEventListener(
+        'click',
+        function () {
+
+          isRepeat = !isRepeat;
+
+          npAudio.loop = isRepeat;
+
+          repeatBtn.classList.toggle(
+            'is-active',
+            isRepeat
+          );
+
+          repeatBtn.setAttribute(
+            'aria-pressed',
+            isRepeat ? 'true' : 'false'
+          );
+
+        }
+      );
+
+    }
+
+
+    /* --------------------------------
+       오디오 재생 시작
+    -------------------------------- */
+
+    npAudio.addEventListener(
+      'play',
+      function () {
+
+        updateMiniPlaying(true);
+
+        showMini(
+          npCover.src,
+          npTitle.textContent,
+          npCredit.textContent
+        );
+
       }
-    });
+    );
+
+
+    /* --------------------------------
+       일시정지
+    -------------------------------- */
+
+    npAudio.addEventListener(
+      'pause',
+      function () {
+
+        updateMiniPlaying(false);
+
+      }
+    );
+
+
+    /* --------------------------------
+       곡 종료
+    -------------------------------- */
+
+    npAudio.addEventListener(
+      'ended',
+      function () {
+
+        updateMiniPlaying(false);
+
+
+        /*
+         * 전체 재생이 아니면 종료
+         */
+        if (
+          !isPlayAll ||
+          npAudio.loop
+        ) {
+          return;
+        }
+
+
+        var tracks = activeTracks();
+
+        var activeTrack = null;
+
+        tracks.forEach(function (track) {
+
+          if (
+            track.classList.contains('is-active')
+          ) {
+            activeTrack = track;
+          }
+
+        });
+
+
+        var currentIndex =
+          activeTrack
+            ? tracks.indexOf(activeTrack)
+            : -1;
+
+
+        var nextTrack =
+          tracks[currentIndex + 1];
+
+
+        /*
+         * 다음 곡이 있으면 재생
+         */
+        if (nextTrack) {
+
+          playTrack(nextTrack);
+
+          scrollLyrics();
+
+        } else {
+
+          /*
+           * 마지막 곡이면 처음으로
+           */
+          playTrack(tracks[0]);
+
+          scrollLyrics();
+
+        }
+
+      }
+    );
+
+
+    /* --------------------------------
+       미니 플레이어 재생 / 일시정지
+    -------------------------------- */
+
+    if (miniPlayBtn) {
+
+      miniPlayBtn.addEventListener(
+        'click',
+        function () {
+
+          if (npAudio.paused) {
+
+            npAudio.play().catch(function () {});
+
+          } else {
+
+            npAudio.pause();
+
+          }
+
+        }
+      );
+
+    }
+
+
+    /* --------------------------------
+       미니 플레이어 → 전체 플레이어
+    -------------------------------- */
+
+    if (miniOpenBtn) {
+
+      miniOpenBtn.addEventListener(
+        'click',
+        function () {
+
+          openModal(null);
+
+          showAlbum(null);
+
+        }
+      );
+
+    }
+
   }
 
-  if (miniOpenBtn) {
-    miniOpenBtn.addEventListener('click', function () {
-      openModal(null);
-      showAlbum(null);
-    });
+
+  /*
+   * JSON으로 HTML이 만들어진 후
+   * index.html에서 호출할 수 있도록 공개
+   */
+  window.WEST150MusicInit = initMusicPlayer;
+
+
+  /*
+   * 일반적인 경우
+   */
+  if (document.readyState !== 'loading') {
+
+    initMusicPlayer();
+
+  } else {
+
+    document.addEventListener(
+      'DOMContentLoaded',
+      initMusicPlayer
+    );
+
   }
+
 })();
+```
