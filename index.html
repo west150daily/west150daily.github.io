@@ -1,478 +1,388 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>WEST150 Work</title>
-  <meta name="description" content="WEST150 Work · 생성기 모음">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #f5f5f7;
-      --card: #ffffff;
-      --text: #1d1d1f;
-      --text-secondary: #6e6e73;
-      --border: rgba(0, 0, 0, 0.06);
-      --accent: #0071e3;
-      --accent-hover: #0077ed;
-      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-      --shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-      --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.1);
-      --radius: 18px;
-      --radius-sm: 12px;
-      --header-h: 52px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEST150</title>
 
-    [data-theme="dark"] {
-      --bg: #000000;
-      --card: #1c1c1e;
-      --text: #f5f5f7;
-      --text-secondary: #98989d;
-      --border: rgba(255, 255, 255, 0.08);
-      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-      --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
-      --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.55);
-    }
+<!--
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    Tooplate 2167 Orbital
 
-    html {
-      scroll-behavior: smooth;
-      -webkit-text-size-adjust: 100%;
-    }
+    https://www.tooplate.com/view/2167-orbital
 
-    body {
-      font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-      transition: background 0.35s ease, color 0.35s ease;
-      min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
+    Free HTML CSS Template
 
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      height: var(--header-h);
-      background: rgba(245, 245, 247, 0.72);
-      backdrop-filter: saturate(180%) blur(20px);
-      -webkit-backdrop-filter: saturate(180%) blur(20px);
-      border-bottom: 1px solid var(--border);
-      transition: background 0.35s ease;
-    }
+-->
 
-    [data-theme="dark"] header {
-      background: rgba(0, 0, 0, 0.72);
-    }
-
-    .header-inner {
-      max-width: 1080px;
-      margin: 0 auto;
-      padding: 0 28px;
-      height: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo {
-      font-size: 1.05rem;
-      font-weight: 600;
-      letter-spacing: -0.03em;
-      color: var(--text);
-      text-decoration: none;
-      transition: opacity 0.2s;
-    }
-
-    .logo:hover { opacity: 0.7; }
-
-    .nav {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-    }
-
-    .nav a {
-      color: var(--text-secondary);
-      text-decoration: none;
-      font-size: 0.875rem;
-      font-weight: 500;
-      padding: 6px 12px;
-      border-radius: 980px;
-      transition: all 0.2s ease;
-    }
-
-    .nav a:hover {
-      color: var(--text);
-      background: rgba(0, 0, 0, 0.04);
-    }
-
-    [data-theme="dark"] .nav a:hover {
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-left: 8px;
-    }
-
-    .icon-btn {
-      width: 34px;
-      height: 34px;
-      border: none;
-      background: transparent;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
-      color: var(--text-secondary);
-      transition: all 0.2s ease;
-    }
-
-    .icon-btn:hover {
-      background: rgba(0, 0, 0, 0.05);
-      color: var(--text);
-    }
-
-    [data-theme="dark"] .icon-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .color-picker-wrap {
-      position: relative;
-      width: 34px;
-      height: 34px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .color-picker-wrap input[type="color"] {
-      position: absolute;
-      opacity: 0;
-      width: 34px;
-      height: 34px;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-    }
-
-    .color-swatch {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: var(--accent);
-      border: 2px solid rgba(255,255,255,0.85);
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.12);
-      pointer-events: none;
-    }
-
-    main {
-      max-width: 1080px;
-      margin: 0 auto;
-      padding: 56px 28px 100px;
-    }
-
-    .hero {
-      text-align: center;
-      padding: 48px 0 72px;
-    }
-
-    .hero h1 {
-      font-size: clamp(2rem, 4.5vw, 2.75rem);
-      font-weight: 700;
-      letter-spacing: -0.035em;
-      margin-bottom: 12px;
-      line-height: 1.15;
-      color: var(--text);
-    }
-
-    .hero p {
-      font-size: 1.05rem;
-      color: var(--text-secondary);
-      font-weight: 400;
-      letter-spacing: -0.01em;
-      max-width: 360px;
-      margin: 0 auto;
-    }
-
-    section { margin-bottom: 80px; }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 24px;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .section-title {
-      font-size: 1.35rem;
-      font-weight: 650;
-      letter-spacing: -0.025em;
-    }
-
-    .section-desc {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      font-weight: 400;
-    }
-
-    .generators-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 16px;
-    }
-
-    .generator-card {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 26px 24px 24px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
-                  box-shadow 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-      text-decoration: none;
-      color: inherit;
-      display: block;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .generator-card:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .generator-card .icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.25rem;
-      margin-bottom: 16px;
-      color: white;
-      transition: background 0.25s ease;
-    }
-
-    .generator-card h3 {
-      font-size: 1.05rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-      letter-spacing: -0.02em;
-    }
-
-    .generator-card p {
-      font-size: 0.84rem;
-      color: var(--text-secondary);
-      line-height: 1.45;
-      letter-spacing: -0.01em;
-    }
-
-    .generator-card .arrow {
-      position: absolute;
-      top: 22px;
-      right: 22px;
-      opacity: 0;
-      transform: translateX(-4px);
-      transition: all 0.25s ease;
-      color: var(--accent);
-      font-size: 1rem;
-      font-weight: 500;
-    }
-
-    .generator-card:hover .arrow {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    footer {
-      text-align: center;
-      padding: 36px 24px 48px;
-      color: var(--text-secondary);
-      font-size: 0.8rem;
-      letter-spacing: -0.01em;
-    }
-
-    /* Responsive */
-    @media (max-width: 1024px) {
-      .header-inner { padding: 0 24px; }
-      main { padding: 48px 24px 80px; }
-      .hero { padding: 40px 0 56px; }
-      section { margin-bottom: 64px; }
-      .generators-grid { gap: 14px; }
-    }
-
-    @media (max-width: 640px) {
-      :root { --header-h: 48px; }
-      .header-inner { padding: 0 16px; }
-      .logo { font-size: 0.95rem; }
-      .nav a { display: none; }
-      main { padding: 32px 16px 72px; }
-      .hero { padding: 28px 0 40px; }
-      .hero h1 { font-size: 1.75rem; }
-      .hero p { font-size: 0.95rem; }
-      section { margin-bottom: 52px; }
-      .section-header { margin-bottom: 18px; }
-      .section-title { font-size: 1.2rem; }
-      .generators-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-      .generator-card { padding: 22px 20px; }
-    }
-
-    @media (max-width: 380px) {
-      .hero h1 { font-size: 1.55rem; }
-    }
-  </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tooplate-2167-orbital-style.css">
 </head>
-<body>
-  <header>
-    <div class="header-inner">
-      <a href="archive.html" class="logo">WEST150 Work</a>
-      <nav class="nav">
-        <a href="#generators">생성기</a>
-        <div class="header-actions">
-          <div class="color-picker-wrap" title="포인트 컬러">
-            <input type="color" id="accentPicker" value="#0071e3" aria-label="포인트 컬러 선택">
-            <div class="color-swatch" id="colorSwatch"></div>
+
+<body class="visuals-on">
+
+<div class="aura"></div>
+<div class="stars"></div>
+
+<nav class="nav">
+  <div class="logo"><a href="#" class="logo"><img src="images/west150-logo.png" alt="WEST150" class="logo-img"></a></div>
+  <ul class="nav-links">
+    <li><a href="#daily">Daily</a></li>
+    <li><a href="#" class="js-open-music">Music</a></li>
+    <li><a href="#theology">Theology</a></li>
+  </ul>
+  <button class="menu-toggle" aria-label="Open menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu">
+  <a href="#daily">Daily</a>
+  <a href="#" class="js-open-music">Music</a>
+  <a href="#theology">Theology</a>
+</div>
+
+<header class="hero">
+  <div class="stage">
+    <div class="parallax">
+      <div class="ring-tilt">
+        <div class="ring" id="ring">
+
+          <div class="panel">
+            <div class="panel-face panel-face--text">
+              <div class="p-num">01</div>
+              <div>
+                <div class="p-label">VECTOR</div>
+                <div class="p-meta">AXIS-X</div>
+              </div>
+            </div>
+            <div class="panel-face panel-face--image">
+              <img src="images/image-01.jpg" alt="Vector" loading="lazy">
+              <div class="panel-scrim"></div>
+              <div class="panel-cap"><span class="p-num">01</span>VECTOR</div>
+            </div>
           </div>
-          <button class="icon-btn" id="themeToggle" aria-label="테마 전환">🌙</button>
+
+          <div class="panel">
+            <div class="panel-face panel-face--text">
+              <div class="p-num">02</div>
+              <div>
+                <div class="p-label">PRISM</div>
+                <div class="p-meta">SPECTRA</div>
+              </div>
+            </div>
+            <div class="panel-face panel-face--image">
+              <img src="images/image-02.jpg" alt="Prism" loading="lazy">
+              <div class="panel-scrim"></div>
+              <div class="panel-cap"><span class="p-num">02</span>PRISM</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-face panel-face--text">
+              <div class="p-num">03</div>
+              <div>
+                <div class="p-label">PULSE</div>
+                <div class="p-meta">120 BPM</div>
+              </div>
+            </div>
+            <div class="panel-face panel-face--image">
+              <img src="images/image-03.jpg" alt="Pulse" loading="lazy">
+              <div class="panel-scrim"></div>
+              <div class="panel-cap"><span class="p-num">03</span>PULSE</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-face panel-face--text">
+              <div class="p-num">04</div>
+              <div>
+                <div class="p-label">NOVA</div>
+                <div class="p-meta">IGNITION</div>
+              </div>
+            </div>
+            <div class="panel-face panel-face--image">
+              <img src="images/image-04.jpg" alt="Nova" loading="lazy">
+              <div class="panel-scrim"></div>
+              <div class="panel-cap"><span class="p-num">04</span>NOVA</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-face panel-face--text">
+              <div class="p-num">05</div>
+              <div>
+                <div class="p-label">FLUX</div>
+                <div class="p-meta">STREAM</div>
+              </div>
+            </div>
+            <div class="panel-face panel-face--image">
+              <img src="images/image-05.jpg" alt="Flux" loading="lazy">
+              <div class="panel-scrim"></div>
+              <div class="panel-cap"><span class="p-num">05</span>FLUX</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-face panel-face--text">
+              <div class="p-num">06</div>
+              <div>
+                <div class="p-label">HALO</div>
+                <div class="p-meta">RADIANT</div>
+              </div>
+            </div>
+            <div class="panel-face panel-face--image">
+              <img src="images/image-06.jpg" alt="Halo" loading="lazy">
+              <div class="panel-scrim"></div>
+              <div class="panel-cap"><span class="p-num">06</span>HALO</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-face panel-face--text">
+              <div class="p-num">07</div>
+              <div>
+                <div class="p-label">DRIFT</div>
+                <div class="p-meta">ZERO-G</div>
+              </div>
+            </div>
+            <div class="panel-face panel-face--image">
+              <img src="images/image-07.jpg" alt="Drift" loading="lazy">
+              <div class="panel-scrim"></div>
+              <div class="panel-cap"><span class="p-num">07</span>DRIFT</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-face panel-face--text">
+              <div class="p-num">08</div>
+              <div>
+                <div class="p-label">ECHO</div>
+                <div class="p-meta">RESONANT</div>
+              </div>
+            </div>
+            <div class="panel-face panel-face--image">
+              <img src="images/image-08.jpg" alt="Echo" loading="lazy">
+              <div class="panel-scrim"></div>
+              <div class="panel-cap"><span class="p-num">08</span>ECHO</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-face panel-face--text">
+              <div class="p-num">09</div>
+              <div>
+                <div class="p-label">ZENITH</div>
+                <div class="p-meta">APEX</div>
+              </div>
+            </div>
+            <div class="panel-face panel-face--image">
+              <img src="images/image-09.jpg" alt="Zenith" loading="lazy">
+              <div class="panel-scrim"></div>
+              <div class="panel-cap"><span class="p-num">09</span>ZENITH</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-face panel-face--text">
+              <div class="p-num">10</div>
+              <div>
+                <div class="p-label">CORE</div>
+                <div class="p-meta">CENTER</div>
+              </div>
+            </div>
+            <div class="panel-face panel-face--image">
+              <img src="images/image-10.jpg" alt="Core" loading="lazy">
+              <div class="panel-scrim"></div>
+              <div class="panel-cap"><span class="p-num">10</span>CORE</div>
+            </div>
+          </div>
+
         </div>
-      </nav>
+      </div>
+      <div class="hero-text">
+        <div class="eyebrow">WEST150 NETWORK</div>
+        <h1>THREE VOICES, ONE ORIGIN</h1>
+        <p>뉴스, 음악, 신학 — 서로 다른 언어로 같은 이야기를 전합니다.</p>
+      </div>
     </div>
-  </header>
+  </div>
+  <div class="hero-controls">
+    <div class="ctrl">
+      <span class="ctrl-label">VISUALS</span>
+      <button class="switch" id="visualsSwitch" role="switch" aria-checked="true" aria-label="Toggle image visuals">
+        <span class="knob"></span>
+      </button>
+    </div>
+    <div class="ctrl">
+      <span class="ctrl-label">ZOOM</span>
+      <button class="switch" id="zoomSwitch" role="switch" aria-checked="false" aria-label="Zoom ring 24 percent larger">
+        <span class="knob"></span>
+      </button>
+    </div>
+    <div class="ctrl">
+      <span class="ctrl-label">SPACING</span>
+      <div class="spacing" role="group" aria-label="Ring spacing">
+        <button class="spacing-step" data-space="0" aria-label="Tight spacing"><i></i></button>
+        <button class="spacing-step is-active" data-space="1" aria-label="Default spacing"><i></i></button>
+        <button class="spacing-step" data-space="2" aria-label="Wide spacing"><i></i></button>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">
+    <span>SCROLL</span>
+    <div class="line"></div>
+  </div>
+</header>
 
-  <main>
-    <section class="hero">
-      <h1>WEST150 Work</h1>
-      <p>생성기를 한곳에 모아두었습니다.</p>
-    </section>
+<section class="section" id="about">
+  <div class="section-head reveal">
+    <div class="eyebrow">// ABOUT WEST150</div>
+    <h2>하나의 이름. 세 개의 방식.</h2>
+    <p>WEST150은 하나의 생각에서 시작합니다. 뉴스를 읽고, 음악을 만들고, 신학을 나눕니다. 서로 다른 콘텐츠지만, 우리가 향하는 곳은 같습니다.</p>
+  </div>
+  <div class="features">
+    <div class="feature reveal" id="daily">
+      <img src="images/west150-daily-logo.png" alt="WEST150 DAILY" class="f-logo">
+      <div class="f-index">01 // DAILY</div>
+      <h3>X에서 골라 전합니다</h3>
+      <p>X(트위터)의 소식을 선별해 읽기 쉬운 카드뉴스로 정리해 전합니다.</p>
+    </div>
+    <div class="feature reveal feature--clickable js-open-music" id="music" role="button" tabindex="0" aria-haspopup="dialog">
+      <img src="images/west150-music-logo.png" alt="WEST150 MUSIC" class="f-logo">
+      <div class="f-index">02 // MUSIC</div>
+      <h3>소리로 짓는 이야기</h3>
+      <p>감정과 순간을 음악으로 담아 작업하고 발표합니다.</p>
+      <span class="f-cta">TRACKS 보기 →</span>
+    </div>
+    <div class="feature reveal" id="theology">
+      <img src="images/west150-theology-logo.png" alt="WEST150 THEOLOGY" class="f-logo">
+      <div class="f-index">03 // THEOLOGY</div>
+      <h3>깊이를 나누다</h3>
+      <p>신학적 주제를 글과 카드뉴스로 풀어내 함께 생각할 거리를 나눕니다.</p>
+    </div>
+  </div>
+</section>
 
-    <section id="generators">
-      <div class="section-header">
-        <h2 class="section-title">생성기</h2>
-        <span class="section-desc">클릭하면 바로 사용할 수 있습니다</span>
+<section class="cta" id="launch">
+  <div class="reveal">
+    <h2>함께 나눌 준비가 되셨나요?</h2>
+    <p>WEST150의 세 채널에서 뉴스와 음악, 그리고 깊은 이야기를 만나보세요.</p>
+    <a href="#" class="btn">EXPLORE WEST150</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="logo"><a href="#" class="logo"><img src="images/west150-logo.png" alt="WEST150" class="logo-img"></a></div>
+
+  <div class="footer-right">
+    <div class="social-icons">
+      <!-- 각 href="#"는 실제 계정 URL로 교체해주세요 -->
+      <a href="https://x.com/WEST150OFFICIAL" class="social-icon" rel="noopener" target="_blank" aria-label="X (Twitter)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4L20 20M20 4L4 20"/></svg>
+      </a>
+      <a href="#" class="social-icon" rel="noopener" target="_blank" aria-label="Threads">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M6.321 6.016c-.27-.18-1.166-.802-1.166-.802.756-1.081 1.753-1.502 3.132-1.502.975 0 1.803.327 2.394.948s.928 1.509 1.005 2.644q.492.207.905.484c1.109.745 1.719 1.86 1.719 3.137 0 2.716-2.226 5.075-6.256 5.075C4.594 16 1 13.987 1 7.994 1 2.034 4.482 0 8.044 0 9.69 0 13.55.243 15 5.036l-1.36.353C12.516 1.974 10.163 1.43 8.006 1.43c-3.565 0-5.582 2.171-5.582 6.79 0 4.143 2.254 6.343 5.63 6.343 2.777 0 4.847-1.443 4.847-3.556 0-1.438-1.208-2.127-1.27-2.127-.236 1.234-.868 3.31-3.644 3.31-1.618 0-3.013-1.118-3.013-2.582 0-2.09 1.984-2.847 3.55-2.847.586 0 1.294.04 1.663.114 0-.637-.54-1.728-1.9-1.728-1.25 0-1.566.405-1.967.868ZM8.716 8.19c-2.04 0-2.304.87-2.304 1.416 0 .878 1.043 1.168 1.6 1.168 1.02 0 2.067-.282 2.232-2.423a6.2 6.2 0 0 0-1.528-.161"/></svg>
+      </a>
+      <a href="#" class="social-icon" rel="noopener" target="_blank" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
+      </a>
+      <a href="mailto:west150official@gmail.com" class="social-icon" aria-label="Email">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.5 6.5L12 13L20.5 6.5"/></svg>
+      </a>
+    </div>
+    <div class="credit">© 2026 WEST150. All rights reserved.</div>
+  </div>
+</footer>
+
+<div class="music-modal" id="musicModal" role="dialog" aria-modal="true" aria-label="WEST150 MUSIC">
+  <div class="music-modal__backdrop" data-close-music></div>
+  <div class="music-modal__panel">
+    <button class="music-modal__close" data-close-music aria-label="닫기">&times;</button>
+    <div class="music-modal__head">
+      <img src="images/west150-music-logo.png" alt="WEST150 MUSIC" class="music-modal__logo">
+      <h2>TRACKS</h2>
+    </div>
+
+    <div class="track-list" id="trackList">
+
+      <!-- ============ ALBUM 1 ============ -->
+      <div class="album">
+        <div class="album-header">
+          <img src="images/every-cover.png" alt="EVERY 앨범 커버" class="album-cover" draggable="false" oncontextmenu="return false">
+          <div class="album-title">EVERY</div>
+          <div class="album-meta">EP · 2 TRACKS</div>
+        </div>
+
+        <div class="album-tracks">
+          <button class="track-item" data-src="audio/every.mp3" data-cover="images/every-cover.png" data-title="EVERY" data-track-id="every"
+            data-credit-label="AI와 협업 제작">
+            <span class="track-item__num">01</span>
+            <span class="track-item__title">EVERY</span>
+            <span class="track-item__credit">AI와 협업 제작</span>
+            <span class="track-item__play">▶</span>
+          </button>
+
+          <button class="track-item" data-src="audio/he-ascended.mp3" data-cover="images/every-cover.png" data-title="HE ASCENDED" data-track-id="he-ascended"
+            data-credit-label="AI와 협업 제작">
+            <span class="track-item__num">02</span>
+            <span class="track-item__title">HE ASCENDED</span>
+            <span class="track-item__credit">AI와 협업 제작</span>
+            <span class="track-item__play">▶</span>
+          </button>
+
+          <!--
+            ▶ 같은 앨범에 곡을 더 추가하려면:
+              1) 위 <button class="track-item"> 전체를 복사해서 이 자리에 붙여넣고
+                 data-src / data-title / data-track-id / data-credit-label,
+                 그리고 track-item__num(03, 04…) / track-item__title / track-item__credit 텍스트만 바꿔주세요.
+                 data-cover는 그대로 두면(같은 앨범 커버 경로) 이 앨범 커버를 그대로 씁니다.
+              2) data-track-id에 넣은 값과 같은 key로 lyrics-data.js의 LYRICS 객체에
+                 가사를 추가해주세요. (예: data-track-id="new-song" → LYRICS.new-song = `가사...`)
+          -->
+        </div>
       </div>
 
-      <div class="generators-grid">
-        <a href="card.html" class="generator-card">
-          <div class="icon">📰</div>
-          <h3>카드뉴스 생성기</h3>
-          <p>카드뉴스 형태를 빠르고 깔끔하게 만듭니다.</p>
-          <span class="arrow">→</span>
-        </a>
+      <!--
+        ▶ 새 앨범을 추가하려면:
+          위 <div class="album">...</div> 전체를 복사해서 이 자리에 붙여넣고
+          album-cover 이미지 경로 / album-title / album-meta,
+          그리고 그 안의 track-item(들)의 data-cover도 새 커버 경로로 맞춰주세요.
+      -->
 
-         <a href="info.html" class="generator-card">
-          <div class="icon">📊</div>
-          <h3>인포그래픽 생성기</h3>
-          <p>정보를 시각적으로 정리한 인포그래픽을 만듭니다.</p>
-          <span class="arrow">→</span>
-        </a>
+    </div>
 
-        <a href="breaking.html" class="generator-card">
-          <div class="icon">🚨</div>
-          <h3>속보카드 생성기</h3>
-          <p>긴급 속보 스타일의 카드를 생성합니다.</p>
-          <span class="arrow">→</span>
-        </a>
-
-        <a href="factcheck.html" class="generator-card">
-          <div class="icon">✅</div>
-          <h3>팩트체크 카드 생성기</h3>
-          <p>팩트체크용 카드를 제작합니다.</p>
-          <span class="arrow">→</span>
-        </a>
-
-        <a href="list.html" class="generator-card">
-          <div class="icon">📋</div>
-          <h3>리스트 · 타임라인 생성기</h3>
-          <p>단계, 목록, 타임라인 형태의 카드를 만듭니다.</p>
-          <span class="arrow">→</span>
-        </a>
-        
-        <a href="sou.html" class="generator-card">
-          <div class="icon">📋</div>
-          <h3>출처,링크 모음</h3>
-          <p>카드뉴스 팩트체크를 위한 출처 링크를 만듭니다.</p>
-          <span class="arrow">→</span>
-        </a>
-        
-        <a href="qnote.html" class="generator-card">
-          <div class="icon">💬</div>
-          <h3>인용카드 생성기</h3>
-          <p>명언·인용문을 세련된 카드로 만듭니다.</p>
-          <span class="arrow">→</span>
-        </a>
-
-        <a href="sns.html" class="generator-card">
-          <div class="icon">📱</div>
-          <h3>SNS 게시글 번역 생성기</h3>
-          <p>SNS 게시글을 번역·정리한 카드를 만듭니다.</p>
-          <span class="arrow">→</span>
-        </a>
+    <div class="now-playing" id="nowPlaying">
+      <img src="images/every-cover.png" alt="" class="now-playing__cover" id="npCover" draggable="false" oncontextmenu="return false">
+      <div class="now-playing__info">
+        <div class="now-playing__title" id="npTitle">EVERY</div>
+        <div class="now-playing__credit" id="npCredit">AI와 협업 제작</div>
+        <audio id="npAudio" controls preload="none" controlsList="nodownload noremoteplayback" disablePictureInPicture oncontextmenu="return false" src="audio/every.mp3"></audio>
       </div>
-    </section>
-  </main>
+    </div>
 
-  <footer>
-    <p>© 2026 · WEST150 Work</p>
-  </footer>
+    <div class="lyrics-box" id="lyricsBox">
+      <div class="lyrics-box__label">LYRICS</div>
+      <p class="lyrics-box__text" id="lyricsText">[Verse 1]
+Woke up breathing, that's a reason right there
+숨을 쉬며 깨어났다는 것, 그것만으로도 충분한 이유예요
+Every heartbeat is a reason to declare
+모든 심장 박동은 선포할 이유가 되죠
+Didn't have to open up my eyes today
+오늘 눈을 뜨지 못했을 수도 있었지만
+But I did, so I'm giving all the praise
+눈을 떴기에, 전 모든 찬양을 올려 드립니다</p>
+    </div>
 
-  <script>
-    const themeToggle = document.getElementById('themeToggle');
-    const html = document.documentElement;
+    <p class="music-disclaimer">본 페이지의 트랙은 상업적 이용 목적이 아닌 포트폴리오 목적으로 게시된 샘플입니다. 트랙별 제작 방식은 곡 목록과 재생 화면에 표시되어 있습니다.</p>
+  </div>
+</div>
 
-    const savedTheme = localStorage.getItem('theme') ||
-      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+<script src="tooplate-2167-orbital-script.js"></script>
+<script src="lyrics-data.js"></script>
+<script src="west150-music.js"></script>
 
-    if (savedTheme === 'dark') {
-      html.setAttribute('data-theme', 'dark');
-      themeToggle.textContent = '☀️';
-    }
-
-    themeToggle.addEventListener('click', () => {
-      const isDark = html.getAttribute('data-theme') === 'dark';
-      if (isDark) {
-        html.removeAttribute('data-theme');
-        themeToggle.textContent = '🌙';
-        localStorage.setItem('theme', 'light');
-      } else {
-        html.setAttribute('data-theme', 'dark');
-        themeToggle.textContent = '☀️';
-        localStorage.setItem('theme', 'dark');
-      }
-    });
-
-    const accentPicker = document.getElementById('accentPicker');
-    const colorSwatch = document.getElementById('colorSwatch');
-
-    const savedAccent = localStorage.getItem('accent') || '#0071e3';
-    accentPicker.value = savedAccent;
-    document.documentElement.style.setProperty('--accent', savedAccent);
-    colorSwatch.style.background = savedAccent;
-
-    accentPicker.addEventListener('input', (e) => {
-      const color = e.target.value;
-      document.documentElement.style.setProperty('--accent', color);
-      colorSwatch.style.background = color;
-      localStorage.setItem('accent', color);
-    });
-  </script>
 </body>
 </html>
