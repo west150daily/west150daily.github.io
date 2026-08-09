@@ -1,36 +1,21 @@
 [
   {
-    "id": 1,
+    "id": 4,
     "category": "정치",
-    "time": "2026-08-09T16:42:00+09:00",
-    "text": "이 자리에는 실제 X(트위터) 소식을 정리한 카드뉴스가 들어갈 예정입니다. 짧고 명확하게, 오늘 꼭 알아야 할 소식만 골라서 전합니다.",
-    "source": "출처 예시",
-    "sourceUrl": "#",
+    "time": "2026-08-09T18:15:24.080Z",
+    "text": "지금은 테스트 중 입니다",
+    "source": "테스트",
+    "sourceUrl": "테스트",
     "images": [],
-    "breaking": false
+    "breaking": true
   },
   {
-    "id": 2,
-    "category": "테크",
-    "time": "2026-08-09T14:30:00+09:00",
-    "text": "카드뉴스처럼 순서가 있는 여러 장은 좌우 화살표나 스와이프로 넘겨볼 수 있습니다.",
-    "source": "출처 예시",
-    "sourceUrl": "#",
-    "images": [
-      "../images/west150-daily-logo.png",
-      "../images/west150-music-logo.png",
-      "../images/west150-theology-logo.png"
-    ],
-    "breaking": false
-  },
-  {
-    "id": 3,
-    "category": "해외",
-    "time": "2026-08-08T18:00:00+09:00",
-    "text": "피드는 최신순으로 계속 쌓이는 구조예요. 자료를 주시면 이 형태 그대로 실제 뉴스로 채워드릴게요.",
-    "source": "출처 예시",
-    "sourceUrl": "#",
+    "id": 5,
+    "category": "정치",
+    "time": "2026-08-09T18:17:31.816Z",
+    "text": "지금은 테스트 중 입니다",
+    "source": "테스트 중 입니다 테스트",
+    "sourceUrl": "하나둘 샛",
     "images": [],
-    "breaking": false
+    "breaking": true
   }
-]
