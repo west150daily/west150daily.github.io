@@ -44,75 +44,7 @@
 <section class="section album-grid-section">
   <div class="album-grid">
 
-    <button class="album-card reveal js-open-music" data-album-id="every" data-album-cover="../images/every-cover.png">
-      <img src="../images/every-cover.png" alt="EVERY 앨범 커버" class="album-card__cover" draggable="false" oncontextmenu="return false">
-      <div class="album-card__title">EVERY</div>
-      <div class="album-card__meta">EP · 4 TRACKS</div>
-    </button>
-
-    <!-- 새로운 앨범 카드 추가 -->
-    <button class="album-card reveal js-open-music" data-album-id="anew" data-album-cover="../images/cover2.png">
-  <img src="../images/cover2.png" alt="ANEW" class="album-card__cover" draggable="false" oncontextmenu="return false">
-  <div class="album-card__title">ANEW</div>
-  <div class="album-card__meta">EP · 6 TRACKS</div>
-</button>
-
-  </div>
-</section>
-
-<footer class="footer">
-  <div class="logo"><a href="../" class="logo"><img src="../images/west150-logo.png" alt="WEST150" class="logo-img"></a></div>
-
-  <div class="footer-right">
-    <div class="social-icons">
-      <a href="https://x.com/WEST150OFFICIAL" class="social-icon" rel="noopener" target="_blank" aria-label="X (Twitter)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4L20 20M20 4L4 20"/></svg>
-      </a>
-      <a href="#" class="social-icon" rel="noopener" target="_blank" aria-label="Threads">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M6.321 6.016c-.27-.18-1.166-.802-1.166-.802.756-1.081 1.753-1.502 3.132-1.502.975 0 1.803.327 2.394.948s.928 1.509 1.005 2.644q.492.207.905.484c1.109.745 1.719 1.86 1.719 3.137 0 2.716-2.226 5.075-6.256 5.075C4.594 16 1 13.987 1 7.994 1 2.034 4.482 0 8.044 0 9.69 0 13.55.243 15 5.036l-1.36.353C12.516 1.974 10.163 1.43 8.006 1.43c-3.565 0-5.582 2.171-5.582 6.79 0 4.143 2.254 6.343 5.63 6.343 2.777 0 4.847-1.443 4.847-3.556 0-1.438-1.208-2.127-1.27-2.127-.236 1.234-.868 3.31-3.644 3.31-1.618 0-3.013-1.118-3.013-2.582 0-2.09 1.984-2.847 3.55-2.847.586 0 1.294.04 1.663.114 0-.637-.54-1.728-1.9-1.728-1.25 0-1.566.405-1.967.868ZM8.716 8.19c-2.04 0-2.304.87-2.304 1.416 0 .878 1.043 1.168 1.6 1.168 1.02 0 2.067-.282 2.232-2.423a6.2 6.2 0 0 0-1.528-.161"/></svg>
-      </a>
-      <a href="#" class="social-icon" rel="noopener" target="_blank" aria-label="Instagram">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
-      </a>
-      <a href="mailto:west150official@gmail.com" class="social-icon" aria-label="Email">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.5 6.5L12 13L20.5 6.5"/></svg>
-      </a>
-    </div>
-    <div class="credit">© 2026 WEST150. All rights reserved.</div>
-  </div>
-</footer>
-
-<!-- Mini Player -->
-<div class="mini-player" id="miniPlayer" aria-hidden="true">
-  <img src="../images/every-cover.png" alt="" class="mini-player__cover" id="miniCover" draggable="false" oncontextmenu="return false">
-  <div class="mini-player__info">
-    <div class="mini-player__title" id="miniTitle">EVERY</div>
-    <div class="mini-player__credit" id="miniCredit">AI와 협업 제작</div>
-  </div>
-  <div class="mini-player__controls">
-    <button class="mini-player__btn" id="miniPlayBtn" type="button" aria-label="재생/일시정지">
-      <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5L8 5.5z"/></svg>
-      <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
-    </button>
-    <button class="mini-player__open" id="miniOpenBtn" type="button" aria-label="전체 플레이어 열기">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M7 14l5-5 5 5"/></svg>
-    </button>
-  </div>
-</div>
-
-<div class="music-modal" id="musicModal" role="dialog" aria-modal="true" aria-label="WEST150 MUSIC">
-  <div class="music-modal__backdrop" data-close-music></div>
-  <div class="music-modal__panel">
-    <button class="music-modal__close" data-close-music aria-label="닫기">&times;</button>
-    <div class="music-modal__head">
-      <img src="../images/west150-music-logo.png" alt="WEST150 MUSIC" class="music-modal__logo">
-      <h2>TRACKS</h2>
-      <button class="music-modal__show-all" id="showAllAlbums" type="button" hidden>← 전체 앨범</button>
-    </div>
-
-    <div class="track-list" id="trackList">
-
-      <div class="album" data-album-id="every">
+    <div class="album" data-album-id="every">
         <div class="album-header">
           <img src="../images/every-cover.png" alt="EVERY 앨범 커버" class="album-cover" draggable="false" oncontextmenu="return false">
           <div class="album-title">EVERY</div>
@@ -120,95 +52,67 @@
         </div>
 
         <div class="album-tracks">
-          <button class="track-item" data-src="../audio/every.mp3" data-cover="../images/every-cover.png" data-title="EVERY" data-track-id="every"
-            data-credit-label="AI와 협업 제작">
+          <button class="track-item" data-src="../audio/every.mp3" data-cover="../images/every-cover.png" data-title="EVERY" data-track-id="every" data-credit-label="AI와 협업 제작">
             <span class="track-item__num">01</span>
             <span class="track-item__title">EVERY</span>
             <span class="track-item__credit">AI와 협업 제작</span>
             <span class="track-item__play">▶</span>
           </button>
 
-          <button class="track-item" data-src="../audio/he-ascended.mp3" data-cover="../images/every-cover.png" data-title="HE ASCENDED" data-track-id="he-ascended"
-            data-credit-label="AI와 협업 제작">
+          <button class="track-item" data-src="../audio/he-ascended.mp3" data-cover="../images/every-cover.png" data-title="HE ASCENDED" data-track-id="he-ascended" data-credit-label="AI와 협업 제작">
             <span class="track-item__num">02</span>
             <span class="track-item__title">HE ASCENDED</span>
             <span class="track-item__credit">AI와 협업 제작</span>
             <span class="track-item__play">▶</span>
           </button>
 
-          <button class="track-item" data-src="../audio/HE IS RISEN.mp3" data-cover="../images/every-cover.png" data-title="HE IS RISEN" data-track-id="he-is-risen"
-            data-credit-label="AI와 협업 제작">
+          <button class="track-item" data-src="../audio/HE IS RISEN.mp3" data-cover="../images/every-cover.png" data-title="HE IS RISEN" data-track-id="he-is-risen" data-credit-label="AI와 협업 제작">
             <span class="track-item__num">03</span>
             <span class="track-item__title">HE IS RISEN</span>
             <span class="track-item__credit">AI와 협업 제작</span>
             <span class="track-item__play">▶</span>
           </button>
 
-         <!-- 새로운 앨범 시작 (ANEW) -->
-<div class="album" data-album-id="anew"> 
-  <div class="album-header">
-    <img src="../images/cover2.png" alt="ANEW 앨범 커버" class="album-cover" draggable="false" oncontextmenu="return false">
-    <div class="album-title">ANEW</div>
-    <div class="album-meta">EP · 6 TRACKS</div>
-  </div>
-  
-  <div class="album-tracks">
-    <!-- 01번 곡 -->
-    <button class="track-item" data-src="../audio/the-lights-is-comming.mp3" data-cover="../images/cover2.png" 
-            data-title="THE LIGHTS IS COMMING" data-track-id="song-01" data-credit-label="AI와 협업 제작">
-      <span class="track-item__num">01</span>
-      <span class="track-item__title">THE LIGHTS IS COMMING</span>
-      <span class="track-item__credit">AI와 협업 제작</span>
-      <span class="track-item__play">▶</span>
-    </button>
+          <button class="track-item" data-src="../audio/REDEEMED.mp3" data-cover="../images/every-cover.png" data-title="REDEEMED" data-track-id="redeemed" data-credit-label="AI와 협업 제작">
+            <span class="track-item__num">04</span>
+            <span class="track-item__title">REDEEMED</span>
+            <span class="track-item__credit">AI와 협업 제작</span>
+            <span class="track-item__play">▶</span>
+          </button>
+        </div> <!-- album-tracks 끝 (EVERY) -->
+      </div> <!-- album 끝 (EVERY) -->
 
-    <!-- 02번 곡 -->
-    <button class="track-item" data-src="../audio/lord-im-lost.mp3" data-cover="../images/cover2.png" 
-            data-title="LORD I'M LOST" data-track-id="song-02" data-credit-label="AI와 협업 제작">
-      <span class="track-item__num">02</span>
-      <span class="track-item__title">LORD I'M LOST</span>
-      <span class="track-item__credit">AI와 협업 제작</span>
-      <span class="track-item__play">▶</span>
-    </button>
+      <!-- 2. ANEW 앨범 상자 (EVERY 상자 밖으로 나왔습니다) -->
+      <div class="album" data-album-id="anew"> 
+        <div class="album-header">
+          <img src="../images/cover2.png" alt="ANEW 앨범 커버" class="album-cover" draggable="false" oncontextmenu="return false">
+          <div class="album-title">ANEW</div>
+          <div class="album-meta">EP · 6 TRACKS</div>
+        </div>
+        
+        <div class="album-tracks">
+          <button class="track-item" data-src="../audio/the-lights-is-comming.mp3" data-cover="../images/cover2.png" data-title="THE LIGHTS IS COMING" data-track-id="song-01" data-credit-label="AI와 협업 제작">
+            <span class="track-item__num">01</span><span class="track-item__title">THE LIGHTS IS COMING</span><span class="track-item__play">▶</span>
+          </button>
+          <button class="track-item" data-src="../audio/lord-im-lost.mp3" data-cover="../images/cover2.png" data-title="LORD I'M LOST" data-track-id="song-02" data-credit-label="AI와 협업 제작">
+            <span class="track-item__num">02</span><span class="track-item__title">LORD I'M LOST</span><span class="track-item__play">▶</span>
+          </button>
+          <button class="track-item" data-src="../audio/trouble-don't-last-always.mp3" data-cover="../images/cover2.png" data-title="TROUBLE DON'T LAST ALWAYS" data-track-id="song-03" data-credit-label="AI와 협업 제작">
+            <span class="track-item__num">03</span><span class="track-item__title">TROUBLE DON'T LAST ALWAYS</span><span class="track-item__play">▶</span>
+          </button>
+          <button class="track-item" data-src="../audio/it-is-well.mp3" data-cover="../images/cover2.png" data-title="IT IS WELL" data-track-id="song-04" data-credit-label="AI와 협업 제작">
+            <span class="track-item__num">04</span><span class="track-item__title">IT IS WELL</span><span class="track-item__play">▶</span>
+          </button>
+          <button class="track-item" data-src="../audio/mask.mp3" data-cover="../images/cover2.png" data-title="MASK" data-track-id="song-05" data-credit-label="AI와 협업 제작">
+            <span class="track-item__num">05</span><span class="track-item__title">MASK</span><span class="track-item__play">▶</span>
+          </button>
+          <button class="track-item" data-src="../audio/open-page.mp3" data-cover="../images/cover2.png" data-title="OPEN PAGE" data-track-id="song-06" data-credit-label="AI와 협업 제작">
+            <span class="track-item__num">06</span><span class="track-item__title">OPEN PAGE</span><span class="track-item__play">▶</span>
+          </button>
+        </div> <!-- album-tracks 끝 (ANEW) -->
+      </div> <!-- album 끝 (ANEW) -->
 
-    <!-- 03번 곡 -->
-    <button class="track-item" data-src="../audio/trouble-don't-last-always.mp3" data-cover="../images/cover2.png" 
-            data-title="TROUBLE DON'T LAST ALWAYS" data-track-id="song-03" data-credit-label="AI와 협업 제작">
-      <span class="track-item__num">03</span>
-      <span class="track-item__title">TROUBLE DON'T LAST ALWAYS</span>
-      <span class="track-item__credit">AI와 협업 제작</span>
-      <span class="track-item__play">▶</span>
-    </button>
-
-    <!-- 04번 곡 -->
-    <button class="track-item" data-src="../audio/it-is-well.mp3" data-cover="../images/cover2.png" 
-            data-title="IT IS WELL" data-track-id="song-04" data-credit-label="AI와 협업 제작">
-      <span class="track-item__num">04</span>
-      <span class="track-item__title">IT IS WELL</span>
-      <span class="track-item__credit">AI와 협업 제작</span>
-      <span class="track-item__play">▶</span>
-    </button>
-
-    <!-- 05번 곡 -->
-    <button class="track-item" data-src="../audio/mask.mp3" data-cover="../images/cover2.png" 
-            data-title="MASK" data-track-id="song-05" data-credit-label="AI와 협업 제작">
-      <span class="track-item__num">05</span>
-      <span class="track-item__title">MASK</span>
-      <span class="track-item__credit">AI와 협업 제작</span>
-      <span class="track-item__play">▶</span>
-    </button>
-
-    <!-- 06번 곡 (파일명 open-page.mp3로 수정됨) -->
-    <button class="track-item" data-src="../audio/open-page.mp3" data-cover="../images/cover2.png" 
-            data-title="OPEN PAGE" data-track-id="song-06" data-credit-label="AI와 협업 제작">
-      <span class="track-item__num">06</span>
-      <span class="track-item__title">OPEN PAGE</span>
-      <span class="track-item__credit">AI와 협업 제작</span>
-      <span class="track-item__play">▶</span>
-    </button>
-    
-  </div> <!-- album-tracks 끝 -->
-</div> <!-- album 끝 -->
+    </div> <!-- trackList 끝 -->
     
 
     <div class="now-playing" id="nowPlaying">
