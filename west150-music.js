@@ -101,6 +101,16 @@
 
       showMini(cover, title, credit);
       npAudio.play().catch(function () {});
+
+      /* 트랙 선택 시 가사 영역으로 부드럽게 스크롤 */
+      var lyricsBox = document.getElementById('lyricsBox');
+      var panel = modal.querySelector('.music-modal__panel');
+      if (lyricsBox && panel) {
+        setTimeout(function () {
+          var top = lyricsBox.offsetTop - 24;
+          panel.scrollTo({ top: top, behavior: 'smooth' });
+        }, 80);
+      }
     });
   });
 
