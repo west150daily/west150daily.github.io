@@ -7,10 +7,596 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+KR:wght@400;500;600&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="../tooplate-2167-orbital-style.css">
+
+<!-- MUSIC 전용 디자인 -->
+<style>
+:root{
+  --m-black:#080706;
+  --m-brown:#241912;
+  --m-warm:#8e6a4b;
+  --m-gold:#c9a982;
+  --m-cream:#eee4d5;
+  --m-muted:#9b9188;
+  --m-line:rgba(238,228,213,.13);
+  --m-line-soft:rgba(238,228,213,.07);
+}
+
+/* =========================================================
+   MUSIC PAGE 전체 배경
+   사진 없이도 사진 같은 시네마틱 색감이 나도록
+   검정 + 짙은 갈색 + 따뜻한 빛을 여러 겹으로 구성
+   ========================================================= */
+
+html{
+  background:var(--m-black) !important;
+}
+
+body.page-music{
+  min-height:100vh;
+  margin:0;
+  color:var(--m-cream) !important;
+  background:
+    radial-gradient(
+      ellipse 65% 48% at 72% 4%,
+      rgba(211,164,113,.25) 0%,
+      rgba(143,99,61,.14) 22%,
+      transparent 62%
+    ),
+    radial-gradient(
+      ellipse 52% 42% at 18% 48%,
+      rgba(92,55,34,.23) 0%,
+      transparent 68%
+    ),
+    linear-gradient(
+      112deg,
+      #050504 0%,
+      #100c09 34%,
+      #1c120d 55%,
+      #0a0807 100%
+    ) !important;
+  font-family:"DM Sans",sans-serif !important;
+  overflow-x:hidden;
+}
+
+/* 화면 전체의 미세한 필름 그레인 */
+body.page-music::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode:screen;
+}
+
+/* 오른쪽 위에서 들어오는 공연장 같은 따뜻한 빛 */
+body.page-music::after{
+  content:"";
+  position:fixed;
+  width:70vw;
+  height:90vh;
+  right:-28vw;
+  top:-25vh;
+  z-index:0;
+  pointer-events:none;
+  background:linear-gradient(
+    135deg,
+    rgba(255,231,194,.30),
+    rgba(190,139,91,.13) 28%,
+    transparent 67%
+  );
+  filter:blur(32px);
+  transform:rotate(-8deg);
+}
+
+/* 기존 orbital 배경 요소는 Music에서 숨김 */
+.page-music .aura,
+.page-music .stars{
+  display:none !important;
+}
+
+/* =========================================================
+   NAV
+   ========================================================= */
+
+.page-music .nav{
+  position:fixed !important;
+  top:0;
+  left:0;
+  right:0;
+  z-index:100;
+  height:82px;
+  padding:0 clamp(22px,5vw,64px) !important;
+  display:flex;
+  align-items:center;
+  background:linear-gradient(
+    to bottom,
+    rgba(5,4,3,.86),
+    rgba(5,4,3,.18)
+  ) !important;
+  border-bottom:1px solid var(--m-line-soft);
+  backdrop-filter:blur(12px);
+}
+
+.page-music .nav .logo,
+.page-music .nav .logo a{
+  display:flex;
+  align-items:center;
+}
+
+.page-music .nav .logo-img{
+  width:108px;
+  height:auto;
+  filter:brightness(0) invert(1);
+}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.page-music .music-hero{
+  position:relative;
+  z-index:2;
+  min-height:760px;
+  height:92vh;
+  max-height:1000px;
+  padding:150px 24px 100px !important;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  overflow:hidden;
+}
+
+/* 먼 곳의 빛 */
+.page-music .music-hero::before{
+  content:"";
+  position:absolute;
+  width:min(60vw,760px);
+  height:620px;
+  top:-170px;
+  right:-120px;
+  background:radial-gradient(
+    ellipse,
+    rgba(255,222,181,.23) 0%,
+    rgba(192,137,88,.12) 24%,
+    transparent 68%
+  );
+  filter:blur(18px);
+  pointer-events:none;
+}
+
+/* 바닥/안개 같은 따뜻한 층 */
+.page-music .music-hero::after{
+  content:"";
+  position:absolute;
+  left:-15%;
+  right:-15%;
+  bottom:-28%;
+  height:52%;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(130,83,49,.22),
+      transparent 65%
+    );
+  filter:blur(22px);
+  pointer-events:none;
+}
+
+.page-music .music-hero > *{
+  position:relative;
+  z-index:3;
+}
+
+/* WEST150 MUSIC 로고 */
+.page-music .music-hero__logo{
+  width:min(190px,38vw);
+  max-height:52px;
+  object-fit:contain;
+  margin-bottom:30px;
+  filter:brightness(0) invert(1);
+  opacity:.94;
+}
+
+/* 작은 라벨 */
+.page-music .music-hero__eyebrow{
+  font-family:"JetBrains Mono",monospace !important;
+  font-size:10px !important;
+  letter-spacing:.42em !important;
+  text-indent:.42em;
+  color:#a99c8e !important;
+  margin-bottom:28px;
+}
+
+/* 메인 제목 */
+.page-music .music-hero h1{
+  max-width:900px;
+  margin:0 !important;
+  font-family:"Noto Serif KR",serif !important;
+  font-size:clamp(38px,6vw,78px) !important;
+  font-weight:400 !important;
+  line-height:1.08 !important;
+  letter-spacing:-.06em !important;
+  color:var(--m-cream) !important;
+  text-shadow:
+    0 2px 35px rgba(0,0,0,.55),
+    0 0 50px rgba(210,157,105,.08);
+}
+
+/* 설명 */
+.page-music .music-hero p{
+  max-width:500px;
+  margin:27px auto 0 !important;
+  font-family:"Noto Serif KR",serif !important;
+  font-size:13px !important;
+  line-height:2 !important;
+  color:#aaa097 !important;
+  word-break:keep-all;
+}
+
+/* 장식선 */
+.page-music .music-hero h1::after{
+  content:"";
+  display:block;
+  width:44px;
+  height:1px;
+  margin:34px auto 0;
+  background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(211,177,139,.75),
+    transparent
+  );
+}
+
+/* =========================================================
+   ALBUM AREA
+   ========================================================= */
+
+.page-music .album-grid-section{
+  position:relative;
+  z-index:3;
+  padding:30px clamp(20px,6vw,90px) 150px !important;
+  background:
+    linear-gradient(
+      to bottom,
+      transparent,
+      rgba(5,4,3,.38) 12%,
+      rgba(5,4,3,.82) 100%
+    );
+}
+
+.page-music .album-grid{
+  width:min(1180px,100%);
+  margin:0 auto;
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:60px clamp(24px,5vw,80px) !important;
+}
+
+/* 앨범 카드 */
+.page-music .album-card{
+  position:relative;
+  display:block;
+  width:100%;
+  padding:0 !important;
+  border:0 !important;
+  background:transparent !important;
+  color:inherit;
+  text-align:left;
+  cursor:pointer;
+  transition:transform .5s cubic-bezier(.2,.7,.2,1);
+}
+
+.page-music .album-card::after{
+  content:"";
+  position:absolute;
+  left:5%;
+  right:5%;
+  bottom:-20px;
+  height:45px;
+  background:rgba(139,88,49,.17);
+  filter:blur(25px);
+  opacity:.5;
+  z-index:-1;
+  transition:.5s ease;
+}
+
+.page-music .album-card:hover{
+  transform:translateY(-8px);
+}
+
+.page-music .album-card:hover::after{
+  opacity:.85;
+  transform:scale(1.05);
+}
+
+.page-music .album-card__cover{
+  display:block;
+  width:100%;
+  aspect-ratio:1 / 1;
+  object-fit:cover;
+  border:1px solid rgba(235,221,203,.16);
+  box-shadow:
+    0 25px 70px rgba(0,0,0,.5),
+    0 4px 25px rgba(126,78,45,.12);
+  transition:
+    border-color .4s ease,
+    box-shadow .4s ease,
+    filter .4s ease;
+}
+
+.page-music .album-card:hover .album-card__cover{
+  border-color:rgba(231,204,172,.35);
+  box-shadow:
+    0 30px 80px rgba(0,0,0,.6),
+    0 10px 45px rgba(141,89,52,.18);
+  filter:saturate(.92) brightness(1.04);
+}
+
+.page-music .album-card__title{
+  margin-top:20px;
+  font-family:"DM Sans",sans-serif !important;
+  font-size:23px !important;
+  font-weight:500 !important;
+  letter-spacing:.18em !important;
+  color:#e5dbcd !important;
+}
+
+.page-music .album-card__meta{
+  margin-top:8px;
+  font-family:"JetBrains Mono",monospace !important;
+  font-size:9px !important;
+  letter-spacing:.22em !important;
+  color:#83786e !important;
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.page-music .footer{
+  position:relative;
+  z-index:4;
+  padding:60px clamp(22px,5vw,64px) 30px !important;
+  background:#060504 !important;
+  border-top:1px solid var(--m-line-soft);
+}
+
+.page-music .footer .logo-img{
+  width:105px;
+  filter:brightness(0) invert(1);
+}
+
+.page-music .social-icon{
+  color:#a79b90 !important;
+  border-color:rgba(238,228,213,.13) !important;
+}
+
+.page-music .social-icon:hover{
+  color:#eee4d5 !important;
+  border-color:rgba(238,228,213,.4) !important;
+}
+
+.page-music .credit{
+  color:#5e5751 !important;
+}
+
+/* =========================================================
+   MINI PLAYER
+   ========================================================= */
+
+.page-music .mini-player{
+  z-index:200 !important;
+  background:
+    linear-gradient(
+      105deg,
+      rgba(18,13,10,.97),
+      rgba(34,22,15,.97)
+    ) !important;
+  border:1px solid rgba(225,199,169,.17) !important;
+  box-shadow:
+    0 20px 70px rgba(0,0,0,.55),
+    0 0 35px rgba(139,86,48,.08);
+  backdrop-filter:blur(18px);
+}
+
+.page-music .mini-player__cover{
+  border-color:rgba(225,199,169,.16) !important;
+}
+
+.page-music .mini-player__title{
+  color:#eee4d5 !important;
+}
+
+.page-music .mini-player__credit{
+  color:#8e8177 !important;
+}
+
+/* =========================================================
+   MODAL / PLAYER
+   ========================================================= */
+
+.page-music .music-modal{
+  z-index:300 !important;
+}
+
+.page-music .music-modal__backdrop{
+  background:
+    radial-gradient(
+      ellipse at 50% 20%,
+      rgba(107,66,39,.22),
+      rgba(0,0,0,.92) 65%
+    ) !important;
+  backdrop-filter:blur(9px);
+}
+
+.page-music .music-modal__panel{
+  background:
+    radial-gradient(
+      ellipse 70% 40% at 75% 0%,
+      rgba(144,91,54,.13),
+      transparent 70%
+    ),
+    linear-gradient(
+      125deg,
+      #0b0806,
+      #17100b 58%,
+      #090706
+    ) !important;
+  border:1px solid rgba(235,219,199,.15) !important;
+  box-shadow:
+    0 30px 100px rgba(0,0,0,.7),
+    0 0 70px rgba(130,79,44,.08);
+}
+
+.page-music .music-modal__head h2{
+  color:#e9dfd1 !important;
+}
+
+.page-music .music-modal__logo{
+  filter:brightness(0) invert(1);
+  opacity:.9;
+}
+
+.page-music .modal-ctrl-btn{
+  color:#d4c6b7 !important;
+  border-color:rgba(230,211,188,.16) !important;
+  background:rgba(255,255,255,.025) !important;
+}
+
+.page-music .modal-ctrl-btn:hover{
+  border-color:rgba(230,211,188,.38) !important;
+  background:rgba(174,119,75,.08) !important;
+}
+
+.page-music .album{
+  border-color:rgba(235,219,199,.09) !important;
+}
+
+.page-music .album-header{
+  background:rgba(255,255,255,.018) !important;
+}
+
+.page-music .track-item{
+  color:#d8cec2 !important;
+  border-bottom-color:rgba(235,219,199,.07) !important;
+}
+
+.page-music .track-item:hover{
+  background:rgba(157,99,57,.08) !important;
+}
+
+.page-music .now-playing{
+  background:rgba(255,255,255,.025) !important;
+  border-color:rgba(235,219,199,.09) !important;
+}
+
+.page-music .lyrics-box{
+  background:rgba(255,255,255,.018) !important;
+  border-color:rgba(235,219,199,.08) !important;
+}
+
+.page-music .music-disclaimer{
+  color:#645b54 !important;
+}
+
+/* =========================================================
+   REVEAL
+   ========================================================= */
+
+.page-music .reveal{
+  opacity:0;
+  transform:translateY(22px);
+  transition:
+    opacity .85s ease,
+    transform .85s ease;
+}
+
+.page-music .reveal.visible{
+  opacity:1;
+  transform:none;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media(max-width:760px){
+
+  .page-music .nav{
+    height:70px;
+    padding:0 20px !important;
+  }
+
+  .page-music .nav .logo-img{
+    width:94px;
+  }
+
+  .page-music .music-hero{
+    min-height:700px;
+    height:auto;
+    padding:125px 22px 85px !important;
+  }
+
+  .page-music .music-hero__logo{
+    width:155px;
+    margin-bottom:24px;
+  }
+
+  .page-music .music-hero__eyebrow{
+    font-size:8px !important;
+    letter-spacing:.32em !important;
+    text-indent:.32em;
+  }
+
+  .page-music .music-hero h1{
+    font-size:clamp(35px,12vw,58px) !important;
+  }
+
+  .page-music .music-hero p{
+    font-size:12px !important;
+    line-height:1.9 !important;
+  }
+
+  .page-music .album-grid-section{
+    padding:15px 20px 100px !important;
+  }
+
+  .page-music .album-grid{
+    grid-template-columns:1fr !important;
+    gap:52px !important;
+  }
+
+  .page-music .album-card__title{
+    font-size:19px !important;
+  }
+
+  .page-music .footer{
+    padding-bottom:110px !important;
+  }
+
+  .page-music .mini-player{
+    left:12px !important;
+    right:12px !important;
+    bottom:12px !important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .page-music .reveal,
+  .page-music .album-card,
+  .page-music .album-card__cover{
+    transition:none !important;
+  }
+}
+</style>
 </head>
 
 <body class="page-music">
@@ -75,33 +661,16 @@
         rel="noopener"
         target="_blank"
         aria-label="X (Twitter)"
-      >
-        𝕏
-      </a>
+      >𝕏</a>
 
-      <a
-        href="#"
-        class="social-icon"
-        aria-label="Threads"
-      >
-        ◉
-      </a>
-
-      <a
-        href="#"
-        class="social-icon"
-        aria-label="Instagram"
-      >
-        ◎
-      </a>
+      <a href="#" class="social-icon" aria-label="Threads">◉</a>
+      <a href="#" class="social-icon" aria-label="Instagram">◎</a>
 
       <a
         href="mailto:west150official@gmail.com"
         class="social-icon"
         aria-label="Email"
-      >
-        ✉
-      </a>
+      >✉</a>
 
     </div>
 
@@ -113,13 +682,11 @@
 
 </footer>
 
-
 <div
   class="mini-player"
   id="miniPlayer"
   aria-hidden="true"
 >
-
   <img
     src="../images/every-cover.png"
     alt=""
@@ -130,21 +697,8 @@
   >
 
   <div class="mini-player__info">
-
-    <div
-      class="mini-player__title"
-      id="miniTitle"
-    >
-      EVERY
-    </div>
-
-    <div
-      class="mini-player__credit"
-      id="miniCredit"
-    >
-      AI와 협업 제작
-    </div>
-
+    <div class="mini-player__title" id="miniTitle">EVERY</div>
+    <div class="mini-player__credit" id="miniCredit">AI와 협업 제작</div>
   </div>
 
   <div class="mini-player__controls">
@@ -155,24 +709,14 @@
       type="button"
       aria-label="재생/일시정지"
     >
-
-      <svg
-        class="icon-play"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-      >
+      <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor">
         <path d="M8 5.5v13l11-6.5L8 5.5z"/>
       </svg>
 
-      <svg
-        class="icon-pause"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-      >
+      <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor">
         <rect x="6" y="5" width="4" height="14" rx="1"/>
         <rect x="14" y="5" width="4" height="14" rx="1"/>
       </svg>
-
     </button>
 
     <button
@@ -180,14 +724,10 @@
       id="miniOpenBtn"
       type="button"
       aria-label="전체 플레이어 열기"
-    >
-      ⌃
-    </button>
+    >⌃</button>
 
   </div>
-
 </div>
-
 
 <div
   class="music-modal"
@@ -197,10 +737,7 @@
   aria-label="WEST150 MUSIC"
 >
 
-  <div
-    class="music-modal__backdrop"
-    data-close-music
-  ></div>
+  <div class="music-modal__backdrop" data-close-music></div>
 
   <div class="music-modal__panel">
 
@@ -208,9 +745,7 @@
       class="music-modal__close"
       data-close-music
       aria-label="닫기"
-    >
-      &times;
-    </button>
+    >&times;</button>
 
     <div class="music-modal__head">
 
@@ -227,9 +762,7 @@
         id="showAllAlbums"
         type="button"
         hidden
-      >
-        ← 전체 앨범
-      </button>
+      >← 전체 앨범</button>
 
     </div>
 
@@ -239,31 +772,20 @@
         class="modal-ctrl-btn"
         id="playAllBtn"
         type="button"
-      >
-        ▶ 전체재생
-      </button>
+      >▶ 전체재생</button>
 
       <button
         class="modal-ctrl-btn"
         id="repeatBtn"
         type="button"
         aria-pressed="false"
-      >
-        ↻ 반복재생
-      </button>
+      >↻ 반복재생</button>
 
     </div>
 
-    <div
-      class="track-list"
-      id="trackList"
-    ></div>
+    <div class="track-list" id="trackList"></div>
 
-
-    <div
-      class="now-playing"
-      id="nowPlaying"
-    >
+    <div class="now-playing" id="nowPlaying">
 
       <img
         src="../images/every-cover.png"
@@ -276,19 +798,12 @@
 
       <div class="now-playing__info">
 
-        <div
-          class="now-playing__title"
-          id="npTitle"
-        >
-          EVERY
-        </div>
+        <div class="now-playing__title" id="npTitle">EVERY</div>
 
         <div
           class="now-playing__credit"
           id="npCredit"
-        >
-          AI와 협업 제작
-        </div>
+        >AI와 협업 제작</div>
 
         <audio
           id="npAudio"
@@ -303,197 +818,148 @@
 
     </div>
 
+    <div class="lyrics-box" id="lyricsBox">
 
-    <div
-      class="lyrics-box"
-      id="lyricsBox"
-    >
+      <div class="lyrics-box__label">LYRICS</div>
 
-      <div class="lyrics-box__label">
-        LYRICS
-      </div>
-
-      <p
-        class="lyrics-box__text"
-        id="lyricsText"
-      >
+      <p class="lyrics-box__text" id="lyricsText">
         가사를 불러오는 중입니다.
       </p>
 
     </div>
-
 
     <p class="music-disclaimer">
       본 페이지의 트랙은 상업적 이용이 아닌 포트폴리오 용도로 게시된 샘플입니다.
     </p>
 
   </div>
-
 </div>
 
-
 <script src="../tooplate-2167-orbital-script.js"></script>
-
 <script src="../lyrics-data.js"></script>
-
 <script src="../west150-music.js"></script>
 
-
 <script>
-
 (async function(){
 
-  const res =
-    await fetch(
-      "music-data.json?t=" + Date.now(),
-      {
-        cache:"no-store"
-      }
-    );
+  const res = await fetch(
+    "music-data.json?t=" + Date.now(),
+    { cache:"no-store" }
+  );
 
   if(!res.ok){
-
-    throw new Error(
-      "music-data.json " + res.status
-    );
-
+    throw new Error("music-data.json " + res.status);
   }
 
-  const data =
-    await res.json();
+  const data = await res.json();
 
-  const grid =
-    document.getElementById("albumGrid");
+  const grid = document.getElementById("albumGrid");
+  const list = document.getElementById("trackList");
 
-  const list =
-    document.getElementById("trackList");
+  const esc = v =>
+    String(v ?? "")
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;")
+      .replace(/'/g,"&#039;");
 
-
-  const esc =
-    v =>
-      String(v ?? "")
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-
-
-  grid.innerHTML =
-    (data.albums || [])
-      .map(a => `
-
-        <button
-          class="album-card reveal js-open-music"
-          data-album-id="${esc(a.id)}"
-          data-album-cover="${esc(a.cover)}"
+  grid.innerHTML = (data.albums || [])
+    .map(a => `
+      <button
+        class="album-card reveal js-open-music"
+        data-album-id="${esc(a.id)}"
+        data-album-cover="${esc(a.cover)}"
+      >
+        <img
+          src="${esc(a.cover)}"
+          alt="${esc(a.title)} 앨범 커버"
+          class="album-card__cover"
+          draggable="false"
+          oncontextmenu="return false"
         >
+
+        <div class="album-card__title">
+          ${esc(a.title)}
+        </div>
+
+        <div class="album-card__meta">
+          ${esc(a.type || "ALBUM")}
+          ·
+          ${(a.tracks || []).length}
+          TRACKS
+        </div>
+      </button>
+    `)
+    .join("");
+
+  list.innerHTML = (data.albums || [])
+    .map(a => `
+      <div class="album" data-album-id="${esc(a.id)}">
+
+        <div class="album-header">
 
           <img
             src="${esc(a.cover)}"
             alt="${esc(a.title)} 앨범 커버"
-            class="album-card__cover"
+            class="album-cover"
             draggable="false"
             oncontextmenu="return false"
           >
 
-          <div class="album-card__title">
+          <div class="album-title">
             ${esc(a.title)}
           </div>
 
-          <div class="album-card__meta">
+          <div class="album-meta">
             ${esc(a.type || "ALBUM")}
             ·
             ${(a.tracks || []).length}
             TRACKS
           </div>
 
-        </button>
-
-      `)
-      .join("");
-
-
-  list.innerHTML =
-    (data.albums || [])
-      .map(a => `
-
-        <div
-          class="album"
-          data-album-id="${esc(a.id)}"
-        >
-
-          <div class="album-header">
-
-            <img
-              src="${esc(a.cover)}"
-              alt="${esc(a.title)} 앨범 커버"
-              class="album-cover"
-              draggable="false"
-              oncontextmenu="return false"
-            >
-
-            <div class="album-title">
-              ${esc(a.title)}
-            </div>
-
-            <div class="album-meta">
-              ${esc(a.type || "ALBUM")}
-              ·
-              ${(a.tracks || []).length}
-              TRACKS
-            </div>
-
-          </div>
-
-
-          <div class="album-tracks">
-
-            ${(a.tracks || [])
-              .map((t,i) => `
-
-                <button
-                  class="track-item"
-                  data-src="${esc(t.audio)}"
-                  data-cover="${esc(a.cover)}"
-                  data-title="${esc(t.title)}"
-                  data-track-id="${esc(t.lyricsId || t.id)}"
-                  data-lyrics="${t.lyrics ? esc(t.lyrics) : ""}"
-                  data-credit-label="${esc(t.credit || "")}"
-                >
-
-                  <span class="track-item__num">
-                    ${String(i+1).padStart(2,"0")}
-                  </span>
-
-                  <span class="track-item__title">
-                    ${esc(t.title)}
-                  </span>
-
-                  <span class="track-item__credit">
-                    ${esc(t.credit || "")}
-                  </span>
-
-                  <span class="track-item__play">
-                    ▶
-                  </span>
-
-                </button>
-
-              `)
-              .join("")}
-
-          </div>
-
         </div>
 
-      `)
-      .join("");
+        <div class="album-tracks">
 
+          ${(a.tracks || [])
+            .map((t,i) => `
+              <button
+                class="track-item"
+                data-src="${esc(t.audio)}"
+                data-cover="${esc(a.cover)}"
+                data-title="${esc(t.title)}"
+                data-track-id="${esc(t.lyricsId || t.id)}"
+                data-lyrics="${t.lyrics ? esc(t.lyrics) : ""}"
+                data-credit-label="${esc(t.credit || "")}"
+              >
 
-  const first =
-    data.albums?.[0]?.tracks?.[0];
+                <span class="track-item__num">
+                  ${String(i+1).padStart(2,"0")}
+                </span>
 
+                <span class="track-item__title">
+                  ${esc(t.title)}
+                </span>
+
+                <span class="track-item__credit">
+                  ${esc(t.credit || "")}
+                </span>
+
+                <span class="track-item__play">
+                  ▶
+                </span>
+
+              </button>
+            `)
+            .join("")}
+
+        </div>
+      </div>
+    `)
+    .join("");
+
+  const first = data.albums?.[0]?.tracks?.[0];
 
   if(first){
 
@@ -508,19 +974,22 @@
 
     document.getElementById("npCredit").textContent =
       first.credit || "";
-
   }
-
 
   if(window.WEST150MusicInit){
-
     window.WEST150MusicInit();
-
   }else{
-
     location.reload();
-
   }
+
+  /* 동적으로 생성된 앨범에도 reveal 적용 */
+  document
+    .querySelectorAll(".page-music .reveal")
+    .forEach((el,i) => {
+      setTimeout(() => {
+        el.classList.add("visible");
+      }, Math.min(i * 90, 500));
+    });
 
 })()
 
@@ -532,7 +1001,6 @@
     '<p style="opacity:.6">music-data.json을 불러오지 못했습니다.</p>';
 
 });
-
 </script>
 
 </body>
