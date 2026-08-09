@@ -837,7 +837,7 @@ body.page-music::after{
 
 <script src="../tooplate-2167-orbital-script.js"></script>
 <script src="../lyrics-data.js"></script>
-<script src="../west150-music.js"></script>
+<script src="./west150-music.js"></script>
 
 <script>
 (async function(){
@@ -976,10 +976,10 @@ body.page-music::after{
       first.credit || "";
   }
 
-  if(window.WEST150MusicInit){
+  if (typeof window.WEST150MusicInit === "function") {
     window.WEST150MusicInit();
-  }else{
-    location.reload();
+  } else {
+    throw new Error("west150-music.js를 불러오지 못했습니다.");
   }
 
   /* 동적으로 생성된 앨범에도 reveal 적용 */
