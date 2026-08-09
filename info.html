@@ -1741,7 +1741,10 @@
   async function saveBlobSmart(blob, filename) {
     if (!blob) return false;
     const file = new File([blob], filename, { type: 'image/png' });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    // 공유 시트(Mail/메시지/AirDrop)는 아이폰/아이패드에서만 사용.
+    // 맥/윈도우 데스크톱 크롬도 navigator.share를 지원하는 경우가 있는데,
+    // 거기서는 다운로드 대신 공유창이 떠서 "저장이 안 된다"고 느껴지므로 건너뜀.
+    if (isIOS() && navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
         await navigator.share({ files: [file], title: filename });
         return true;
