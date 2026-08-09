@@ -359,3 +359,123 @@ He is risen!
 };
 
 
+"redeemd": '[Intro]
+Oh...
+Yeah, I've been redeemed
+네, 난 구속(구원)받았네
+
+[Verse 1]
+I was lost in a story I couldn't rewrite
+난 스스로 다시 쓸 수 없는 이야기 속에 길을 잃었었고
+Bound to a past that I couldn't fight
+맞서 싸울 수 없는 과거에 얽매여 있었지
+Then the chains fell off and the debt was paid
+그때 사슬이 풀리고 모든 죗값이 치러졌네
+A price too high, but You gave it all away
+너무나 비싼 대가였지만, 주님은 전부 내어주셨네
+
+Now I'm not who I used to be no more
+이제 난 더 이상 예전의 내가 아니라네
+Washed and made new, walking through that door
+깨끗이 씻겨 새롭게 되어, 그 문을 걸어 지나가네
+Grave couldn't hold me, sin lost its grip
+무덤도 날 붙잡지 못했고, 죄도 그 움켜쥔 힘을 잃었네
+All by a love that I don't deserve, no
+이 모든 게 내가 감당할 수 없는 사랑 덕분이라네
+
+[Chorus 1]
+Redeemed!
+구원받았네!
+Redeemed, I've been redeemed
+구원받았네, 난 구속받았네
+Washed by the blood, made clean, set free
+그 보혈로 씻겨 깨끗해지고 자유케 되었네
+Redeemed!
+구원받았네!
+Redeemed, I've been redeemed
+구원받았네, 난 구속받았네
+Once I was lost, now found, that's me
+한때 길을 잃었으나 이제 찾았으니, 그게 바로 나일세
+All by a love
+이 모든 게 그 사랑 덕분이네
+Redeemed
+구원받았네
+All by a love
+이 모든 게 그 사랑 덕분이네
+
+[Verse 2]
+Early in the morning I remember where I've been
+이른 아침, 내가 어디에 있었는지 기억하네
+Traded all my shame for a brand new skin
+내 모든 수치를 완전히 새로운 삶으로 맞바꾸었지
+Step by step, I'm walking in the light You made
+한 걸음씩, 주님이 만드신 빛 가운데로 걸어가네
+No condemnation, heavy debt to pay
+더 이상 정죄함도, 치러야 할 무거운 빚도 없네
+
+[Chorus 2]
+Redeemed!
+구원받았네!
+Redeemed, I've been redeemed
+구원받았네, 난 구속받았네
+Washed by the blood, made clean, set free
+그 보혈로 씻겨 깨끗해지고 자유케 되었네
+Redeemed!
+구원받았네!
+Redeemed, I've been redeemed
+구원받았네, 난 구속받았네
+Once I was lost, now found, that's me
+한때 길을 잃었으나 이제 찾았으니, 그게 바로 나일세
+All by a love
+이 모든 게 그 사랑 덕분이네
+Redeemed
+구원받았네
+All by a love
+이 모든 게 그 사랑 덕분이네
+
+[Bridge / Climax]
+Can you feel the weight just falling off tonight?
+오늘 밤 그 무거운 짐이 툭 떨어져 나가는 게 느껴지나요?
+(Yes, we feel it falling)
+가벼워지는 게 느껴져요
+Watch the old become the new, watch it come alive!
+옛것이 새것이 되고, 다시 살아나는 것을 보라!
+(Got to follow)
+따라가야 해요
+Higher and higher, I'm walking free
+더 높이, 더 높이, 난 자유롭게 걸어가네
+You are the reason why I am, why I am...
+주님이 바로 내 존재의 이유, 내 존재의 이유라네...
+
+[Outro - Final Chorus]
+Redeemed!
+구원받았네!
+Redeemed, I've been redeemed
+구원받았네, 난 구속받았네
+Washed by the blood, made clean, set free
+그 보혈로 씻겨 깨끗해지고 자유케 되었네
+Redeemed!
+구원받았네!
+Redeemed, I've been redeemed
+구원받았네, 난 구속받았네
+Once I was lost, now found, that's me
+한때 길을 잃었으나 이제 찾았으니, 그게 바로 나일세
+
+Now I am alive
+이제 난 살아있네
+Redeemed
+구원받았네
+Now I am alive
+이제 난 살아있네
+Redeemed
+구원받았네
+Now I am alive
+이제 난 살아있네
+Every single day, shining His glory from up above
+매일 매순간, 저 위로부터 오는 그분의 영광을 비추며
+Praise Him
+그분을 찬양하라
+Oh, I've been redeemed
+오, 난 구속받았네'
+};
+
