@@ -1,19 +1,4 @@
 (function () {
-  /* ---------- Theme toggle (shared across subpages) ---------- */
-  var themeBtn = document.getElementById('themeToggle');
-  function applyTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    try { localStorage.setItem('west150-theme', theme); } catch (e) {}
-  }
-  function currentTheme() {
-    return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-  }
-  if (themeBtn) {
-    themeBtn.addEventListener('click', function () {
-      applyTheme(currentTheme() === 'light' ? 'dark' : 'light');
-    });
-  }
-
   /* ---------- Music modal + mini player ---------- */
   var modal = document.getElementById('musicModal');
   if (!modal) return;
@@ -119,7 +104,6 @@
     });
   });
 
-  /* Audio state → mini player */
   if (npAudio) {
     npAudio.addEventListener('play', function () {
       updateMiniPlaying(true);
