@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEST150 MUSIC 관리자</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0b0d10;color:#e7e9ec;font-family:Arial,sans-serif;padding:32px 18px 80px}.wrap{max-width:900px;margin:auto}
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:22px;margin:18px 0}
+h1,h2{margin:0 0 8px}.muted{color:rgba(231,233,236,.55);font-size:.9rem}.login{max-width:380px;margin:100px auto;text-align:center}
+input,textarea,select{width:100%;background:#11151a;color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:11px 12px;margin-top:7px}
+textarea{min-height:110px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.btn{border:0;border-radius:8px;padding:10px 15px;cursor:pointer;font-weight:600}
+.primary{background:#1d9bf0;color:#fff}.secondary{background:#252a31;color:#fff}.danger{background:#54252a;color:#ff9da3}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+.album{border-top:1px solid rgba(255,255,255,.08);padding-top:18px;margin-top:18px}.track{background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px;margin:10px 0}
+.track-head{display:flex;justify-content:space-between;gap:10px}.small{font-size:.8rem;color:rgba(231,233,236,.5)}.error{color:#ff6b6b;min-height:22px;margin-top:10px}
+.path{font-family:monospace;color:#6fc5ff;font-size:.82rem;word-break:break-all}.help{font-size:.8rem;color:rgba(231,233,236,.5);line-height:1.6;margin-top:6px}
+.preview{width:100px;height:100px;object-fit:cover;border-radius:8px;margin-top:10px;display:none}
+#adminContent{display:none}@media(max-width:650px){.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="login" id="loginBox">
+  <h1>WEST150 MUSIC</h1><p class="muted">관리자 로그인</p>
+  <form id="loginForm"><input id="password" type="password" placeholder="비밀번호" autofocus><button class="btn primary" style="width:100%;margin-top:10px">입장</button></form>
+  <div class="error" id="loginError"></div>
+</div>
+
+<div class="wrap" id="adminContent">
+  <h1>WEST150 MUSIC 관리자</h1>
+  <p class="muted">앨범 커버와 트랙 정보를 관리하고 music-data.json을 생성합니다.</p>
+
+  <div class="card">
+    <h2>앨범</h2>
+    <div class="row">
+      <div><label>앨범 ID</label><input id="albumId" placeholder="예: anew"></div>
+      <div><label>앨범명</label><input id="albumTitle" placeholder="예: ANEW"></div>
+    </div>
+    <div class="row">
+      <div><label>타입</label><input id="albumType" value="EP"></div>
+      <div><label>아티스트</label><input id="albumArtist" value="WEST150 MUSIC"></div>
+    </div>
+    <label>앨범 커버 파일</label>
+    <input id="coverFile" type="file" accept="image/*">
+    <div class="help">현재 구조에 맞춰 <code>../images/파일명</code> 경로가 자동 입력됩니다. 실제 이미지는 GitHub의 <code>images/</code> 폴더에 업로드해야 합니다.</div>
+    <img id="coverPreview" class="preview" alt="">
+    <input id="coverPath" placeholder="../images/cover.png">
+    <div class="actions"><button class="btn primary" id="addAlbumBtn">앨범 추가</button><button class="btn secondary" id="resetAlbumBtn">입력 초기화</button></div>
+  </div>
+
+  <div class="card">
+    <h2>트랙 추가</h2>
+    <label>앨범 선택</label><select id="trackAlbum"></select>
+    <div class="row">
+      <div><label>트랙 ID</label><input id="trackId" placeholder="예: song-07"></div>
+      <div><label>곡 제목</label><input id="trackTitle" placeholder="예: NEW SONG"></div>
+    </div>
+    <div class="row">
+      <div><label>크레딧</label><input id="trackCredit" value="AI와 협업 제작"></div>
+      <div><label>가사 ID</label><input id="lyricsId" placeholder="기존 lyrics-data.js를 쓸 경우 입력"></div>
+    </div>
+    <label>음원 파일</label>
+    <input id="audioFile" type="file" accept="audio/*">
+    <div class="help">현재 구조에 맞춰 <code>../audio/파일명</code> 경로가 자동 입력됩니다. 실제 음원은 GitHub의 <code>audio/</code> 폴더에 업로드해야 합니다.</div>
+    <input id="audioPath" placeholder="../audio/song.mp3">
+    <label>가사 직접 입력 (선택)</label>
+    <textarea id="lyrics" placeholder="입력하면 JSON에 lyrics로 저장됩니다. 비워두면 lyricsId가 있으면 기존 lyrics-data.js를 사용합니다."></textarea>
+    <div class="actions"><button class="btn primary" id="addTrackBtn">트랙 추가</button><button class="btn secondary" id="resetTrackBtn">입력 초기화</button></div>
+  </div>
+
+  <div class="card">
+    <h2>현재 등록 내용</h2>
+    <div id="albumList"></div>
+  </div>
+
+  <div class="card">
+    <h2>저장</h2>
+    <p class="muted">다운로드한 <b>music-data.json</b>을 음악 페이지와 같은 폴더에 올리면 됩니다.</p>
+    <div class="actions"><button class="btn primary" id="downloadBtn">music-data.json 다운로드</button><button class="btn danger" id="clearBtn">전체 초기화</button></div>
+  </div>
+</div>
+
+<script>
+const PASSWORD="101677";
+let data={albums:[]};
+
+const $=id=>document.getElementById(id);
+function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  $("loginForm").addEventListener("submit",e=>{e.preventDefault();if($("password").value.trim()===PASSWORD){$("loginBox").style.display="none";$("adminContent").style.display="block";loadData();}else{$("loginError").textContent="비밀번호가 틀렸습니다.";$("password").value="";$("password").focus();}});
+  $("coverFile").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;$("coverPath").value="../images/"+f.name;const u=URL.createObjectURL(f);$("coverPreview").src=u;$("coverPreview").style.display="block";});
+  $("audioFile").addEventListener("change",e=>{const f=e.target.files[0];if(f)$("audioPath").value="../audio/"+f.name;});
+  $("addAlbumBtn").onclick=addAlbum;
+  $("addTrackBtn").onclick=addTrack;
+  $("resetAlbumBtn").onclick=resetAlbum;
+  $("resetTrackBtn").onclick=resetTrack;
+  $("downloadBtn").onclick=downloadJSON;
+  $("clearBtn").onclick=()=>{if(confirm("전체 앨범과 트랙을 삭제할까요?")){data={albums:[]};render();}};
+});
+
+async function loadData(){
+  try{const r=await fetch("music-data.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const j=await r.json();if(j&&Array.isArray(j.albums))data=j;}}catch(e){}
+  render();
+}
+function addAlbum(){
+  const id=$("albumId").value.trim(),title=$("albumTitle").value.trim();
+  if(!id||!title)return alert("앨범 ID와 앨범명을 입력해주세요.");
+  if(data.albums.some(a=>a.id===id))return alert("이미 존재하는 앨범 ID입니다.");
+  data.albums.push({id,title,type:$("albumType").value.trim()||"EP",artist:$("albumArtist").value.trim()||"WEST150 MUSIC",cover:$("coverPath").value.trim(),tracks:[]});
+  render();resetAlbum();alert("앨범이 추가되었습니다.");
+}
+function addTrack(){
+  const album=data.albums.find(a=>a.id===$("trackAlbum").value);
+  if(!album)return alert("앨범을 먼저 선택해주세요.");
+  const id=$("trackId").value.trim(),title=$("trackTitle").value.trim();
+  if(!id||!title)return alert("트랙 ID와 곡 제목을 입력해주세요.");
+  if(album.tracks.some(t=>t.id===id))return alert("이미 존재하는 트랙 ID입니다.");
+  const t={id,title,audio:$("audioPath").value.trim(),credit:$("trackCredit").value.trim(),lyricsId:$("lyricsId").value.trim()};
+  if($("lyrics").value.trim())t.lyrics=$("lyrics").value;
+  album.tracks.push(t);render();resetTrack();alert("트랙이 추가되었습니다.");
+}
+function removeAlbum(id){if(confirm("앨범을 삭제할까요?")){data.albums=data.albums.filter(a=>a.id!==id);render();}}
+function removeTrack(albumId,trackId){const a=data.albums.find(x=>x.id===albumId);if(a)a.tracks=a.tracks.filter(t=>t.id!==trackId);render();}
+function render(){
+  $("trackAlbum").innerHTML=data.albums.length?data.albums.map(a=>`<option value="${esc(a.id)}">${esc(a.title)}</option>`).join(""):"<option>앨범 없음</option>";
+  $("albumList").innerHTML=data.albums.length?data.albums.map(a=>`
+    <div class="album"><div class="track-head"><div><b>${esc(a.title)}</b> <span class="small">${esc(a.type)} · ${a.tracks.length} TRACKS</span><div class="path">${esc(a.cover)}</div></div><button class="btn danger" onclick="removeAlbum('${esc(a.id)}')">앨범 삭제</button></div>
+    ${a.tracks.map((t,i)=>`<div class="track"><div class="track-head"><div><b>${String(i+1).padStart(2,"0")} · ${esc(t.title)}</b><div class="small">${esc(t.credit||"")}</div><div class="path">${esc(t.audio)}</div>${t.lyricsId?`<div class="small">가사 ID: ${esc(t.lyricsId)}</div>`:""}${t.lyrics?'<div class="small">JSON 가사 포함</div>':""}</div><button class="btn danger" onclick="removeTrack('${esc(a.id)}','${esc(t.id)}')">삭제</button></div></div>`).join("")}
+    </div>`).join(""):'<div class="muted">등록된 앨범이 없습니다.</div>';
+}
+function resetAlbum(){$("albumId").value="";$("albumTitle").value="";$("albumType").value="EP";$("albumArtist").value="WEST150 MUSIC";$("coverFile").value="";$("coverPath").value="";$("coverPreview").style.display="none";}
+function resetTrack(){$("trackId").value="";$("trackTitle").value="";$("trackCredit").value="AI와 협업 제작";$("lyricsId").value="";$("audioFile").value="";$("audioPath").value="";$("lyrics").value="";}
+function downloadJSON(){
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="music-data.json";document.body.appendChild(a);a.click();a.remove();
+}
+</script>
+</body>
+</html>
