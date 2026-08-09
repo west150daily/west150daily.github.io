@@ -19,6 +19,10 @@
 
 <nav class="nav">
   <div class="logo"><a href="../" class="logo logo-img-badge"><img src="../images/west150-logo.png" alt="WEST150" class="logo-img"></a></div>
+  <div class="nav-clock" id="navClock">
+    <span class="nav-clock__item"><span class="nav-clock__flag">🇰🇷</span><span class="nav-clock__label">KST</span><span id="clockKST">--:--</span></span>
+    <span class="nav-clock__item"><span class="nav-clock__flag">🇺🇸</span><span class="nav-clock__label">EST</span><span id="clockEST">--:--</span></span>
+  </div>
 </nav>
 
 <header class="daily-hero">
@@ -31,7 +35,26 @@
   <p>※ 아래 카드는 디자인 확인용 샘플입니다 — 실제 뉴스 콘텐츠는 곧 업데이트됩니다.</p>
 </div>
 
-<section class="feed">
+<div class="daily-layout">
+
+  <aside class="breaking-sidebar reveal">
+    <div class="breaking-sidebar__head"><span class="dot"></span>속보</div>
+
+    <a href="#" class="breaking-item">
+      <span class="breaking-item__time">방금</span>
+      <span class="breaking-item__text">속보 예시 문구가 이 자리에 짧게 표시됩니다.</span>
+    </a>
+    <a href="#" class="breaking-item">
+      <span class="breaking-item__time">12분 전</span>
+      <span class="breaking-item__text">속보만 모아서 빠르게 훑어볼 수 있는 공간입니다.</span>
+    </a>
+    <a href="#" class="breaking-item">
+      <span class="breaking-item__time">1시간 전</span>
+      <span class="breaking-item__text">중요한 소식은 아래 메인 피드보다 먼저 여기에 올라옵니다.</span>
+    </a>
+  </aside>
+
+  <section class="feed feed--in-layout">
 
   <article class="feed-card reveal">
     <div class="feed-card__avatar"><img src="../images/west150-daily-icon.png" alt=""></div>
@@ -57,10 +80,20 @@
         <span class="feed-card__dot">·</span>
         <span class="feed-card__time">3시간 전</span>
       </div>
-      <span class="feed-card__tag">SAMPLE · 예시 카드</span>
-      <p class="feed-card__text">이미지가 포함된 카드는 이렇게 보여요. 실제 콘텐츠가 준비되면 카드뉴스 이미지와 함께 게시됩니다.</p>
-      <div class="feed-card__media">
-        <img src="../images/west150-daily-logo.png" alt="샘플 이미지">
+      <span class="feed-card__tag">SAMPLE · 여러 장(캐러셀) 예시</span>
+      <p class="feed-card__text">카드뉴스처럼 순서가 있는 여러 장은 이렇게 옆으로 넘겨보는 캐러셀로 보여줄 수 있어요. 스와이프하거나 점을 눌러 다음 장으로 이동해보세요.</p>
+      <div class="feed-card__media feed-card__media--carousel">
+        <div class="carousel-track" data-carousel>
+          <div class="carousel-slide"><img src="../images/west150-daily-logo.png" alt="샘플 1"></div>
+          <div class="carousel-slide"><img src="../images/west150-music-logo.png" alt="샘플 2"></div>
+          <div class="carousel-slide"><img src="../images/west150-theology-logo.png" alt="샘플 3"></div>
+        </div>
+        <div class="carousel-counter">1/3</div>
+        <div class="carousel-dots">
+          <button class="dot is-active" aria-label="1번째 이미지"></button>
+          <button class="dot" aria-label="2번째 이미지"></button>
+          <button class="dot" aria-label="3번째 이미지"></button>
+        </div>
       </div>
       <div class="feed-card__source">출처 예시 · <a href="#">원문 보기</a></div>
     </div>
@@ -80,8 +113,9 @@
       <div class="feed-card__source">출처 예시 · <a href="#">원문 보기</a></div>
     </div>
   </article>
+  </section>
 
-</section>
+</div>
 
 <footer class="footer">
   <div class="logo"><a href="../" class="logo logo-img-badge"><img src="../images/west150-logo.png" alt="WEST150" class="logo-img"></a></div>
@@ -107,6 +141,7 @@
 </footer>
 
 <script src="../tooplate-2167-orbital-script.js"></script>
+<script src="../west150-daily.js"></script>
 
 
 </body>
