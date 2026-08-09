@@ -18,21 +18,7 @@
 
 <nav class="nav">
   <div class="logo"><a href="../" class="logo"><img src="../images/west150-logo.png" alt="WEST150" class="logo-img"></a></div>
-  <ul class="nav-links">
-    <li><a href="../daily/">Daily</a></li>
-    <li><a href="../music/">Music</a></li>
-    <li><a href="../theology/">Theology</a></li>
-  </ul>
-<button class="menu-toggle" aria-label="Open menu" aria-expanded="false">
-    <span></span><span></span><span></span>
-  </button>
 </nav>
-
-<div class="mobile-menu">
-  <a href="../daily/">Daily</a>
-  <a href="../music/">Music</a>
-  <a href="../theology/">Theology</a>
-</div>
 
 <header class="music-hero">
   <img src="../images/west150-music-logo.png" alt="WEST150 MUSIC" class="music-hero__logo reveal">
@@ -108,6 +94,17 @@
       <img src="../images/west150-music-logo.png" alt="WEST150 MUSIC" class="music-modal__logo">
       <h2>TRACKS</h2>
       <button class="music-modal__show-all" id="showAllAlbums" type="button" hidden>← 전체 앨범</button>
+    </div>
+
+    <div class="modal-controls">
+      <button class="modal-ctrl-btn" id="playAllBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M8 5.5v13l11-6.5L8 5.5z"/></svg>
+        전체재생
+      </button>
+      <button class="modal-ctrl-btn" id="repeatBtn" type="button" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        반복재생
+      </button>
     </div>
 
     <div class="track-list" id="trackList">
