@@ -529,6 +529,7 @@
 ================================ -->
 
 <script src="../lyrics-data.js"></script>
+<script src="west150-music.js"></script>
 
 
 <!-- ================================
@@ -841,28 +842,10 @@
     }
 
 
-    /*
-     * 중요:
-     *
-     * west150-music.js는
-     * music 폴더 안에 있음.
-     *
-     * 따라서 ../west150-music.js가 아니라
-     * ./west150-music.js
-     */
-
-    const playerScript =
-      document.createElement("script");
-
-
-    playerScript.src =
-      "west150-music.js?t=" +
-      Date.now();
-
-
-    document.body.appendChild(
-      playerScript
-    );
+    /* JSON으로 트랙을 만든 뒤 플레이어를 초기화 */
+    if (window.WEST150MusicInit) {
+      window.WEST150MusicInit();
+    }
 
 
   } catch (error) {
