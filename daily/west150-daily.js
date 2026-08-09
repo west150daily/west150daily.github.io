@@ -1,4 +1,30 @@
 (function () {
+  /* ---------- Live clock: KST / US Eastern ---------- */
+  var kstEl = document.getElementById('clockKST');
+  var estEl = document.getElementById('clockEST');
+
+  function formatTime(timeZone) {
+    return new Intl.DateTimeFormat('en-US', {
+      timeZone: timeZone,
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    }).format(new Date());
+  }
+
+  function updateClock() {
+    if (kstEl) kstEl.textContent = formatTime('Asia/Seoul');
+    if (estEl) estEl.textContent = formatTime('America/New_York');
+  }
+
+  if (kstEl || estEl) {
+    updateClock();
+    setInterval(updateClock, 1000 * 15); /* 분 단위 표시라 15초마다면 충분 */
+  }
+})();
+
+(function () {
+  /* ---------- Multi-image carousel (Instagram-style swipe) ---------- */
   var carousels = document.querySelectorAll('.feed-card__media--carousel');
 
   carousels.forEach(function (media) {
