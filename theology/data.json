@@ -1,0 +1,24 @@
+[
+  {
+    "id":"theology-demo-01",
+    "type":"essay",
+    "status":"draft",
+    "category":"FAITH",
+    "tag":"THEOLOGY",
+    "title":"첫 번째 에세이를 준비하세요",
+    "subtitle":"여러 장의 카드로 하나의 ESSAY를 만듭니다.",
+    "summary":"관리자에서 카드들을 추가하고 순서를 조정하면 홈페이지에서 카드뉴스형 리더로 볼 수 있습니다.",
+    "author":"WEST150 THEOLOGY",
+    "date":"2026-08-11T00:00:00.000Z",
+    "source":"",
+    "sourceUrl":"",
+    "bibleRef":"",
+    "featured":false,
+    "image":"image/essay-01.jpg",
+    "body":"",
+    "cards":[
+      {"id":"card-01","image":"image/essay-01.jpg","label":"FAITH","title":"첫 번째 카드","body":"첫 번째 카드 내용을 입력하세요.","order":1},
+      {"id":"card-02","image":"image/essay-02.jpg","label":"THEOLOGY","title":"두 번째 카드","body":"두 번째 카드 내용을 입력하세요.","order":2}
+    ]
+  }
+]
