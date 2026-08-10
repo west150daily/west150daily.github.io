@@ -821,3 +821,42 @@ body.page-daily * { box-sizing: border-box; }
     transition: none !important;
   }
 }
+
+
+/* ============================================================
+   WEST150 DAILY LOGO OVERRIDE
+   실제 파일: ../images/west150-daily-logo.png
+   ============================================================ */
+.editorial-nav .brand-lockup{
+  min-width:0;
+}
+.editorial-nav .brand-mark{
+  width:46px;
+  height:46px;
+  padding:6px;
+  overflow:hidden;
+  flex:0 0 46px;
+  background:transparent;
+  border:1px solid var(--line);
+  border-radius:0;
+}
+.editorial-nav .brand-mark .logo-img{
+  display:block;
+  width:100% !important;
+  height:100% !important;
+  max-width:none !important;
+  object-fit:contain !important;
+  object-position:center;
+}
+@media (max-width:640px){
+  .editorial-nav .brand-mark{
+    width:40px;
+    height:40px;
+    flex-basis:40px;
+    padding:5px;
+  }
+  .editorial-nav .brand-section{
+    font-size:10px;
+    letter-spacing:2px;
+  }
+}
