@@ -1,0 +1,20 @@
+[
+  {
+    "id": "theology-example-01",
+    "type": "essay",
+    "status": "draft",
+    "category": "THEOLOGY",
+    "tag": "FAITH",
+    "title": "첫 번째 글을 준비하세요",
+    "subtitle": "THEOLOGY 관리자에서 이 콘텐츠를 수정하거나 삭제할 수 있습니다.",
+    "summary": "이 항목은 관리자와 데이터 구조가 정상적으로 연결되는지 확인하기 위한 초안입니다.",
+    "body": "관리자에서 새로운 콘텐츠를 작성한 뒤 JSON DOWNLOAD를 눌러 data.json을 업데이트하세요.",
+    "author": "WEST150 THEOLOGY",
+    "date": "2026-08-10T09:00:00.000Z",
+    "source": "",
+    "sourceUrl": "",
+    "image": "",
+    "bibleRef": "",
+    "featured": false
+  }
+]
