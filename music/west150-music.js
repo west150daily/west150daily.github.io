@@ -13,9 +13,17 @@
 
     var npAudio = document.getElementById('npAudio');
     var npCover = document.getElementById('npCover');
+    var npVinyl = document.getElementById('npVinyl');
     var npTitle = document.getElementById('npTitle');
     var npCredit = document.getElementById('npCredit');
     var lyricsText = document.getElementById('lyricsText');
+
+    var wavePlayBtn = document.getElementById('wavePlayBtn');
+    var waveBars = document.getElementById('waveBars');
+    var waveBarsBg = document.getElementById('waveBarsBg');
+    var waveBarsFill = document.getElementById('waveBarsFill');
+    var waveCurrent = document.getElementById('waveCurrent');
+    var waveDuration = document.getElementById('waveDuration');
 
     var mini = document.getElementById('miniPlayer');
     var miniCover = document.getElementById('miniCover');
@@ -23,9 +31,76 @@
     var miniCredit = document.getElementById('miniCredit');
     var miniPlayBtn = document.getElementById('miniPlayBtn');
     var miniOpenBtn = document.getElementById('miniOpenBtn');
+    var miniProgress = document.getElementById('miniProgress');
 
     var isPlayAll = false;
     var isRepeat = false;
+    var WAVE_BAR_COUNT = 46;
+
+
+    /*
+     * 트랙 id를 시드로 쓰는 결정론적 랜덤값 생성기.
+     * 같은 곡이면 항상 같은 파형 모양이 나온다.
+     */
+    function seededRandom(seedStr) {
+      var seed = 0;
+      for (var i = 0; i < seedStr.length; i++) {
+        seed = (seed * 31 + seedStr.charCodeAt(i)) >>> 0;
+      }
+      return function () {
+        seed = (seed * 1664525 + 1013904223) >>> 0;
+        return seed / 4294967296;
+      };
+    }
+
+
+    function formatTime(sec) {
+      if (!isFinite(sec) || sec < 0) return '0:00';
+      var m = Math.floor(sec / 60);
+      var s = Math.floor(sec % 60);
+      return m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+
+    /*
+     * 트랙별 고정된 웨이브폼 막대 렌더링
+     * (실제 오디오 데이터를 분석하지 않고, 트랙 id 기반의
+     *  시각적 파형을 만들어 재생바를 감싸는 용도)
+     */
+    function buildWaveBars(seed) {
+      if (!waveBarsBg || !waveBarsFill) return;
+
+      var rand = seededRandom(seed || 'default');
+      var bgFrag = document.createDocumentFragment();
+      var fillFrag = document.createDocumentFragment();
+
+      for (var i = 0; i < WAVE_BAR_COUNT; i++) {
+        var h = Math.round(22 + rand() * 78); // 22% ~ 100%
+        var bg = document.createElement('div');
+        bg.className = 'bar';
+        bg.style.height = h + '%';
+        bgFrag.appendChild(bg);
+
+        var fill = document.createElement('div');
+        fill.className = 'bar';
+        fill.style.height = h + '%';
+        fillFrag.appendChild(fill);
+      }
+
+      waveBarsBg.innerHTML = '';
+      waveBarsFill.innerHTML = '';
+      waveBarsBg.appendChild(bgFrag);
+      waveBarsFill.appendChild(fillFrag);
+    }
+
+
+    function seekFromClientX(clientX) {
+      if (!waveBars || !npAudio || !isFinite(npAudio.duration)) return;
+      var rect = waveBars.getBoundingClientRect();
+      var ratio = (clientX - rect.left) / rect.width;
+      ratio = Math.max(0, Math.min(1, ratio));
+      npAudio.currentTime = ratio * npAudio.duration;
+    }
 
 
     function albums() {
@@ -163,6 +238,22 @@
       npAudio.src = src;
 
       npAudio.load();
+
+
+      /*
+       * 웨이브폼 재생바 초기화
+       */
+
+      buildWaveBars(id || src);
+
+      if (waveBarsFill) {
+        waveBarsFill.style.width = '0%';
+      }
+      if (miniProgress) {
+        miniProgress.style.width = '0%';
+      }
+      if (waveCurrent) waveCurrent.textContent = '0:00';
+      if (waveDuration) waveDuration.textContent = '0:00';
 
 
       /*
@@ -426,6 +517,14 @@
             );
           }
 
+          if (npVinyl) {
+            npVinyl.classList.add('is-spinning');
+          }
+
+          if (wavePlayBtn) {
+            wavePlayBtn.classList.add('is-playing');
+          }
+
         }
       );
 
@@ -444,6 +543,52 @@
             );
           }
 
+          if (npVinyl) {
+            npVinyl.classList.remove('is-spinning');
+          }
+
+          if (wavePlayBtn) {
+            wavePlayBtn.classList.remove('is-playing');
+          }
+
+        }
+      );
+
+
+      /*
+       * 곡 길이 로드됨
+       */
+
+      npAudio.addEventListener(
+        'loadedmetadata',
+        function () {
+          if (waveDuration) {
+            waveDuration.textContent = formatTime(npAudio.duration);
+          }
+        }
+      );
+
+
+      /*
+       * 재생 진행 (웨이브폼 채우기 + 미니 진행바 + 시간 표시)
+       */
+
+      npAudio.addEventListener(
+        'timeupdate',
+        function () {
+          if (!isFinite(npAudio.duration) || npAudio.duration <= 0) return;
+
+          var pct = (npAudio.currentTime / npAudio.duration) * 100;
+
+          if (waveBarsFill) {
+            waveBarsFill.style.width = pct + '%';
+          }
+          if (miniProgress) {
+            miniProgress.style.width = pct + '%';
+          }
+          if (waveCurrent) {
+            waveCurrent.textContent = formatTime(npAudio.currentTime);
+          }
         }
       );
 
@@ -455,6 +600,14 @@
       npAudio.addEventListener(
         'ended',
         function () {
+
+          if (npVinyl) {
+            npVinyl.classList.remove('is-spinning');
+          }
+
+          if (wavePlayBtn) {
+            wavePlayBtn.classList.remove('is-playing');
+          }
 
           if (
             !isPlayAll ||
@@ -484,6 +637,47 @@
 
         }
       );
+
+    }
+
+
+    /*
+     * 웨이브폼 재생바 클릭/드래그 탐색(seek)
+     */
+
+    if (waveBars && npAudio) {
+
+      var waveDragging = false;
+
+      waveBars.addEventListener('pointerdown', function (e) {
+        waveDragging = true;
+        seekFromClientX(e.clientX);
+      });
+
+      window.addEventListener('pointermove', function (e) {
+        if (!waveDragging) return;
+        seekFromClientX(e.clientX);
+      });
+
+      window.addEventListener('pointerup', function () {
+        waveDragging = false;
+      });
+    }
+
+
+    /*
+     * 커스텀 재생 버튼 (웨이브폼 옆)
+     */
+
+    if (wavePlayBtn && npAudio) {
+
+      wavePlayBtn.addEventListener('click', function () {
+        if (npAudio.paused) {
+          npAudio.play().catch(function () {});
+        } else {
+          npAudio.pause();
+        }
+      });
 
     }
 

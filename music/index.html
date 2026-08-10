@@ -1131,6 +1131,8 @@ body.page-music::after{
   id="miniPlayer"
   aria-hidden="true"
 >
+  <div class="mini-player__progress" id="miniProgress"></div>
+
   <img
     src="../images/every-cover.png"
     alt=""
@@ -1231,14 +1233,21 @@ body.page-music::after{
 
     <div class="now-playing" id="nowPlaying">
 
-      <img
-        src="../images/every-cover.png"
-        alt=""
-        class="now-playing__cover"
-        id="npCover"
-        draggable="false"
-        oncontextmenu="return false"
-      >
+      <div class="now-playing__art">
+        <div class="now-playing__glow"></div>
+        <div class="now-playing__vinyl" id="npVinyl">
+          <img
+            src="../images/every-cover.png"
+            alt=""
+            class="now-playing__cover"
+            id="npCover"
+            draggable="false"
+            oncontextmenu="return false"
+          >
+          <div class="now-playing__grooves"></div>
+          <div class="now-playing__spindle"></div>
+        </div>
+      </div>
 
       <div class="now-playing__info">
 
@@ -1251,12 +1260,27 @@ body.page-music::after{
 
         <audio
           id="npAudio"
-          controls
           preload="none"
           controlsList="nodownload noremoteplayback"
           disablePictureInPicture
           oncontextmenu="return false"
         ></audio>
+
+        <div class="wave-player" id="wavePlayer">
+          <button class="wave-player__play" id="wavePlayBtn" type="button" aria-label="재생/일시정지">
+            <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5L8 5.5z"/></svg>
+            <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+          </button>
+          <div class="wave-player__bars" id="waveBars">
+            <div class="wave-bars__track" id="waveBarsBg"></div>
+            <div class="wave-bars__fill" id="waveBarsFill"></div>
+          </div>
+          <div class="wave-player__time">
+            <span id="waveCurrent">0:00</span>
+            <span class="sep">/</span>
+            <span id="waveDuration">0:00</span>
+          </div>
+        </div>
 
       </div>
 
