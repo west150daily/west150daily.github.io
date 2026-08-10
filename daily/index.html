@@ -1,130 +1,153 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WEST150 DAILY</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0a09">
+  <meta name="description" content="WEST150 DAILY — Curated daily news.">
+  <title>WEST150 DAILY — Editorial</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../tooplate-2167-orbital-style.css">
-<link rel="stylesheet" href="west150-daily-style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../tooplate-2167-orbital-style.css">
+  <link rel="stylesheet" href="west150-daily-style.css">
 </head>
 
 <body class="page-sub page-daily">
 
-<div class="aura"></div>
-<div class="stars"></div>
+  <div class="editorial-noise" aria-hidden="true"></div>
 
-<nav class="nav">
-  <div class="logo">
-    <a href="../" class="logo logo-img-badge">
-      <img src="../images/west150-daily-logo.png" alt="WEST150 DAILY" class="logo-img">
-    </a>
-  </div>
-  <div class="nav-clock" id="navClock">
-    <span class="nav-clock__item">
-      <span class="nav-clock__flag">🇰🇷</span>
-      <span class="nav-clock__label">KST</span>
-      <span id="clockKST">--:--</span>
-    </span>
-    <span class="nav-clock__item">
-      <span class="nav-clock__flag">🇺🇸</span>
-      <span class="nav-clock__label">EST</span>
-      <span id="clockEST">--:--</span>
-    </span>
-  </div>
-</nav>
-
-<header class="daily-hero">
-  <div class="daily-hero__badge reveal"><span class="dot"></span>LIVE FEED</div>
-  <h1 class="reveal">WEST150 DAILY CARD NEWS</h1>
-  <p class="reveal">다양한 소식을 선별해 읽기 쉬운 카드뉴스로 정리해 전합니다.</p>
-</header>
-
-<!-- 카테고리 필터 -->
-<div class="category-filter reveal">
-  <button class="cat-btn is-active" data-cat="all">전체</button>
-  <button class="cat-btn" data-cat="정치">정치</button>
-  <button class="cat-btn" data-cat="경제">경제</button>
-  <button class="cat-btn" data-cat="테크">테크</button>
-  <button class="cat-btn" data-cat="해외">해외</button>
-  <button class="cat-btn" data-cat="사회">사회</button>
-</div>
-
-<div class="feed-notice reveal">
-  <p>※ 최신 카드뉴스는 GitHub의 daily/data.json을 기준으로 표시됩니다.</p>
-</div>
-
-<div class="daily-layout">
-
-  <!-- 속보 -->
-  <aside class="breaking-sidebar reveal" id="breakingSidebar">
-    <div class="breaking-sidebar__head">
-      <span class="dot"></span>속보
-      <span class="breaking-new-badge">NEW</span>
-    </div>
-    <div class="breaking-list">
-      <a href="#card-1" class="breaking-item">
-  <img class="breaking-item__thumb" src="../images/west150-daily-icon.png" alt="">
-  <div class="breaking-item__content">
-    <span class="breaking-item__time">방금</span>
-    <span class="breaking-item__text">속보 예시 문구가 이 자리에 짧게 표시됩니다.</span>
-  </div>
-</a>
-      <a href="#card-2" class="breaking-item">
-        <span class="breaking-item__time">12분 전</span>
-        <span class="breaking-item__text">속보만 모아서 빠르게 훑어볼 수 있는 공간입니다.</span>
+  <nav class="nav editorial-nav">
+    <div class="nav-inner">
+      <a href="../" class="brand-lockup" aria-label="WEST150 home">
+        <span class="brand-mark">
+          <img src="../images/west150-daily-logo.png" alt="WEST150 DAILY" class="logo-img">
+        </span>
+        <span class="brand-section">DAILY</span>
       </a>
-      <a href="#card-3" class="breaking-item">
-        <span class="breaking-item__time">1시간 전</span>
-        <span class="breaking-item__text">중요한 소식은 메인 피드보다 먼저 여기에 올라옵니다.</span>
-      </a>
-    </div>
-  </aside>
 
-  <section class="feed feed--in-layout" id="mainFeed">
-    <div class="skeleton-card" id="feedLoading">
-      <div class="skeleton-avatar"></div>
-      <div class="skeleton-lines">
-        <div class="skeleton-line short"></div>
-        <div class="skeleton-line medium"></div>
-        <div class="skeleton-line long"></div>
+      <div class="nav-center">
+        <span class="nav-status"><i></i> LIVE EDITION</span>
+        <span class="nav-rule"></span>
+        <span class="nav-date" id="navDate">AUG 10, 2026</span>
+      </div>
+
+      <div class="nav-clock" id="navClock">
+        <span class="nav-clock__item">
+          <span class="nav-clock__label">KST</span>
+          <span id="clockKST">--:--</span>
+        </span>
+        <span class="nav-clock__item">
+          <span class="nav-clock__label">EST</span>
+          <span id="clockEST">--:--</span>
+        </span>
       </div>
     </div>
-  </section>
-</div>
+  </nav>
 
-<!-- 맨 위로 -->
-<button class="back-to-top" id="backToTop" aria-label="맨 위로">↑</button>
+  <main>
+    <header class="daily-hero editorial-container">
+      <div class="hero-kicker">
+        <span>WEST150</span>
+        <span class="hero-kicker-line"></span>
+        <span>DAILY NEWSROOM</span>
+      </div>
 
-<footer class="footer">
-  <div class="logo">
-    <a href="../" class="logo logo-img-badge">
-      <img src="../images/west150-daily-logo.png" alt="WEST150 DAILY" class="logo-img">
-    </a>
-  </div>
-  <div class="footer-right">
-    <div class="social-icons">
-      <a href="https://x.com/WEST150OFFICIAL" class="social-icon" rel="noopener" target="_blank" aria-label="X">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4L20 20M20 4L4 20"/></svg>
-      </a>
-      <a href="#" class="social-icon" rel="noopener" target="_blank" aria-label="Threads">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M6.321 6.016c-.27-.18-1.166-.802-1.166-.802.756-1.081 1.753-1.502 3.132-1.502.975 0 1.803.327 2.394.948s.928 1.509 1.005 2.644q.492.207.905.484c1.109.745 1.719 1.86 1.719 3.137 0 2.716-2.226 5.075-6.256 5.075C4.594 16 1 13.987 1 7.994 1 2.034 4.482 0 8.044 0 9.69 0 13.55.243 15 5.036l-1.36.353C12.516 1.974 10.163 1.43 8.006 1.43c-3.565 0-5.582 2.171-5.582 6.79 0 4.143 2.254 6.343 5.63 6.343 2.777 0 4.847-1.443 4.847-3.556 0-1.438-1.208-2.127-1.27-2.127-.236 1.234-.868 3.31-3.644 3.31-1.618 0-3.013-1.118-3.013-2.582 0-2.09 1.984-2.847 3.55-2.847.586 0 1.294.04 1.663.114 0-.637-.54-1.728-1.9-1.728-1.25 0-1.566.405-1.967.868ZM8.716 8.19c-2.04 0-2.304.87-2.304 1.416 0 .878 1.043 1.168 1.6 1.168 1.02 0 2.067-.282 2.232-2.423a6.2 6.2 0 0 0-1.528-.161"/></svg>
-      </a>
-      <a href="#" class="social-icon" rel="noopener" target="_blank" aria-label="Instagram">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
-      </a>
-      <a href="mailto:west150official@gmail.com" class="social-icon" aria-label="Email">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.5 6.5L12 13L20.5 6.5"/></svg>
-      </a>
+      <div class="hero-grid">
+        <div>
+          <h1>THE DAILY<br><em>NEWS.</em></h1>
+        </div>
+        <div class="hero-copy">
+          <p class="hero-lead">오늘의 주요 소식을 선별해<br>읽기 쉬운 카드뉴스로 전합니다.</p>
+          <p class="hero-meta">CURATED · CONDENSED · CURRENT</p>
+        </div>
+      </div>
+
+      <div class="edition-line">
+        <span>VOL. 01</span>
+        <span>MONDAY, AUGUST 10, 2026</span>
+        <span>WEST150 DAILY</span>
+      </div>
+    </header>
+
+    <section class="category-bar editorial-container" aria-label="뉴스 카테고리">
+      <div class="category-label">SECTIONS</div>
+      <div class="category-filter">
+        <button class="cat-btn is-active" data-cat="all">ALL</button>
+        <button class="cat-btn" data-cat="정치">POLITICS</button>
+        <button class="cat-btn" data-cat="경제">ECONOMY</button>
+        <button class="cat-btn" data-cat="테크">TECH</button>
+        <button class="cat-btn" data-cat="해외">WORLD</button>
+        <button class="cat-btn" data-cat="사회">SOCIETY</button>
+      </div>
+    </section>
+
+    <section class="editorial-container breaking-strip" aria-label="속보">
+      <div class="breaking-label">
+        <span class="breaking-dot"></span>
+        <span>BREAKING</span>
+      </div>
+      <div class="breaking-track">
+        <div class="breaking-list"></div>
+      </div>
+      <div class="breaking-more">LIVE</div>
+    </section>
+
+    <div class="editorial-container source-note">
+      <span>EDITOR'S NOTE</span>
+      <span>최신 카드뉴스는 daily/data.json을 기준으로 표시됩니다.</span>
     </div>
-    <div class="credit">© 2026 WEST150. All rights reserved.</div>
-  </div>
-</footer>
 
-<script src="../tooplate-2167-orbital-script.js"></script>
-<script src="west150-daily.js"></script>
+    <div class="editorial-container daily-layout">
+      <aside class="breaking-sidebar" id="breakingSidebar">
+        <div class="sidebar-head">
+          <span>IN FOCUS</span>
+          <span class="sidebar-count" id="breakingCount">00</span>
+        </div>
+        <div class="sidebar-intro">지금 가장 빠르게<br>확인해야 할 소식.</div>
+        <div class="sidebar-list"></div>
+      </aside>
+
+      <section class="feed feed--in-layout" id="mainFeed" aria-live="polite">
+        <div class="skeleton-card" id="feedLoading">
+          <div class="skeleton-label"></div>
+          <div class="skeleton-title"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line short"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <button class="back-to-top" id="backToTop" aria-label="맨 위로">↑</button>
+
+  <footer class="footer editorial-footer">
+    <div class="editorial-container footer-grid">
+      <div>
+        <a href="../" class="footer-brand">WEST150</a>
+        <p>DAILY NEWSROOM</p>
+      </div>
+
+      <div class="footer-middle">
+        <span>NEWS · CULTURE · WORLD</span>
+        <span>EST. 2026</span>
+      </div>
+
+      <div class="footer-right">
+        <div class="social-icons">
+          <a href="https://x.com/WEST150OFFICIAL" class="social-icon" rel="noopener" target="_blank" aria-label="X">𝕏</a>
+          <a href="#" class="social-icon" aria-label="Threads">◎</a>
+          <a href="#" class="social-icon" aria-label="Instagram">◉</a>
+          <a href="mailto:west150official@gmail.com" class="social-icon" aria-label="Email">@</a>
+        </div>
+        <div class="credit">© 2026 WEST150. ALL RIGHTS RESERVED.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../tooplate-2167-orbital-script.js"></script>
+  <script src="west150-daily.js"></script>
 </body>
 </html>
