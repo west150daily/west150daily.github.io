@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#11110f">
+  <meta name="description" content="WEST150 DAILY — Curated daily news.">
+  <title>WEST150 DAILY — NEWS CARD</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../tooplate-2167-orbital-style.css">
+  <link rel="stylesheet" href="west150-daily-style.css">
+</head>
+
+<body class="page-sub page-daily">
+
+  <div class="editorial-noise" aria-hidden="true"></div>
+
+  <!-- 독립형 DAILY 네비게이션: 메인 WEST150으로 이동하는 링크 없음 -->
+  <nav class="daily-nav">
+    <div class="daily-nav__inner">
+      <div class="daily-brand" aria-label="WEST150 DAILY">
+        <span class="daily-brand__mark">
+          <img src="../images/west150-daily-logo.png" alt="WEST150 DAILY">
+        </span>
+        <span class="daily-brand__word">DAILY</span>
+      </div>
+
+      <div class="daily-nav__center">
+        <span class="live-status"><i></i> LIVE EDITION</span>
+        <span class="nav-divider"></span>
+        <span id="navDate">AUG 10, 2026</span>
+      </div>
+
+      <div class="daily-nav__tools">
+        <button class="nav-tool" id="searchOpen" type="button" aria-label="검색">SEARCH</button>
+        <button class="nav-tool nav-icon" id="themeToggle" type="button" aria-label="라이트/다크 모드">◐</button>
+        <span class="clock" id="clockKST">--:--</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breaking -->
+  <section class="breaking-bar" aria-label="속보">
+    <div class="breaking-bar__inner">
+      <div class="breaking-label"><i></i><span>BREAKING</span></div>
+      <div class="breaking-marquee">
+        <div class="breaking-list" id="breakingList"></div>
+      </div>
+      <button class="breaking-live" id="breakingJump" type="button">LIVE ↗</button>
+    </div>
+  </section>
+
+  <main>
+
+    <!-- Hero -->
+    <header class="daily-hero editorial-container">
+      <div class="hero-kicker">
+        <span>WEST150 DAILY</span>
+        <span class="hero-kicker-line"></span>
+        <span>INDEPENDENT NEWSROOM</span>
+      </div>
+
+      <div class="hero-grid">
+        <div>
+          <p class="hero-number">VOL. <span id="editionNumber">01</span></p>
+          <h1>WEST150<br><em>NEWSCARD</em></h1>
+        </div>
+
+        <div class="hero-copy">
+          <p class="hero-lead">오늘의 주요 소식을 선별해<br>읽기 쉬운 카드뉴스로 전합니다.</p>
+          <p class="hero-meta">CURATED · CONDENSED · CURRENT</p>
+        </div>
+      </div>
+
+      <div class="edition-line">
+        <span id="heroDate">MONDAY, AUGUST 10, 2026</span>
+        <span>WEST150 DAILY</span>
+      </div>
+    </header>
+
+    <!-- Today's Top Story -->
+    <section class="top-story editorial-container" id="topStory">
+      <div class="section-rule">
+        <span>TODAY'S TOP STORY</span>
+        <span>01 / FEATURED</span>
+      </div>
+
+      <article class="top-story__card" id="topStoryCard">
+        <div class="top-story__visual" id="topStoryVisual">
+          <span class="top-story__stamp">FEATURED</span>
+        </div>
+        <div class="top-story__body">
+          <div class="story-meta" id="topStoryMeta">WEST150 DAILY · TODAY</div>
+          <h2 id="topStoryTitle">오늘의 주요 소식을 불러오는 중입니다.</h2>
+          <p id="topStoryText">data.json에서 최신 콘텐츠를 불러오고 있습니다.</p>
+          <div class="top-story__bottom">
+            <span id="topStorySource">SOURCE — WEST150 DAILY</span>
+            <button id="topStoryRead" type="button">READ STORY <span>→</span></button>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- Category -->
+    <section class="category-section editorial-container" id="sections">
+      <div class="section-rule">
+        <span>SECTIONS</span>
+        <span>FILTER BY TOPIC</span>
+      </div>
+
+      <div class="category-filter">
+        <button class="cat-btn is-active" data-cat="all">ALL</button>
+        <button class="cat-btn" data-cat="정치">POLITICS</button>
+        <button class="cat-btn" data-cat="경제">ECONOMY</button>
+        <button class="cat-btn" data-cat="테크">TECH</button>
+        <button class="cat-btn" data-cat="해외">WORLD</button>
+        <button class="cat-btn" data-cat="사회">SOCIETY</button>
+      </div>
+    </section>
+
+    <!-- Feed -->
+    <section class="editorial-container daily-layout" id="news">
+      <aside class="focus-sidebar">
+        <div class="sidebar-head">
+          <span>IN FOCUS</span>
+          <span class="sidebar-count" id="breakingCount">00</span>
+        </div>
+        <p class="sidebar-intro">지금 가장 빠르게<br>확인해야 할 소식.</p>
+        <div class="sidebar-list" id="sidebarList"></div>
+
+        <div class="sidebar-save">
+          <span>YOUR EDITION</span>
+          <strong id="savedCount">0</strong>
+          <small>saved stories</small>
+        </div>
+      </aside>
+
+      <section class="feed" id="mainFeed" aria-live="polite">
+        <div class="loading-card">
+          <span></span><span></span><span></span>
+        </div>
+      </section>
+    </section>
+
+  </main>
+
+  <!-- Search overlay -->
+  <div class="overlay-panel" id="searchPanel" aria-hidden="true">
+    <div class="overlay-panel__backdrop" data-close-panel></div>
+    <section class="search-panel" role="dialog" aria-modal="true" aria-label="검색">
+      <div class="panel-head">
+        <span>SEARCH WEST150 DAILY</span>
+        <button type="button" data-close-panel aria-label="닫기">×</button>
+      </div>
+      <div class="search-input-wrap">
+        <input id="searchInput" type="search" placeholder="검색어를 입력하세요" autocomplete="off">
+        <span>⌕</span>
+      </div>
+      <div class="search-results" id="searchResults">
+        <p class="panel-hint">제목, 내용, 카테고리, 출처를 검색할 수 있습니다.</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- Article reader -->
+  <div class="overlay-panel" id="readerPanel" aria-hidden="true">
+    <div class="overlay-panel__backdrop" data-close-panel></div>
+    <article class="reader-panel" role="dialog" aria-modal="true" aria-label="기사 읽기">
+      <div class="reader-top">
+        <span id="readerCategory">EDITORIAL</span>
+        <button type="button" data-close-panel aria-label="닫기">×</button>
+      </div>
+      <div class="reader-label">WEST150 DAILY / ARTICLE</div>
+      <h2 id="readerTitle">기사 제목</h2>
+      <div class="reader-meta" id="readerMeta"></div>
+      <div class="reader-images" id="readerImages"></div>
+      <div class="reader-body" id="readerBody"></div>
+      <div class="reader-source" id="readerSource"></div>
+      <div class="reader-actions">
+        <button id="readerBookmark" type="button">♡ SAVE</button>
+        <button id="readerCopy" type="button">LINK COPY</button>
+        <button id="readerX" type="button">𝕏 SHARE</button>
+      </div>
+    </article>
+  </div>
+
+  <!-- Mobile bottom nav -->
+  <nav class="mobile-bottom-nav" aria-label="모바일 메뉴">
+    <button data-scroll="#topStory"><span>01</span>TOP</button>
+    <button data-scroll="#news"><span>02</span>NEWS</button>
+    <button id="mobileSearch"><span>⌕</span>SEARCH</button>
+    <button id="mobileSaved"><span>♡</span>SAVED</button>
+  </nav>
+
+  <button class="back-to-top" id="backToTop" type="button" aria-label="맨 위로">↑</button>
+
+  <footer class="footer editorial-footer">
+    <div class="editorial-container footer-grid">
+      <div>
+        <div class="footer-brand">WEST150 DAILY</div>
+        <p>INDEPENDENT EDITORIAL NEWSROOM</p>
+      </div>
+
+      <div class="footer-middle">
+        <span>NEWS · CULTURE · WORLD</span>
+        <span>EST. 2026</span>
+      </div>
+
+      <div class="footer-right">
+        <div class="social-icons">
+          <a href="https://x.com/WEST150OFFICIAL" class="social-icon" rel="noopener" target="_blank" aria-label="X">𝕏</a>
+          <a href="#" class="social-icon" aria-label="Threads">◎</a>
+          <a href="#" class="social-icon" aria-label="Instagram">◉</a>
+          <a href="mailto:west150official@gmail.com" class="social-icon" aria-label="Email">@</a>
+        </div>
+        <div class="credit">© 2026 WEST150 DAILY. ALL RIGHTS RESERVED.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../tooplate-2167-orbital-script.js"></script>
+  <script src="west150-daily.js"></script>
+</body>
+</html>

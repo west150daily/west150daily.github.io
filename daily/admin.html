@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WEST150 DAILY 관리자</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0b0d10;
+      color: #e7e9ec;
+      font-family: 'Space Grotesk', sans-serif;
+      line-height: 1.5;
+      padding: 40px 20px 80px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: rgba(231,233,236,0.5);
+      font-size: 0.9rem;
+      margin-bottom: 32px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      color: rgba(231,233,236,0.6);
+      margin-bottom: 6px;
+      margin-top: 14px;
+    }
+
+    label:first-child {
+      margin-top: 0;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.3);
+      color: #fff;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: rgba(29,155,240,0.7);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #1d9bf0;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #1a8cd8;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.08);
+      color: #e7e9ec;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.12);
+    }
+
+    .btn-danger {
+      background: rgba(255,80,80,0.15);
+      color: #ff6b6b;
+      border: 1px solid rgba(255,80,80,0.3);
+    }
+
+    .btn-danger:hover {
+      background: rgba(255,80,80,0.25);
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .list-item:last-child {
+      border-bottom: none;
+    }
+
+    .list-text {
+      flex: 1;
+      font-size: 0.92rem;
+    }
+
+    .list-cat {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      margin-right: 8px;
+    }
+
+    .list-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .empty {
+      color: rgba(231,233,236,0.4);
+      text-align: center;
+      padding: 30px 0;
+    }
+
+    /* 로그인 */
+    .password-box {
+      max-width: 360px;
+      margin: 100px auto;
+      text-align: center;
+    }
+
+    .password-box input {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .password-error {
+      color: #ff6b6b;
+      font-size: 0.85rem;
+      margin-top: 12px;
+      min-height: 20px;
+    }
+
+    #adminContent {
+      display: none;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    a.link {
+      color: #4db8ff;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    a.link:hover {
+      text-decoration: underline;
+    }
+
+    /* 이미지 파일 */
+    .image-help {
+      color: rgba(231,233,236,0.45);
+      font-size: 0.8rem;
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+
+    .image-help code {
+      color: #4db8ff;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .selected-files {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: rgba(231,233,236,0.65);
+    }
+
+    .selected-files div {
+      padding: 4px 0;
+    }
+
+    @media (max-width: 600px) {
+      .row {
+        grid-template-columns: 1fr;
+      }
+
+      .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================
+       비밀번호 화면
+  ========================== -->
+
+  <div class="password-box" id="passwordBox">
+
+    <h1>WEST150 DAILY</h1>
+
+    <p class="subtitle">
+      관리자 로그인
+    </p>
+
+    <form id="loginForm">
+
+      <input
+        type="password"
+        id="passwordInput"
+        placeholder="비밀번호"
+        autocomplete="current-password"
+        autofocus
+      >
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+        style="width:100%;"
+      >
+        입장
+      </button>
+
+    </form>
+
+    <div
+      class="password-error"
+      id="passwordError"
+      aria-live="polite"
+    ></div>
+
+  </div>
+
+
+  <!-- =========================
+       관리자 내용
+  ========================== -->
+
+  <div
+    class="container"
+    id="adminContent"
+  >
+
+    <div class="top-bar">
+
+      <div>
+
+        <h1>
+          카드뉴스 생성기
+        </h1>
+
+        <p class="subtitle">
+          새 카드를 추가하고 JSON으로 내보내세요
+        </p>
+
+      </div>
+
+      <a
+        href="./"
+        class="link"
+      >
+        ← 피드로 돌아가기
+      </a>
+
+    </div>
+
+
+    <!-- =========================
+         작성 폼
+    ========================== -->
+
+    <div class="card">
+
+      <h2
+        style="font-size:1.1rem; margin-bottom:8px;"
+      >
+        새 카드 작성
+      </h2>
+
+
+      <label>
+        카테고리
+      </label>
+
+      <select id="category">
+
+        <option value="정치">
+          정치
+        </option>
+
+        <option value="경제">
+          경제
+        </option>
+
+        <option value="테크">
+          테크
+        </option>
+
+        <option value="해외">
+          해외
+        </option>
+
+        <option value="사회">
+          사회
+        </option>
+
+      </select>
+
+
+      <label>
+        내용
+      </label>
+
+      <textarea
+        id="text"
+        placeholder="뉴스 내용을 입력하세요"
+      ></textarea>
+
+
+      <div class="row">
+
+        <div>
+
+          <label>
+            출처 이름
+          </label>
+
+          <input
+            type="text"
+            id="source"
+            placeholder="예: 연합뉴스"
+          >
+
+        </div>
+
+
+        <div>
+
+          <label>
+            출처 링크
+          </label>
+
+          <input
+            type="text"
+            id="sourceUrl"
+            placeholder="https://..."
+          >
+
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           이미지 선택
+      ========================== -->
+
+      <label>
+        이미지 선택
+      </label>
+
+      <input
+        type="file"
+        id="imageFiles"
+        accept="image/*"
+        multiple
+      >
+
+      <div class="image-help">
+
+        GitHub의 <code>daily/image/</code> 폴더에
+        이미지를 먼저 업로드하세요.
+
+        <br>
+
+        파일을 선택하면 자동으로
+
+        <code>image/파일명.jpg</code>
+
+        형식의 경로가 입력됩니다.
+
+      </div>
+
+
+      <div
+        id="selectedFiles"
+        class="selected-files"
+      ></div>
+
+
+      <textarea
+        id="images"
+        placeholder="image/news1.jpg&#10;image/news2.jpg"
+        style="min-height:70px; margin-top:10px;"
+      ></textarea>
+
+
+      <label
+        style="
+          display:flex;
+          align-items:center;
+          gap:8px;
+          margin-top:16px;
+        "
+      >
+
+        <input
+          type="checkbox"
+          id="breaking"
+          style="width:auto"
+        >
+
+        속보로 등록
+
+      </label>
+
+
+      <div class="actions">
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          onclick="addCard()"
+        >
+          카드 추가
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          onclick="clearForm()"
+        >
+          초기화
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================
+         카드 목록
+    ========================== -->
+
+    <div class="card">
+
+      <h2
+        style="font-size:1.1rem; margin-bottom:16px;"
+      >
+        등록된 카드
+
+        <span id="cardCount">
+          (0)
+        </span>
+
+      </h2>
+
+      <div id="cardList"></div>
+
+    </div>
+
+
+    <!-- =========================
+         내보내기
+    ========================== -->
+
+    <div class="card">
+
+      <h2
+        style="font-size:1.1rem; margin-bottom:12px;"
+      >
+        저장
+      </h2>
+
+      <p
+        style="
+          color:rgba(231,233,236,0.5);
+          font-size:0.9rem;
+          margin-bottom:16px;
+        "
+      >
+
+        아래 버튼을 눌러
+        data.json 파일을 다운로드한 뒤,
+
+        <br>
+
+        GitHub의
+        daily/data.json
+        파일에 덮어쓰세요.
+
+      </p>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        onclick="downloadJSON()"
+      >
+        JSON 다운로드
+      </button>
+
+    </div>
+
+  </div>
+
+
+<script>
+
+/* =========================================================
+   WEST150 DAILY ADMIN
+   ========================================================= */
+
+
+/* =========================
+   비밀번호
+========================= */
+
+const ADMIN_PASSWORD = "101677";
+
+
+/* =========================
+   전역 변수
+========================= */
+
+let cards = [];
+
+let editingId = null;
+
+
+/* =========================
+   페이지 로딩 후 실행
+========================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function () {
+
+    const loginForm =
+      document.getElementById("loginForm");
+
+    const passwordInput =
+      document.getElementById("passwordInput");
+
+    const imageFiles =
+      document.getElementById("imageFiles");
+
+
+    /* 로그인 */
+
+    loginForm.addEventListener(
+      "submit",
+      function (event) {
+
+        event.preventDefault();
+
+        checkPassword();
+
+      }
+    );
+
+
+    /* 이미지 선택 */
+
+    imageFiles.addEventListener(
+      "change",
+      handleImageSelection
+    );
+
+  }
+);
+
+
+/* =========================
+   비밀번호 확인
+========================= */
+
+function checkPassword() {
+
+  const input =
+    document
+      .getElementById("passwordInput")
+      .value
+      .trim();
+
+  const error =
+    document.getElementById("passwordError");
+
+
+  if (input === ADMIN_PASSWORD) {
+
+    error.textContent = "";
+
+    document
+      .getElementById("passwordBox")
+      .style.display = "none";
+
+    document
+      .getElementById("adminContent")
+      .style.display = "block";
+
+    loadCards();
+
+  } else {
+
+    error.textContent =
+      "비밀번호가 틀렸습니다.";
+
+    document
+      .getElementById("passwordInput")
+      .value = "";
+
+    document
+      .getElementById("passwordInput")
+      .focus();
+
+  }
+
+}
+
+
+/* =========================
+   이미지 선택 처리
+========================= */
+
+function handleImageSelection(event) {
+
+  const files =
+    Array.from(event.target.files);
+
+  const textarea =
+    document.getElementById("images");
+
+  const selected =
+    document.getElementById("selectedFiles");
+
+
+  if (!files.length) {
+
+    selected.innerHTML = "";
+
+    return;
+
+  }
+
+
+  /*
+    선택한 파일 이름을
+    daily/image 기준 상대경로로 변환
+  */
+
+  const paths =
+    files.map(function (file) {
+
+      return "image/" + file.name;
+
+    });
+
+
+  /*
+    기존 입력값이 있으면
+    뒤에 추가하지 않고
+    현재 선택 파일로 갱신
+  */
+
+  textarea.value =
+    paths.join("\n");
+
+
+  selected.innerHTML =
+    paths.map(function (path) {
+
+      return (
+        "<div>✓ " +
+        escapeHtml(path) +
+        "</div>"
+      );
+
+    }).join("");
+
+}
+
+
+/* =========================
+   HTML escape
+========================= */
+
+function escapeHtml(value) {
+
+  return String(
+    value == null ? "" : value
+  )
+
+    .replace(/&/g, "&amp;")
+
+    .replace(/</g, "&lt;")
+
+    .replace(/>/g, "&gt;")
+
+    .replace(/"/g, "&quot;")
+
+    .replace(/'/g, "&#039;");
+}
+
+
+/* =========================
+   기존 data.json 불러오기
+========================= */
+
+async function loadCards() {
+
+  try {
+
+    const res =
+      await fetch(
+        "data.json?t=" +
+        Date.now(),
+        {
+          cache: "no-store"
+        }
+      );
+
+
+    if (!res.ok) {
+
+      throw new Error(
+        "data.json HTTP " +
+        res.status
+      );
+
+    }
+
+
+    const data =
+      await res.json();
+
+
+    cards =
+      Array.isArray(data)
+        ? data
+        : [];
+
+
+  } catch (error) {
+
+    console.error(
+      "data.json 로드 실패:",
+      error
+    );
+
+    cards = [];
+
+  }
+
+
+  renderList();
+
+}
+
+
+/* =========================
+   카드 목록 출력
+========================= */
+
+function renderList() {
+
+  const list =
+    document.getElementById(
+      "cardList"
+    );
+
+  const count =
+    document.getElementById(
+      "cardCount"
+    );
+
+
+  count.textContent =
+    "(" +
+    cards.length +
+    ")";
+
+
+  if (cards.length === 0) {
+
+    list.innerHTML =
+      '<div class="empty">' +
+      '등록된 카드가 없습니다' +
+      '</div>';
+
+    return;
+
+  }
+
+
+  const sorted =
+    [...cards].sort(
+      function (a, b) {
+
+        return (
+          new Date(b.time) -
+          new Date(a.time)
+        );
+
+      }
+    );
+
+
+  list.innerHTML =
+    sorted.map(function (card) {
+
+      const text =
+        String(card.text || "");
+
+
+      return `
+
+        <div class="list-item">
+
+          <div class="list-text">
+
+            <span class="list-cat">
+              ${escapeHtml(card.category || "")}
+            </span>
+
+            ${
+              card.breaking
+                ? '<span style="color:#ff6b6b;font-size:0.75rem;">[속보]</span> '
+                : ""
+            }
+
+            ${escapeHtml(
+              text.slice(0, 80)
+            )}
+
+            ${
+              text.length > 80
+                ? "..."
+                : ""
+            }
+
+          </div>
+
+
+          <div class="list-actions">
+
+            <button
+              type="button"
+              class="btn btn-secondary"
+              style="
+                padding:6px 10px;
+                font-size:0.8rem;
+              "
+              onclick="editCard(${Number(card.id)})"
+            >
+              수정
+            </button>
+
+
+            <button
+              type="button"
+              class="btn btn-danger"
+              style="
+                padding:6px 10px;
+                font-size:0.8rem;
+              "
+              onclick="deleteCard(${Number(card.id)})"
+            >
+              삭제
+            </button>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }).join("");
+
+}
+
+
+/* =========================
+   카드 추가
+========================= */
+
+function addCard() {
+
+  const category =
+    document
+      .getElementById("category")
+      .value;
+
+
+  const text =
+    document
+      .getElementById("text")
+      .value
+      .trim();
+
+
+  const source =
+    document
+      .getElementById("source")
+      .value
+      .trim()
+      ||
+      "출처";
+
+
+  const sourceUrl =
+    document
+      .getElementById("sourceUrl")
+      .value
+      .trim()
+      ||
+      "#";
+
+
+  const imagesRaw =
+    document
+      .getElementById("images")
+      .value
+      .trim();
+
+
+  const images =
+    imagesRaw
+      ? imagesRaw
+          .split(/\r?\n/)
+          .map(function (s) {
+            return s.trim();
+          })
+          .filter(Boolean)
+      : [];
+
+
+  const breaking =
+    document
+      .getElementById("breaking")
+      .checked;
+
+
+  if (!text) {
+
+    alert(
+      "내용을 입력해주세요."
+    );
+
+    return;
+
+  }
+
+
+  /* 수정 */
+
+  if (editingId !== null) {
+
+    const idx =
+      cards.findIndex(
+        function (c) {
+
+          return (
+            Number(c.id) ===
+            Number(editingId)
+          );
+
+        }
+      );
+
+
+    if (idx !== -1) {
+
+      cards[idx] = {
+
+        ...cards[idx],
+
+        category,
+
+        text,
+
+        source,
+
+        sourceUrl,
+
+        images,
+
+        breaking
+
+      };
+
+    }
+
+
+    editingId = null;
+
+
+    clearForm();
+
+    renderList();
+
+
+    alert(
+      "수정되었습니다."
+    );
+
+
+    return;
+
+  }
+
+
+  /* 새 카드 */
+
+  const ids =
+    cards
+      .map(function (c) {
+        return Number(c.id);
+      })
+      .filter(function (id) {
+        return Number.isFinite(id);
+      });
+
+
+  const newId =
+    ids.length
+      ? Math.max(...ids) + 1
+      : 1;
+
+
+  cards.push({
+
+    id: newId,
+
+    category,
+
+    time:
+      new Date().toISOString(),
+
+    text,
+
+    source,
+
+    sourceUrl,
+
+    images,
+
+    breaking
+
+  });
+
+
+  clearForm();
+
+  renderList();
+
+
+  alert(
+    "카드가 추가되었습니다.\n\n" +
+    "하단에서 JSON을 다운로드하세요."
+  );
+
+}
+
+
+/* =========================
+   카드 수정
+========================= */
+
+function editCard(id) {
+
+  const card =
+    cards.find(
+      function (c) {
+
+        return (
+          Number(c.id) ===
+          Number(id)
+        );
+
+      }
+    );
+
+
+  if (!card) {
+    return;
+  }
+
+
+  editingId =
+    Number(id);
+
+
+  document
+    .getElementById("category")
+    .value =
+    card.category || "정치";
+
+
+  document
+    .getElementById("text")
+    .value =
+    card.text || "";
+
+
+  document
+    .getElementById("source")
+    .value =
+    card.source || "";
+
+
+  document
+    .getElementById("sourceUrl")
+    .value =
+    card.sourceUrl || "";
+
+
+  document
+    .getElementById("images")
+    .value =
+    Array.isArray(card.images)
+      ? card.images.join("\n")
+      : "";
+
+
+  document
+    .getElementById("breaking")
+    .checked =
+    Boolean(card.breaking);
+
+
+  document
+    .getElementById("imageFiles")
+    .value = "";
+
+
+  document
+    .getElementById("selectedFiles")
+    .innerHTML =
+    "";
+
+
+  window.scrollTo({
+
+    top: 0,
+
+    behavior: "smooth"
+
+  });
+
+}
+
+
+/* =========================
+   카드 삭제
+========================= */
+
+function deleteCard(id) {
+
+  if (
+    !confirm(
+      "이 카드를 삭제할까요?"
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  cards =
+    cards.filter(
+      function (c) {
+
+        return (
+          Number(c.id) !==
+          Number(id)
+        );
+
+      }
+    );
+
+
+  renderList();
+
+}
+
+
+/* =========================
+   폼 초기화
+========================= */
+
+function clearForm() {
+
+  editingId = null;
+
+
+  document
+    .getElementById("text")
+    .value = "";
+
+
+  document
+    .getElementById("source")
+    .value = "";
+
+
+  document
+    .getElementById("sourceUrl")
+    .value = "";
+
+
+  document
+    .getElementById("images")
+    .value = "";
+
+
+  document
+    .getElementById("imageFiles")
+    .value = "";
+
+
+  document
+    .getElementById("selectedFiles")
+    .innerHTML = "";
+
+
+  document
+    .getElementById("breaking")
+    .checked = false;
+
+}
+
+
+/* =========================
+   JSON 다운로드
+========================= */
+
+function downloadJSON() {
+
+  const dataStr =
+    JSON.stringify(
+      cards,
+      null,
+      2
+    );
+
+
+  const blob =
+    new Blob(
+      [dataStr],
+      {
+        type:
+          "application/json"
+      }
+    );
+
+
+  const url =
+    URL.createObjectURL(
+      blob
+    );
+
+
+  const a =
+    document.createElement(
+      "a"
+    );
+
+
+  a.href = url;
+
+  a.download =
+    "data.json";
+
+
+  document
+    .body
+    .appendChild(a);
+
+
+  a.click();
+
+
+  a.remove();
+
+
+  setTimeout(
+    function () {
+
+      URL.revokeObjectURL(
+        url
+      );
+
+    },
+    1000
+  );
+
+}
+
+</script>
+
+</body>
+</html>

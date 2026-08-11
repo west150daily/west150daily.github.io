@@ -1,0 +1,22 @@
+[
+  {
+    "id": 4,
+    "category": "정치",
+    "time": "2026-08-09T18:15:24.080Z",
+    "text": "지금은 테스트 중 입니다",
+    "source": "테스트",
+    "sourceUrl": "테스트",
+    "images": [],
+    "breaking": true
+  },
+  {
+    "id": 5,
+    "category": "정치",
+    "time": "2026-08-09T18:17:31.816Z",
+    "text": "지금은 테스트 중 입니다",
+    "source": "테스트 중 입니다 테스트",
+    "sourceUrl": "하나둘 샛",
+    "images": [],
+    "breaking": true
+  }
+]
