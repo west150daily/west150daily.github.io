@@ -12,6 +12,566 @@
 */
 
 const LYRICS = {
+  "cliff": `There’s a cliff right in front of me
+바로 내 앞에 절벽이 서 있어
+One more step and I’m falling in
+한 걸음만 더 내디디면 아래로 떨어질 것 같아
+I keep asking why I’m still standing
+내가 왜 여전히 버티고 서 있는지 자꾸 묻게 돼
+When everything in me gave in
+내 안의 모든 것이 무너져 내렸는데도
+I’ve been holding my breath too long
+너무 오랫동안 숨을 죽인 채 살아왔어
+Talking to a silence I made myself
+내가 스스로 만들어낸 침묵 속에서 혼자 말하면서
+But something’s steady beneath my feet I didn’t put it there
+하지만 내 발밑엔 내가 놓지 않은, 단단하고 흔들림 없는 무언가가 있어
+I look beside me, and You’re right there
+곁을 돌아보니, 당신이 바로 거기에 있네
+Closer than the fear I’m feeling
+내가 느끼는 두려움보다 더 가까이
+I look behind me, this whole time
+지나온 길을 돌아보니, 이 모든 시간 동안
+You were never far away
+당신은 단 한 번도 멀리 있던 적이 없었어
+Even standing at the edge
+벼랑 끝에 서 있던 그 순간조차
+I wasn’t standing there alone
+나 혼자 서 있었던 게 아니었어
+I thought the fall would be the end
+추락이 모든 것의 끝일 거라 생각했어
+That silence meant I’d made this bed
+이 침묵은 결국 내가 자초한 결과라고 믿었지
+But every time I look back down
+하지만 내가 걸어온 길을 다시 내려다볼 때마다
+I was closer to the ground I feel
+내가 느꼈던 그 단단한 대지에 내가 더 가까이 있었을 뿐이야
+So I stop and I breathe again
+그래서 난 멈춰 서서 다시 숨을 쉬어
+And there You are, You always were
+그러자 당신이 보여, 언제나 늘 그랬듯이
+Maybe faith is just me remembering
+어쩌면 믿음이란 건 그저 내가 기억해 내는 것일지도 몰라
+The edge was never the end
+이 절벽 끝이 결코 마지막이 아니었다는 걸
+I look beside me, and You’re right there
+곁을 돌아보니, 당신이 바로 거기에 있네
+Closer than the fear I’m feeling
+내가 느끼는 두려움보다 더 가까이
+I look behind me, this whole time
+지나온 길을 돌아보니, 이 모든 시간 동안
+You were never far away
+당신은 단 한 번도 멀리 있던 적이 없었어
+Even standing at the edge
+벼랑 끝에 서 있던 그 순간조차
+I wasn’t standing there alone
+나 혼자 서 있었던 게 아니었어
+Every cliff I thought would break me
+나를 무너뜨릴 거라 생각했던 모든 절벽은
+Was ground I hadn’t seen
+그저 내가 보지 못했던 새로운 땅이었을 뿐
+Every fall I thought was coming
+내게 찾아올 거라 믿었던 모든 추락 속에서
+I wasn’t falling, I was caught
+난 떨어지고 있던 게 아니라, 단단히 붙잡혀 있던 거였어
+I look beside me, and You’re right there
+곁을 돌아보니, 당신이 바로 거기에 있네
+Closer than the fear I’m feeling
+내가 느끼는 두려움보다 더 가까이
+I look behind me, this whole time
+지나온 길을 돌아보니, 이 모든 시간 동안
+You were never far away
+당신은 단 한 번도 멀리 있던 적이 없었어
+Even standing at the edge
+벼랑 끝에 서 있던 그 순간조차
+I wasn’t standing there alone
+나 혼자 서 있었던 게 아니었어
+I was never alone
+난 절대로 혼자가 아니었어
+I was never alone
+단 한 순간도 혼자가 아니었어
+You were right there
+당신이 바로 거기에 있었으니까
+You were right there
+바로 거기에 계셔주었으니까` ,
+
+  "get-up-now": `I’ve been sitting in the same old spot
+늘 머물던 그 자리에 오랫동안 앉아 있었어
+Telling myself I’m not ready yet
+아직 준비가 되지 않았다고 스스로에게 말하면서
+Making excuses like they’re gonna save me
+마치 변명이 나를 구원해 주기라도 할 것처럼 핑계를 대며
+But the clock is moving and I can’t forget
+하지만 시간은 계속 흐르고 있고, 난 잊을 수가 없어
+No more waiting for a perfect sign
+완벽한 표적이 나타나길 더는 기다리지 않아
+No more asking if the time is right
+지금이 적절한 때인지 더는 묻지 않을 거야
+I’ve been down here long enough
+이곳 밑바닥에 오랫동안 머물렀으니
+It’s time to rise
+이제는 일어나야 할 시간이야
+Don’t hesitate, get up right now
+망설이지 마, 지금 당장 일어나
+Get up now, don’t hesitate
+지금 당장 일어나, 주저하지 마
+Get up right now, get up now
+지금 바로 일어나, 당장 일어나
+The ground beneath you ain’t your home
+네 발밑의 밑바닥은 네가 머물 보금자리가 아니야
+Stand up, stand up, you’re not alone
+일어나, 일어나, 넌 혼자가 아니니까
+Don’t hesitate, get up right now
+망설이지 마, 지금 당장 일어나
+I was scared of what I’d find out there
+저 세상 밖에서 무엇을 맞닥뜨리게 될지 두려웠어
+Scared my feet would give up on me
+내 두 발이 나를 버리고 무너져 내릴까 봐 겁이 났지
+But fearing never carried anybody
+하지만 두려움은 그 누구도 앞으로 끌어주지 못해
+Faith is how you learn to walk free
+믿음이야말로 자유롭게 걸어가는 법을 배우는 길이야
+No more waiting for the fear to leave
+두려움이 사라지기만을 더는 기다리지 않아
+No more sitting in what used to be
+지난날의 과거 속에 더는 주저앉아 있지 않을 거야
+I’ve been down here long enough
+이곳 밑바닥에 오랫동안 머물렀으니
+It’s time to rise
+이제는 일어나야 할 시간이야
+Don’t hesitate, get up right now
+망설이지 마, 지금 당장 일어나
+Get up now, don’t hesitate
+지금 당장 일어나, 주저하지 마
+Get up right now, get up now
+지금 바로 일어나, 당장 일어나
+The ground beneath you ain’t your home
+네 발밑의 밑바닥은 네가 머물 보금자리가 아니야
+Stand up, stand up, you’re not alone
+일어나, 일어나, 넌 혼자가 아니니까
+Don’t hesitate, get up right now
+망설이지 마, 지금 당장 일어나
+Every time you thought you couldn’t, you got up anyway
+할 수 없을 거라 생각했던 순간마다, 넌 어쨌든 다시 일어섰잖아
+Every door that looked too heavy opened when you moved
+너무나 무거워 보이던 모든 문도 네가 발을 내딛었을 때 열렸어
+Don’t hesitate, get up right now
+망설이지 마, 지금 당장 일어나
+Get up now, don’t hesitate
+지금 당장 일어나, 주저하지 마
+Get up right now, get up now
+지금 바로 일어나, 당장 일어나
+The ground beneath you ain’t your home
+네 발밑의 밑바닥은 네가 머물 보금자리가 아니야
+Stand up, stand up, you’re not alone
+일어나, 일어나, 넌 혼자가 아니니까
+Don’t hesitate, get up right now
+망설이지 마, 지금 당장 일어나
+Get up now, get up now
+지금 당장 일어나, 지금 바로 일어나
+Get up now, get up now
+지금 당장 일어나, 지금 바로 일어나
+You’re not alone
+넌 혼자가 아니야
+Get up now, get up now
+지금 당장 일어나, 지금 바로 일어나
+You’re not alone
+넌 결코 혼자가 아니야
+Get up now, get up now
+지금 당장 일어나, 지금 바로 일어나
+You’re not alone
+넌 혼자가 아니야
+Get up now, get up now
+지금 당장 일어나, 지금 바로 일어나
+Get up now, get up now
+지금 당장 일어나, 지금 바로 일어나
+Get up now, get up now
+지금 당장 일어나, 지금 바로 일어나` ,
+
+  "you-were-never-gone": `I’ve been staring at a door I can’t open
+열리지 않는 문만 줄곧 바라보고 있었어
+Counting steps like they’re all I own
+마치 가진 게 그것뿐인 것처럼 걸음 수만 세면서
+Waiting for a voice from somewhere far away
+어딘가 먼 곳에서 들려올 목소리만을 기다렸지
+Never thought to turn around
+뒤돌아볼 생각은 꿈에도 하지 못한 채
+Something warm here beside me
+내 곁에 있는 무언가 따스한 것
+A quiet kind of light I hadn’t noticed
+내가 미처 알아채지 못했던 은은한 빛 한 줄기
+Maybe I’ve been looking too far out
+어쩌면 너무 먼 곳만 바라보고 있었나 봐
+When You were never gone
+당신은 단 한 번도 떠난 적이 없었는데
+Look beside you, look right there
+네 곁을 바라봐, 바로 그곳을 봐
+Closer than the air I’m breathing
+내가 쉬는 숨보다 더 가까이 있어
+Closer, closer right behind me this whole time
+이 모든 시간 동안 내 바로 뒤에, 더 가까이 있었네
+You were never far away
+당신은 단 한 번도 멀리 있던 적이 없었어
+Every step I thought I walked alone, You were holding my hand
+혼자 걸었다고 생각했던 모든 걸음마다, 당신은 내 손을 잡고 계셨어
+I used to think love had conditions
+사랑에는 조건이 따르는 줄로만 알았어
+A door that opens if I knock just right
+내가 똑바로 올바르게 두드려야만 열리는 문처럼 말이야
+But You’ve been standing in the hallway
+하지만 당신은 이미 복도에 서 계셨지
+Since before I learned to cry
+내가 울음을 터뜨리는 법을 배우기도 전부터
+So I stop, and I turn slowly
+그래서 난 멈춰 서서 천천히 뒤를 돌아봐
+And there You are, You always were
+그러자 당신이 서 있네, 언제나 늘 그랬듯이
+Maybe faith is just remembering
+어쩌면 믿음이란 그저 기억해 내는 것일지도 몰라
+To look beside instead of far
+저 먼 곳 대신 내 옆을 바라보는 법을 말이야
+Look beside you, look right there
+네 곁을 바라봐, 바로 그곳을 봐
+Closer than the air I’m breathing
+내가 쉬는 숨보다 더 가까이 있어
+Closer, closer right behind me this whole time
+이 모든 시간 동안 내 바로 뒤에, 더 가까이 있었네
+You were never far away
+당신은 단 한 번도 멀리 있던 적이 없었어
+Every step I thought I walked alone, You were holding my hand
+혼자 걸었다고 생각했던 모든 걸음마다, 당신은 내 손을 잡고 계셨어
+Every door I thought was locked
+닫혀있다고 생각했던 모든 문은
+Was open all along
+처음부터 언제나 열려 있었어
+Every silence I was scared of
+내가 두려워했던 모든 정적은
+Was You holding on
+당신이 나를 꼭 안아주고 계시던 순간이었어
+Look beside you, look right there
+네 곁을 바라봐, 바로 그곳을 봐
+Closer than the air I’m breathing
+내가 쉬는 숨보다 더 가까이 있어
+Closer, closer right behind me this whole time
+이 모든 시간 동안 내 바로 뒤에, 더 가까이 있었네
+You were never far away
+당신은 단 한 번도 멀리 있던 적이 없었어
+Every step I thought I walked alone, You were holding my hand
+혼자 걸었다고 생각했던 모든 걸음마다, 당신은 내 손을 잡고 계셨어
+Right beside me
+바로 내 곁에
+Right behind me
+바로 내 뒤에
+Right behind me
+바로 내 뒤에
+You were never gone
+당신은 단 한 번도 떠난 적이 없었네
+You were never gone
+단 한 번도 날 떠나지 않으셨네` ,
+
+  "time": `Tracing footsteps in the dark
+어둠 속에서 지난 발자취를 되짚어가며
+Looking for the rhythm
+나만의 리듬을 찾아 헤매네
+Every choice I gotta make
+내가 내려야 하는 모든 선택들
+Caught up in the vision
+눈앞의 비전에 마음을 빼앗긴 채
+Is this the turning of the page?
+이것이 새로운 장을 넘기는 순간일까?
+Time to step out of the cage
+이 갇힌 새장에서 벗어나 발을 내딛을 시간이야
+Feet on the edge, but my heart wants to fly
+벼랑 끝에 서 있지만, 내 마음은 날아오르고 싶어 해
+Looking for truth in the blur of the sky
+아른거리는 하늘 속에서 진실을 찾으면서
+Can you feel it? The moment is nigh
+느껴지니? 그 순간이 바로 코앞에 다가왔어
+We’re about to cross the line
+우리는 이제 경계선을 넘어서려 해
+Am I on the right path? Got me wondering
+내가 올바른 길을 가고 있는 걸까? 자문해보게 돼
+Chase the shadow, breaking through the wind
+그림자를 쫓아, 바람을 뚫고 나아가
+Am I on the right path? Keep it moving in
+내가 올바른 길을 가고 있는 걸까? 계속 앞으로 나아가며
+Hear the echo, let the change begin
+그 울림을 들어봐, 변화를 시작하는 거야
+Show me the way, let it burn so bright
+길을 보여줘, 눈부시게 밝게 타오르도록
+City lights are fading out
+화려한 도시의 불빛들이 스러져가고
+Questions in the mirror
+거울 속에 비친 수많은 질문들
+But the whisper in my soul’s getting a little clearer
+하지만 내 영혼 속 나지막한 속삭임은 조금씩 더 선명해져 가
+No more running from the past
+지나간 과거로부터 더는 도망치지 않아
+Make this second chance last
+이 두 번째 기회를 영원히 내 것으로 만들겠어
+Feet on the edge, but my heart wants to fly
+벼랑 끝에 서 있지만, 내 마음은 날아오르고 싶어 해
+Looking for truth in the blur of the sky
+아른거리는 하늘 속에서 진실을 찾으면서
+Can you feel it? The moment is nigh
+느껴지니? 그 순간이 바로 코앞에 다가왔어
+We’re about to cross the line
+우리는 이제 경계선을 넘어서려 해
+Am I on the right path? Got me wondering
+내가 올바른 길을 가고 있는 걸까? 자문해보게 돼
+Chase the shadow, breaking through the wind
+그림자를 쫓아, 바람을 뚫고 나아가
+Am I on the right path? Keep it moving in
+내가 올바른 길을 가고 있는 걸까? 계속 앞으로 나아가며
+Hear the echo, let the change begin
+그 울림을 들어봐, 변화를 시작하는 거야
+Show me the way, let it burn so bright
+길을 보여줘, 눈부시게 밝게 타오르도록
+Trust the motion, feel the flow, even in the blind
+이 움직임을 믿고, 흐름을 느껴봐, 앞이 보이지 않는 순간조차도
+Leave the heavy weight behind, clearing out my mind
+무거운 짐은 뒤로 남겨둔 채, 머릿속을 맑게 비워내
+Take me there, take me high
+나를 그곳으로 이끌어줘, 저 높이 올라가게 해줘
+Am I on the right path? Yeah, feel the beat
+내가 올바른 길을 가고 있는 걸까? 그래, 이 리듬을 느껴봐
+Chase the shadow, we can make it out
+그림자를 쫓아, 우린 잘 헤쳐 나갈 수 있어
+Am I on the right path? Never turning back
+내가 올바른 길을 가고 있는 걸까? 절대 뒤돌아보지 않아
+Hear the echo, staying on the track
+그 울림을 들으며, 이 길 위에 그대로 서서
+Show me the way, let it burn so bright
+길을 보여줘, 눈부시게 밝게 타오르도록
+Into the light
+저 빛을 향해
+This is the way
+이것이 바로 나아갈 길이야
+Yeah, I am ready now
+그래, 난 이제 준비가 되었어` ,
+
+  "get-Out-the-cell": `You’ve been locked up in a cell you built yourself
+넌 스스로 만든 감옥 속에 갇혀 지내왔지
+Chains you can’t see, but you feel 'em on your health
+눈에 보이지 않지만, 네 삶을 짓누르는 사슬을 느끼며
+Every sin’s a wall, every lie’s a lock
+모든 죄는 벽이 되고, 모든 거짓말은 자물쇠가 되어
+Been sitting in the dark so long, you stopped keeping track
+너무 오랫동안 어둠 속에 앉아있어 얼마나 지났는지조차 잊어버렸어
+You call it comfort, but it’s really just a cage
+넌 그걸 편안함이라 부르지만, 사실은 그저 감옥일 뿐이야
+You call it survival, but it’s just another stage
+넌 그것이 생존이라 말하지만, 그저 또 다른 무대일 뿐이지
+Ain’t nobody chained you, but the choices that you made
+너를 쇠사슬로 묶은 건 다른 누구도 아닌 네가 한 선택들이지만
+But there’s a door right here, and it ain’t never locked
+바로 여기에 문이 있고, 그 문은 단 한 번도 잠긴 적이 없어
+Open up the door, and step on out
+문을 열고 밖으로 걸어 나오렴
+His grace is calling, there’s no room for doubt
+그분의 은혜가 부르고 있으니, 의심할 여지는 없어
+Get out the cell, get out the cell
+그 감옥에서 나와, 당장 밖으로 나와
+He’s setting you free, He’s setting you free
+그분이 널 자유롭게 하시네, 너에게 자유를 주시네
+His love and His grace already paid the fee
+그분의 사랑과 은혜가 이미 모든 대가를 치르셨어
+Get out the cell, get out the cell
+그 감옥에서 나와, 당장 밖으로 나와
+He’s setting you free, He’s setting you free
+그분이 널 자유롭게 하시네, 너에게 자유를 주시네
+His love and His grace already paid the fee
+그분의 사랑과 은혜가 이미 모든 대가를 치르셨어
+I know the walls feel safe when they’ve been up so long
+그 벽들이 너무 오래 서 있었기에 안전하다고 느껴지는 걸 알아
+I know the silence feels like where you belong
+그 적막함이 마치 네가 있어야 할 곳처럼 느껴지는 것도 알아
+But freedom ain’t a feeling, it’s a choice you make
+하지만 자유는 그저 감정이 아니라, 네가 내리는 선택이야
+Get up out the cell before it’s all you’ll ever be
+그 감옥이 네 존재의 전부가 되어버리기 전에 어서 일어나 나오렴
+Grace don’t knock politely, grace knocks down the door
+은혜는 얌전하게 문을 두드리지 않고, 문을 부수며 들어와
+Time to leave that cell, you don’t live there no more
+이제 그 감옥을 떠날 시간이야, 넌 더 이상 거기 사는 사람이 아니니까
+Open up, open up, and step on out
+문을 열어, 문을 열고 밖으로 걸어 나와
+His grace is calling, there’s no room for doubt
+그분의 은혜가 부르고 있으니, 의심할 여지는 없어
+Oh, get out!
+오, 어서 나와!
+Get out the cell, get out the cell
+그 감옥에서 나와, 당장 밖으로 나와
+He’s setting you free, He’s setting you free
+그분이 널 자유롭게 하시네, 너에게 자유를 주시네
+His love and His grace already paid the fee
+그분의 사랑과 은혜가 이미 모든 대가를 치르셨어
+Get out the cell, get out the cell
+그 감옥에서 나와, 당장 밖으로 나와
+He’s setting you free, He’s setting you free
+그분이 널 자유롭게 하시네, 너에게 자유를 주시네
+His love and His grace already paid the fee
+그분의 사랑과 은혜가 이미 모든 대가를 치르셨어
+Clap your hands, stomp your feet
+손뼉을 치고, 발을 구르렴
+Clap your hands, stomp your feet
+손뼉을 치고, 발을 굴러
+His freedom inside makes my life complete
+내 안의 그분의 자유가 내 삶을 완성하네
+Clap your hands, stomp your feet
+손뼉을 치고, 발을 구르렴
+Walk out that door, walk into the street
+그 문을 걸어 나와, 넓은 거리로 걸어 나가
+Get out the cell, get out the cell
+그 감옥에서 나와, 당장 밖으로 나와
+He’s setting you free, He’s setting you free
+그분이 널 자유롭게 하시네, 너에게 자유를 주시네
+His love and His grace already paid the fee
+그분의 사랑과 은혜가 이미 모든 대가를 치르셨어
+Get out the cell, get out the cell
+그 감옥에서 나와, 당장 밖으로 나와
+He’s setting you free, He’s setting you free
+그분이 널 자유롭게 하시네, 너에게 자유를 주시네
+His love and His grace already paid the fee
+그분의 사랑과 은혜가 이미 모든 대가를 치르셨어
+Free!
+자유로워!
+You’re free! Free indeed!
+넌 자유야! 참으로 자유로워!
+Yeah! Free indeed!
+그래! 참된 자유야!
+God is gonna say you’re free!
+하나님께서 네가 자유롭다고 말씀하시네!
+Get out the cell! Yeah! You’re free, oh free!
+그 감옥에서 나와! 그래! 넌 자유야, 오 자유로워!
+Get out the cell! Yeah! You’re free, oh free!
+그 감옥에서 나와! 그래! 넌 자유야, 오 자유로워!
+Get out the cell! Yeah! You’re free, oh free!
+그 감옥에서 나와! 그래! 넌 자유야, 오 자유로워!
+Free indeed! Yeah! Free indeed! Oh free!
+참으로 자유로워! 그래! 진정한 자유야! 오 자유로워!
+Get out the cell! Yeah! Get out the cell! Oh free!
+그 감옥에서 나와! 그래! 당장 밖으로 나와! 오 자유로워!
+Get out the cell! Yeah! Get out the cell! Oh free!
+그 감옥에서 나와! 그래! 당장 밖으로 나와! 오 자유로워!
+His love and His grace already paid the fee
+그분의 사랑과 은혜가 이미 모든 대가를 치르셨어
+Get out the cell, get out the cell
+그 감옥에서 나와, 당장 밖으로 나와
+He’s setting you free, He’s setting you free
+그분이 널 자유롭게 하시네, 너에게 자유를 주시네
+His love and His grace already paid the fee
+그분의 사랑과 은혜가 이미 모든 대가를 치르셨어
+Oh, yeah! Open!
+오, 그래! 문을 열어!
+Get out the cell! Yeah! You’re free, oh free!
+그 감옥에서 나와! 그래! 넌 자유야, 오 자유로워!
+Get out the cell! Yeah!
+그 감옥에서 어서 나와! 그래!
+Open!
+문을 열어!
+Free indeed! Yeah! Free indeed!
+참으로 자유로워! 그래! 진정한 자유야!` ,
+
+  "job": `Where were you when I set the sky in place?
+내가 하늘을 제자리에 펼쳐 놓을 때 넌 어디에 있었니?
+When I hung the stars and called them by name?
+내가 별들을 매달고 그들의 이름을 부를 때?
+Do you know the way the ocean holds its line?
+바다가 어떻게 자신의 경계를 지키는지 넌 알고 있니?
+Do you know who told the morning when to rise?
+아침에게 언제 떠올라야 하는지 말해준 이가 누구인지 알고 있니?
+Where were you when I set the sky in place?
+내가 하늘을 제자리에 펼쳐 놓을 때 넌 어디에 있었니?
+When I hung the stars and called them by name?
+내가 별들을 매달고 그들의 이름을 부를 때?
+Do you know the way the ocean holds its line?
+바다가 어떻게 자신의 경계를 지키는지 넌 알고 있니?
+Do you know who told the morning when to rise?
+아침에게 언제 떠올라야 하는지 말해준 이가 누구인지 알고 있니?
+You’ve been asking why, you’ve been asking how
+넌 왜냐고 물어왔고, 어떻게냐고 물어왔지
+But have you asked who’s holding you right now?
+하지만 지금 바로 너를 안고 있는 이가 누구인지 물어본 적이 있니?
+Before you were formed, before you took a breath
+네가 지어지기도 전에, 네가 첫 숨을 쉬기도 전에
+I already knew the number of your days
+난 이미 네 모든 날의 수를 알고 있었단다
+Do you know me?
+너는 나를 알고 있니?
+Do you know me now?
+이제는 나를 알고 있니?
+Do you know?
+너는 알고 있니?
+I was there before the world found its sound
+세상이 자신의 소리를 찾기도 전에 내가 거기에 있었단다
+I hold the wind, I hold the sea
+내가 바람을 쥐고 있고, 내가 바다를 품고 있어
+I’ve been holding you before you knew me
+네가 나를 알기도 전부터 난 너를 안고 있었단다
+Do you know me? Do you know me now?
+너는 나를 알고 있니? 이제는 나를 알겠니?
+Where were you when the mountains learned to stand?
+산들이 제자리에 서는 법을 배울 때 넌 어디에 있었니?
+When I drew the line between the sea and land?
+내가 바다와 육지 사이에 경계를 그을 때?
+You question me from where you sit so small
+넌 그렇게 작은 자리에 앉아 나에게 질문을 던지지만
+But I was here before you asked at all
+네가 물어보기도 전에 나는 이미 여기에 있었단다
+You’ve been carrying what was never yours to hold
+넌 네 것이 아니었던 무거운 짐들을 계속 짊어져 왔고
+You’ve been running from a love that never let go
+단 한 번도 너를 놓은 적 없는 사랑으로부터 도망쳐 왔지
+Before you doubted, before you turned away
+네가 의심하기 전에, 네가 돌아서기 전에
+I already knew you’d come back home
+난 네가 다시 집으로 돌아올 것을 이미 알고 있었단다
+Do you know me?
+너는 나를 알고 있니?
+Do you know me now?
+이제는 나를 알고 있니?
+I was there before the world found its sound
+세상이 자신의 소리를 찾기도 전에 내가 거기에 있었단다
+I hold the wind, I hold the sea
+내가 바람을 쥐고 있고, 내가 바다를 품고 있어
+I’ve been holding you before you knew me
+네가 나를 알기도 전부터 난 너를 안고 있었단다
+Do you know me? Do you know me now?
+너는 나를 알고 있니? 이제는 나를 알겠니?
+I am not far
+나는 멀리 있지 않단다
+I was never far
+단 한 번도 멀리 있었던 적이 없어
+I am the voice inside the storm
+나는 폭풍 속에서 들려오는 목소리란다
+I am not new
+나는 새로운 존재가 아니란다
+I was never new
+단 한 번도 생소한 존재였던 적이 없어
+I was here before your first word
+네가 첫마디를 떼기도 전에 내가 여기에 있었단다
+I am here, I was here, I was here
+내가 여기에 있다, 내가 여기에 있었단다, 내가 여기에 있었어
+Before you asked, I am here
+네가 묻기도 전에, 내가 여기에 있단다
+Do you know me?
+너는 나를 알고 있니?
+Do you know me now?
+이제는 나를 알고 있니?
+I was there before the world found its sound
+세상이 자신의 소리를 찾기도 전에 내가 거기에 있었단다
+I hold the wind, I hold the sea
+내가 바람을 쥐고 있고, 내가 바다를 품고 있어
+I’ve been holding you before you knew me
+네가 나를 알기도 전부터 난 너를 안고 있었단다
+Do you know me? Do you know me now?
+너는 나를 알고 있니? 이제는 나를 알겠니?
+I am here, I was here, I was here
+내가 여기에 있다, 내가 여기에 있었단다, 내가 여기에 있었어
+Before you asked, I am here
+네가 묻기도 전에, 내가 여기에 있단다` ,
+
   "every": `Woke up breathing, that's a reason right there
 숨을 쉬며 깨어났다는 것, 그것만으로도 충분한 이유예요
 Every heartbeat is a reason to declare

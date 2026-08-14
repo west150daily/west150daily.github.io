@@ -1039,7 +1039,7 @@ body.page-music::after{
 
 <nav class="nav">
   <div class="logo">
-    <a href="../" class="logo">
+    <a href="#" class="logo" aria-label="WEST150 logo">
       <img src="../images/west150-logo.png" alt="WEST150" class="logo-img">
     </a>
   </div>
@@ -1075,7 +1075,7 @@ body.page-music::after{
 <footer class="footer">
 
   <div class="logo">
-    <a href="../" class="logo">
+    <a href="#" class="logo" aria-label="WEST150 logo">
       <img
         src="../images/west150-logo.png"
         alt="WEST150"
@@ -1453,6 +1453,14 @@ body.page-music::after{
     document.getElementById("npCredit").textContent =
       first.credit || "";
   }
+
+  document.addEventListener("click", function (event) {
+    const logoLink = event.target.closest(".page-music .nav .logo a, .page-music .footer .logo a");
+    if (logoLink) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  });
 
   if (typeof window.WEST150MusicInit === "function") {
     window.WEST150MusicInit();

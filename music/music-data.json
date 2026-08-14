@@ -1,6 +1,57 @@
 {
   "albums": [
     {
+      "id": "doyouknow",
+      "title": "DO YOU KNOW?",
+      "type": "EP",
+      "artist": "WEST150 MUSIC",
+      "cover": "../images/doyouknow.PNG",
+      "tracks": [
+        {
+          "id": "cliff",
+          "title": "CLIFF",
+          "audio": "../audio/cliff.mp3",
+          "credit": "AI와 협업 제작",
+          "lyricsId": "cliff"
+        },
+        {
+          "id": "get-up-now",
+          "title": "GET UP NOW",
+          "audio": "../audio/get-up-now.mp3",
+          "credit": "AI와 협업 제작",
+          "lyricsId": "get-up-now"
+        },
+        {
+          "id": "you-were-never-gone",
+          "title": "YOU WERE NEVER GONE",
+          "audio": "../audio/you-were-never-gone.mp3",
+          "credit": "AI와 협업 제작",
+          "lyricsId": "you-were-never-gone"
+        },
+        {
+          "id": "time",
+          "title": "TIME",
+          "audio": "../audio/time.mp3",
+          "credit": "AI와 협업 제작",
+          "lyricsId": "time"
+        },
+        {
+          "id": "get-Out-the-cell",
+          "title": "GET OUT THE CELL",
+          "audio": "../audio/get-Out-the-cell.mp3",
+          "credit": "AI와 협업 제작",
+          "lyricsId": "get-Out-the-cell"
+        },
+        {
+          "id": "job",
+          "title": "JOB",
+          "audio": "../audio/job.mp3",
+          "credit": "AI와 협업 제작",
+          "lyricsId": "job"
+        }
+      ]
+    },
+    {
       "id": "every",
       "title": "EVERY",
       "type": "EP",
